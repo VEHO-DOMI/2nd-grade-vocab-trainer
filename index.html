@@ -1,0 +1,2805 @@
+<!DOCTYPE html>
+<!-- v1.0 – 2026-03-22 · 2nd Grade MORE! 2 -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b1120">
+<title>2nd Grade Vocab Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<style>
+:root {
+  --bg: #0b1120;
+  --bg2: #111827;
+  --card: rgba(255,255,255,0.045);
+  --card-border: rgba(255,255,255,0.08);
+  --card-hover: rgba(255,255,255,0.07);
+  --card-solid: #162033;
+  --text: #eef0f6;
+  --text-secondary: #a8b4c8;
+  --muted: #6b7a94;
+  --accent: #3b82f6;
+  --accent-light: #60a5fa;
+  --accent-glow: rgba(59,130,246,0.25);
+  --accent-deep: #004f9f;
+  --accent2: #f59e0b;
+  --accent2-glow: rgba(245,158,11,0.3);
+  --correct: #22c55e;
+  --correct-glow: rgba(34,197,94,0.2);
+  --wrong: #ef4444;
+  --wrong-glow: rgba(239,68,68,0.2);
+  --context-color: #38bdf8;
+  --def-color: #fbbf24;
+  --trans-color: #f472b6;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --shadow-card: 0 2px 16px rgba(0,0,0,0.3), 0 0 0 1px rgba(59,130,246,0.06);
+  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(59,130,246,0.1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { overscroll-behavior: none; scroll-behavior: smooth; }
+button, input, select { touch-action: manipulation; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 100% 60% at 50% -30%, rgba(0,79,159,0.18), transparent 70%),
+    radial-gradient(ellipse 80% 50% at 100% 100%, rgba(59,130,246,0.08), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 0% 80%, rgba(245,158,11,0.05), transparent);
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(env(safe-area-inset-top) + 0.5rem) 0 calc(env(safe-area-inset-bottom) + 2rem);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* Typography */
+h1 {
+  font-size: 2rem; margin: 1.2rem 0 0.15rem; font-weight: 900; letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+h1 span {
+  background: linear-gradient(135deg, var(--accent-deep) 0%, var(--accent) 40%, var(--accent2) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.subtitle {
+  color: var(--muted); font-size: 0.72rem; margin-bottom: 0.4rem; letter-spacing: 0.2em;
+  text-transform: uppercase; font-weight: 600;
+}
+.school-name {
+  color: rgba(245,158,11,0.35); font-size: 0.62rem; text-align: center;
+  max-width: 320px; line-height: 1.4; margin-bottom: 1.6rem; font-weight: 500;
+}
+
+/* Screen transitions */
+.screen { display: none; width: 100%; max-width: 480px; padding: 0 1rem; }
+.screen.active { display: flex; flex-direction: column; align-items: center; animation: screenIn 0.3s cubic-bezier(0.22,1,0.36,1); }
+@keyframes screenIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+/* Cards */
+.card {
+  width: 100%; background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 1.2rem 1.1rem; margin-bottom: 0.8rem;
+  backdrop-filter: blur(20px); box-shadow: var(--shadow-card);
+}
+.card h3 {
+  font-size: 0.68rem; color: var(--accent2); text-transform: uppercase;
+  letter-spacing: 0.12em; font-weight: 700; margin-bottom: 0.8rem;
+}
+
+/* Login */
+.login-card {
+  width: 100%; max-width: 360px; background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 2.2rem 1.6rem; backdrop-filter: blur(20px);
+  text-align: center; box-shadow: var(--shadow-elevated);
+}
+.login-card h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.4rem; letter-spacing: -0.02em; }
+.login-card p { color: var(--text-secondary); font-size: 0.82rem; margin-bottom: 1.5rem; line-height: 1.4; }
+.login-input {
+  width: 100%; padding: 0.9rem 1rem; border-radius: var(--radius); border: 1.5px solid var(--card-border);
+  background: rgba(255,255,255,0.05); color: var(--text); font-size: 1rem;
+  font-family: inherit; margin-bottom: 1rem; text-align: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.login-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-glow); }
+.login-input::placeholder { color: var(--muted); }
+.login-error { color: var(--wrong); font-size: 0.8rem; margin-bottom: 0.8rem; display: none; }
+.pin-input {
+  width: 150px; padding: 0.9rem 1rem; border-radius: var(--radius); border: 1.5px solid var(--card-border);
+  background: rgba(255,255,255,0.05); color: var(--text); font-size: 1.5rem;
+  font-family: inherit; margin-bottom: 1rem; text-align: center; letter-spacing: 0.5em;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-text-security: disc; text-security: disc;
+}
+.pin-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-glow); }
+.pin-input::placeholder { color: var(--muted); letter-spacing: 0.1em; font-size: 0.9rem; }
+.pin-section { display: none; margin-top: 1rem; text-align: center; }
+.pin-section p { color: var(--text-secondary); font-size: 0.82rem; margin-bottom: 0.8rem; }
+.pin-section .pin-name { color: var(--accent-light); font-weight: 700; }
+.pin-back-btn {
+  background: none; border: none; color: var(--muted); font-size: 0.78rem; cursor: pointer;
+  font-family: inherit; margin-top: 0.5rem; text-decoration: underline; transition: color 0.15s;
+}
+.pin-back-btn:hover { color: var(--text); }
+
+/* Welcome header */
+.welcome-bar {
+  width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;
+}
+.welcome-name { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; }
+.welcome-name small { color: var(--muted); font-weight: 500; font-size: 0.72rem; display: block; margin-top: 0.1rem; }
+.logout-btn {
+  padding: 0.4rem 0.75rem; border-radius: 8px; border: 1px solid var(--card-border);
+  background: rgba(255,255,255,0.03); color: var(--muted); font-size: 0.7rem; cursor: pointer;
+  font-family: inherit; transition: all 0.15s; font-weight: 500;
+}
+.logout-btn:hover { color: var(--wrong); border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.06); }
+
+/* Stats bar */
+.stats-bar { display: flex; gap: 0.5rem; width: 100%; margin-bottom: 0.8rem; }
+.stat-card {
+  flex: 1; background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius);
+  padding: 0.75rem 0.5rem; text-align: center; backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-card); position: relative; overflow: hidden;
+}
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  opacity: 0.6;
+}
+.stat-card:nth-child(1)::before { background: linear-gradient(90deg, var(--accent-deep), var(--accent)); }
+.stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--accent2), #fbbf24); }
+.stat-card:nth-child(3)::before { background: linear-gradient(90deg, var(--correct), #4ade80); }
+.stat-value { font-size: 1.4rem; font-weight: 900; color: var(--accent-light); letter-spacing: -0.02em; }
+.stat-card:nth-child(2) .stat-value { color: var(--accent2); }
+.stat-card:nth-child(3) .stat-value { color: var(--correct); }
+.stat-label { font-size: 0.58rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.2rem; font-weight: 600; }
+
+/* Source Selection */
+.source-section { margin-bottom: 0.8rem; }
+.source-section:last-of-type { margin-bottom: 0; }
+.source-section-label {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 0.45rem; padding-left: 0.1rem;
+}
+.source-section-label.list-label { color: var(--accent2); }
+.source-section-label.unit-label { color: var(--context-color); }
+.source-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem; }
+.source-btn {
+  padding: 0.75rem 0.6rem; border-radius: var(--radius); border: 1.5px solid var(--card-border);
+  background: var(--card); color: var(--text-secondary); font-size: 0.82rem;
+  font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s;
+  text-align: center; position: relative; overflow: hidden;
+}
+.source-btn:hover { background: var(--card-hover); border-color: rgba(255,255,255,0.12); transform: translateY(-1px); }
+.source-btn.selected {
+  background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.45);
+  color: var(--text); box-shadow: 0 0 20px rgba(59,130,246,0.08), inset 0 0 20px rgba(59,130,246,0.04);
+}
+.source-btn .count { display: block; font-size: 0.64rem; color: var(--muted); font-weight: 400; margin-top: 0.2rem; }
+.source-btn .progress-indicator {
+  position: absolute; bottom: 0; left: 0; height: 3px; border-radius: 0 0 var(--radius) var(--radius);
+  background: linear-gradient(90deg, var(--correct), #4ade80); transition: width 0.4s ease;
+}
+.quick-btns { display: flex; gap: 0.4rem; margin-top: 0.7rem; }
+.quick-btn {
+  flex: 1; padding: 0.45rem; border-radius: 8px; border: 1.5px dashed rgba(255,255,255,0.08);
+  background: transparent; color: var(--muted); font-size: 0.7rem; font-weight: 600;
+  cursor: pointer; font-family: inherit; transition: all 0.2s; letter-spacing: -0.01em;
+}
+.quick-btn:hover { border-color: rgba(59,130,246,0.4); color: var(--accent-light); background: rgba(59,130,246,0.05); }
+
+/* Type Selection */
+.type-grid { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.type-btn {
+  flex: 1; min-width: 70px; padding: 0.6rem 0.5rem; border-radius: 10px;
+  border: 1.5px solid var(--card-border); background: var(--card);
+  color: var(--text-secondary); font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; font-family: inherit; transition: all 0.2s; text-align: center;
+  position: relative;
+}
+.type-btn:hover { background: var(--card-hover); transform: translateY(-1px); }
+.type-btn.selected {
+  background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.45); color: var(--text);
+  box-shadow: 0 0 16px rgba(59,130,246,0.08);
+}
+.type-btn.selected[data-type="context"] { background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.45); box-shadow: 0 0 16px rgba(56,189,248,0.08); }
+.type-btn.selected[data-type="context-hard"] { background: rgba(56,189,248,0.15); border-color: rgba(56,189,248,0.5); box-shadow: 0 0 16px rgba(56,189,248,0.1); }
+.type-btn.selected[data-type="definition"] { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.4); box-shadow: 0 0 16px rgba(251,191,36,0.08); }
+.type-btn.selected[data-type="definition-hard"] { background: rgba(251,191,36,0.15); border-color: rgba(251,191,36,0.5); box-shadow: 0 0 16px rgba(251,191,36,0.1); }
+.type-btn.selected[data-type="translation"] { background: rgba(244,114,182,0.1); border-color: rgba(244,114,182,0.4); box-shadow: 0 0 16px rgba(244,114,182,0.08); }
+
+/* Buttons */
+.btn {
+  padding: 0.75rem 1.4rem; border: none; border-radius: var(--radius); font-size: 0.88rem;
+  cursor: pointer; font-weight: 700; font-family: inherit;
+  transition: all 0.2s cubic-bezier(0.22,1,0.36,1); letter-spacing: -0.01em;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: scale(0.97) translateY(0); }
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+  color: white; box-shadow: 0 4px 20px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.15);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.btn-primary:hover { box-shadow: 0 6px 28px rgba(59,130,246,0.35), inset 0 1px 0 rgba(255,255,255,0.15); }
+.btn-primary:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; transform: none; }
+.btn-secondary {
+  background: rgba(255,255,255,0.05); color: var(--text-secondary);
+  border: 1.5px solid var(--card-border); box-shadow: var(--shadow-card);
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.08); color: var(--text); border-color: rgba(255,255,255,0.12); }
+.btn-success {
+  background: linear-gradient(135deg, var(--correct), #16a34a); color: white;
+  box-shadow: 0 4px 20px var(--correct-glow), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.btn-danger { background: rgba(239,68,68,0.1); color: #f87171; border: 1.5px solid rgba(239,68,68,0.2); }
+.btn-block { width: 100%; }
+.btn-small { padding: 0.5rem 0.9rem; font-size: 0.8rem; }
+.btn-weak {
+  background: linear-gradient(135deg, #f59e0b, #d97706); color: white;
+  box-shadow: 0 4px 20px rgba(245,158,11,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.word-count-display {
+  text-align: center; margin: 0.6rem 0; font-size: 0.82rem; color: var(--text-secondary);
+  padding: 0.5rem; border-radius: 8px; background: rgba(255,255,255,0.02);
+}
+.word-count-display strong { color: var(--text); font-weight: 800; }
+
+.def-hint {
+  margin-top: 1rem; padding: 0.6rem 1rem; border-radius: 10px;
+  background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.12);
+  display: flex; align-items: center; justify-content: center; gap: 1rem;
+  font-size: 0.85rem; color: var(--text-secondary);
+}
+.def-hint-letter {
+  font-size: 1.1rem; font-weight: 800; color: var(--def-color);
+  letter-spacing: 0.15em; font-family: 'Courier New', monospace;
+}
+.def-hint-count {
+  font-size: 0.8rem; color: var(--muted); font-weight: 500;
+}
+
+
+/* Gamification: XP, Streak, Badges, Leaderboard, Daily Challenge */
+.stat-card:nth-child(4)::before { background: linear-gradient(90deg, #f97316, #fb923c); }
+.stat-card:nth-child(4) .stat-value { color: #fb923c; }
+.welcome-xp { display: flex; align-items: center; gap: 0.3rem; font-size: 0.8rem; color: var(--accent2); font-weight: 600; margin-top: 0.15rem; }
+
+.badge-row { display: flex; gap: 0.4rem; overflow-x: auto; padding: 0.3rem 0; margin-bottom: 0.8rem; scrollbar-width: none; -ms-overflow-style: none; }
+.badge-row::-webkit-scrollbar { display: none; }
+.badge-icon { font-size: 1.4rem; min-width: 2.2rem; height: 2.2rem; display: flex; align-items: center; justify-content: center; background: var(--card); border: 1px solid var(--card-border); border-radius: 10px; cursor: pointer; transition: transform 0.15s; }
+.badge-icon:hover { transform: scale(1.15); }
+.badge-icon.empty { opacity: 0.3; font-size: 1rem; }
+
+.badge-popup { position: fixed; top: -80px; left: 50%; transform: translateX(-50%); z-index: 1000; background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(251,191,36,0.05)); border: 1px solid rgba(251,191,36,0.3); border-radius: 16px; padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 0.8rem; backdrop-filter: blur(12px); transition: top 0.4s ease; max-width: 90vw; }
+.badge-popup.show { top: 20px; }
+.badge-popup-icon { font-size: 2rem; }
+.badge-popup-text { font-size: 0.85rem; }
+.badge-popup-text strong { color: var(--accent2); display: block; font-size: 0.95rem; }
+
+.badge-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 900; display: none; align-items: center; justify-content: center; padding: 1rem; }
+.badge-modal-overlay.show { display: flex; }
+.badge-modal { background: var(--bg2); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 1.5rem; max-width: 400px; width: 100%; max-height: 80vh; overflow-y: auto; }
+.badge-modal h3 { margin-bottom: 1rem; }
+.badge-item { display: flex; align-items: center; gap: 0.8rem; padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.badge-item:last-child { border-bottom: none; }
+.badge-item-icon { font-size: 1.6rem; min-width: 2rem; text-align: center; }
+.badge-item.locked .badge-item-icon { filter: grayscale(1); opacity: 0.3; }
+.badge-item-info { flex: 1; }
+.badge-item-name { font-weight: 700; font-size: 0.9rem; }
+.badge-item.locked .badge-item-name { color: var(--muted); }
+.badge-item-desc { font-size: 0.75rem; color: var(--muted); }
+
+.daily-card { background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(245,158,11,0.03)); border: 1px solid rgba(251,191,36,0.15); border-radius: var(--radius); padding: 1rem 1.2rem; margin-bottom: 0.8rem; }
+.daily-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+.daily-card-title { font-weight: 800; color: var(--accent2); font-size: 0.95rem; }
+.daily-card-date { font-size: 0.75rem; color: var(--muted); }
+.daily-card-desc { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.8rem; }
+.daily-card-done { font-size: 0.9rem; color: var(--correct); font-weight: 600; }
+.btn-daily { background: linear-gradient(135deg, var(--accent2), #d97706); color: #000; font-weight: 700; border: none; border-radius: var(--radius); padding: 0.6rem 1.5rem; cursor: pointer; font-size: 0.85rem; width: 100%; }
+.btn-daily:hover { filter: brightness(1.1); }
+
+.btn-review { background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(139,92,246,0.05)); border: 1px solid rgba(139,92,246,0.25); color: #a78bfa; }
+.btn-review:hover { background: rgba(139,92,246,0.2); border-color: rgba(139,92,246,0.4); }
+
+#leaderboard-screen .progress-nav { margin-bottom: 1rem; }
+.lb-section-title { font-weight: 800; font-size: 0.85rem; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.08em; margin: 1.2rem 0 0.6rem; }
+.lb-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.8rem; border-radius: 10px; margin-bottom: 0.3rem; background: var(--card); border: 1px solid var(--card-border); }
+.lb-row.me { border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.06); }
+.lb-rank { font-weight: 800; min-width: 1.8rem; text-align: center; font-size: 0.9rem; }
+.lb-name { flex: 1; font-weight: 600; font-size: 0.9rem; }
+.lb-xp { font-weight: 800; color: var(--accent2); font-size: 0.9rem; }
+.lb-score { font-weight: 700; color: var(--correct); font-size: 0.85rem; }
+.lb-divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 1rem 0 0.5rem; }
+
+/* Progress bar (in-quiz) */
+.progress-wrap { width: 100%; margin-bottom: 1.2rem; }
+.progress-bar-bg { width: 100%; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.progress-bar-fill {
+  height: 100%; border-radius: 3px; transition: width 0.4s cubic-bezier(0.22,1,0.36,1);
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+.progress-text { display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+
+/* Quiz Card */
+.quiz-card {
+  width: 100%; background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 1.6rem 1.3rem; backdrop-filter: blur(20px);
+  margin-bottom: 1rem; box-shadow: var(--shadow-elevated); position: relative;
+}
+.task-type-label {
+  display: inline-block; padding: 0.3rem 0.75rem; border-radius: 8px;
+  font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.2rem;
+}
+.task-type-label.context { background: rgba(96,165,250,0.12); color: var(--context-color); border: 1px solid rgba(96,165,250,0.15); }
+.task-type-label.definition, .task-type-label.definition-hard { background: rgba(251,191,36,0.1); color: var(--def-color); border: 1px solid rgba(251,191,36,0.12); }
+.task-type-label.translation { background: rgba(244,114,182,0.1); color: var(--trans-color); border: 1px solid rgba(244,114,182,0.12); }
+
+.quiz-prompt {
+  font-size: 1.12rem; line-height: 1.7; margin-bottom: 1.4rem; color: var(--text);
+  font-weight: 400;
+}
+.quiz-prompt .gap {
+  display: inline; font-weight: 700; color: var(--accent-light); letter-spacing: 0.04em;
+  border-bottom: 2px dashed rgba(59,130,246,0.35); padding: 0.05em 0.2em;
+  background: rgba(59,130,246,0.06); border-radius: 4px 4px 0 0;
+}
+.quiz-prompt .gap.gap-hard {
+  letter-spacing: 0; border-bottom: none; background: none; padding: 0;
+  text-decoration: none;
+}
+.quiz-prompt .gap.gap-hard .gap-line {
+  display: inline-block; width: 8em; border-bottom: 2.5px solid var(--accent-light);
+  vertical-align: baseline; margin-left: 0.05em; opacity: 0.5;
+}
+.quiz-prompt .german-word {
+  font-weight: 700; color: var(--trans-color); font-size: 1.25rem;
+  display: block; text-align: center; padding: 0.8rem 0; line-height: 1.3;
+}
+
+.answer-row { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; }
+.answer-input {
+  flex: 1; padding: 0.85rem 1rem; border-radius: var(--radius); border: 1.5px solid var(--card-border);
+  background: rgba(255,255,255,0.05); color: var(--text); font-size: 1rem;
+  font-family: inherit; transition: all 0.2s;
+}
+.answer-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-glow), 0 0 20px var(--accent-glow); }
+.answer-input::placeholder { color: var(--muted); }
+.answer-input.correct {
+  border-color: var(--correct); box-shadow: 0 0 0 3px var(--correct-glow);
+  background: rgba(34,197,94,0.04);
+}
+.answer-input.wrong {
+  border-color: var(--wrong); box-shadow: 0 0 0 3px var(--wrong-glow);
+  background: rgba(239,68,68,0.04);
+}
+
+.feedback {
+  padding: 0.85rem 1rem; border-radius: var(--radius); margin-bottom: 0.8rem;
+  font-size: 0.86rem; font-weight: 600; display: none; line-height: 1.4;
+}
+.feedback.correct { display: block; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); color: #4ade80; }
+.feedback.wrong { display: block; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #f87171; }
+.feedback .correct-answer { font-weight: 800; color: var(--text); }
+
+.quiz-actions { display: flex; gap: 0.5rem; }
+.quiz-actions .btn { flex: 1; }
+
+.source-tag {
+  display: inline-block; margin-top: 1rem; padding: 0.25rem 0.65rem; border-radius: 6px;
+  font-size: 0.62rem; font-weight: 600; color: var(--muted); letter-spacing: 0.02em;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Results */
+.results-score { text-align: center; margin: 1.5rem 0; }
+.results-score .big-score {
+  font-size: 3.5rem; font-weight: 900; letter-spacing: -0.04em; line-height: 1;
+  background: linear-gradient(135deg, var(--accent-deep), var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.results-score .score-label { color: var(--text-secondary); font-size: 0.88rem; margin-top: 0.5rem; font-weight: 500; }
+.results-score .save-status { font-size: 0.72rem; color: var(--muted); margin-top: 0.6rem; font-weight: 500; }
+
+.results-list { width: 100%; margin-bottom: 1.2rem; max-height: 55vh; overflow-y: auto; }
+.results-list::-webkit-scrollbar { width: 4px; }
+.results-list::-webkit-scrollbar-track { background: transparent; }
+.results-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+.result-item {
+  display: flex; align-items: center; gap: 0.8rem; padding: 0.75rem 0.4rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.85rem;
+  border-radius: 8px; transition: background 0.15s;
+}
+.result-item:hover { background: rgba(255,255,255,0.02); }
+.result-item:last-child { border-bottom: none; }
+.result-icon { font-size: 0.9rem; flex-shrink: 0; }
+.result-word { font-weight: 600; flex: 1; }
+.result-answer { color: var(--muted); font-size: 0.75rem; text-align: right; max-width: 40%; }
+.result-item.wrong .result-word { color: #f87171; }
+.result-item.correct .result-word { color: #4ade80; }
+
+.results-actions { display: flex; gap: 0.5rem; width: 100%; flex-wrap: wrap; }
+.results-actions .btn { flex: 1; min-width: 140px; }
+
+/* Loading */
+.loading { text-align: center; padding: 2rem; color: var(--muted); }
+.spinner {
+  display: inline-block; width: 28px; height: 28px;
+  border: 3px solid rgba(59,130,246,0.15); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Responsive — Mobile */
+@media (max-width: 600px) {
+  h1 { font-size: 1.7rem; }
+  .source-grid { gap: 0.35rem; }
+  .source-btn { padding: 0.65rem 0.4rem; font-size: 0.78rem; }
+  .quiz-card { padding: 1.3rem 1rem; }
+  .quiz-prompt { font-size: 1.02rem; }
+  .stats-bar { gap: 0.35rem; }
+  .stat-card { padding: 0.6rem 0.3rem; }
+  .stat-value { font-size: 1.2rem; }
+  .card { padding: 1rem 0.9rem; }
+}
+@media (max-width: 400px) {
+  .type-grid { flex-direction: column; }
+  .type-btn { min-width: unset; }
+  .screen { padding: 0 0.8rem; }
+}
+
+/* Responsive — Desktop */
+@media (min-width: 768px) {
+  .screen { max-width: 680px; padding: 0 2rem; }
+  h1 { font-size: 2.6rem; margin: 2rem 0 0.2rem; }
+  .subtitle { font-size: 0.82rem; margin-bottom: 0.5rem; letter-spacing: 0.25em; }
+  .school-name { font-size: 0.7rem; max-width: 420px; margin-bottom: 2rem; }
+
+  .welcome-bar { margin-bottom: 1.2rem; }
+  .welcome-name { font-size: 1.4rem; }
+  .welcome-name small { font-size: 0.82rem; }
+  .logout-btn { font-size: 0.78rem; padding: 0.45rem 1rem; }
+
+  .stats-bar { gap: 0.7rem; margin-bottom: 1.2rem; }
+  .stat-card { padding: 1rem 0.8rem; border-radius: 16px; }
+  .stat-value { font-size: 1.8rem; }
+  .stat-label { font-size: 0.68rem; margin-top: 0.25rem; }
+
+  .card { padding: 1.5rem 1.4rem; margin-bottom: 1.1rem; border-radius: 22px; }
+  .card h3 { font-size: 0.75rem; letter-spacing: 0.14em; margin-bottom: 1rem; }
+
+  .source-grid { grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; }
+  .source-btn { padding: 0.9rem 0.8rem; font-size: 0.88rem; border-radius: 16px; }
+  .source-btn .count { font-size: 0.72rem; margin-top: 0.25rem; }
+  .quick-btns { gap: 0.5rem; margin-top: 0.8rem; }
+  .quick-btn { padding: 0.55rem 0.8rem; font-size: 0.76rem; border-radius: 10px; }
+
+  .type-grid { gap: 0.5rem; }
+  .type-btn { padding: 0.75rem 0.7rem; font-size: 0.85rem; border-radius: 12px; }
+
+  .word-count-display { font-size: 0.92rem; padding: 0.6rem; margin: 0.8rem 0; }
+  .def-hint { flex-direction: column; gap: 0.4rem; padding: 0.5rem 0.8rem; }
+  .def-hint-letter { font-size: 1rem; }
+
+  .btn { padding: 0.85rem 1.6rem; font-size: 0.95rem; border-radius: 16px; }
+  .btn-small { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+
+  .home-actions { gap: 0.6rem; margin-top: 0.4rem; }
+
+  /* Quiz */
+  .progress-wrap { margin-bottom: 1.5rem; }
+  .progress-bar-bg { height: 6px; }
+  .progress-text { font-size: 0.78rem; margin-top: 0.6rem; }
+  .quiz-card { padding: 2rem 2rem; border-radius: 24px; margin-bottom: 1.2rem; }
+  .task-type-label { font-size: 0.72rem; padding: 0.35rem 0.9rem; margin-bottom: 1.4rem; }
+  .quiz-prompt { font-size: 1.25rem; line-height: 1.75; margin-bottom: 1.6rem; }
+  .quiz-prompt .gap { padding: 0.08em 0.25em; font-size: 1.1rem; }
+  .quiz-prompt .gap.gap-hard .gap-line { width: 10em; }
+  .quiz-prompt .german-word { font-size: 1.5rem; padding: 1rem 0; }
+  .answer-input { padding: 1rem 1.2rem; font-size: 1.1rem; border-radius: 16px; }
+  .feedback { padding: 1rem 1.2rem; font-size: 0.92rem; border-radius: 16px; }
+  .source-tag { font-size: 0.68rem; padding: 0.3rem 0.75rem; margin-top: 1.2rem; }
+
+  /* Results */
+  .results-score { margin: 2rem 0; }
+  .results-score .big-score { font-size: 4.5rem; }
+  .results-score .score-label { font-size: 1rem; margin-top: 0.6rem; }
+  .result-item { padding: 0.85rem 0.6rem; font-size: 0.92rem; }
+  .result-answer { font-size: 0.82rem; }
+
+  /* Login */
+  .login-card { max-width: 420px; padding: 2.8rem 2.2rem; border-radius: 24px; }
+  .login-card h2 { font-size: 1.6rem; }
+  .login-card p { font-size: 0.9rem; }
+  .login-input { font-size: 1.1rem; padding: 1rem 1.2rem; border-radius: 16px; }
+  .pin-input { width: 180px; font-size: 1.7rem; padding: 1rem 1.2rem; }
+
+  /* Progress screen */
+  .progress-overall { gap: 0.7rem; margin-bottom: 1.3rem; }
+  .progress-overall .stat-card { padding: 1rem 0.8rem; border-radius: 16px; }
+  .progress-ring-wrap { margin-bottom: 1.5rem; }
+  .progress-ring-wrap svg { width: 170px; height: 170px; }
+  .source-progress-item { padding: 1rem 1.2rem; border-radius: 16px; margin-bottom: 0.55rem; }
+  .source-progress-name { font-size: 1rem; }
+  .source-progress-stats { font-size: 0.78rem; gap: 0.8rem; }
+  .word-detail-row { padding: 0.5rem 0.3rem; font-size: 0.86rem; }
+  .progress-legend { font-size: 0.75rem; gap: 1.2rem; margin-bottom: 1.3rem; }
+
+  /* Reference screen */
+  .ref-source-title { font-size: 0.78rem; margin-bottom: 0.6rem; }
+  .ref-word-item { padding: 0.9rem 1.2rem; border-radius: 14px; margin-bottom: 0.45rem; }
+  .ref-word-en { font-size: 0.95rem; }
+  .ref-word-de { font-size: 0.85rem; }
+  .ref-word-details { font-size: 0.88rem; }
+  .ref-detail-label { font-size: 0.68rem; }
+  .ref-select { font-size: 0.88rem; padding: 0.6rem 1rem; }
+}
+
+/* Large desktop */
+@media (min-width: 1024px) {
+  .screen { max-width: 760px; }
+  h1 { font-size: 3rem; }
+  .source-grid { grid-template-columns: repeat(4, 1fr); }
+  .quiz-card { padding: 2.4rem 2.5rem; }
+  .quiz-prompt { font-size: 1.35rem; }
+  .quiz-prompt .german-word { font-size: 1.7rem; }
+  .answer-input { font-size: 1.15rem; }
+  .login-card { max-width: 460px; padding: 3rem 2.5rem; }
+}
+
+body.playing h1, body.playing .subtitle { display: none; }
+
+/* Bottom action area */
+.home-actions { width: 100%; display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.2rem; }
+.home-actions-row { display: flex; gap: 0.5rem; }
+.home-actions-row .btn { flex: 1; }
+
+/* Progress Screen */
+.progress-nav { display: flex; gap: 0.5rem; width: 100%; margin-bottom: 1rem; }
+.progress-nav .btn { flex: 1; }
+
+.progress-overall {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; width: 100%; margin-bottom: 1rem;
+}
+.progress-overall .stat-card { padding: 0.8rem 0.5rem; }
+.progress-overall .stat-card.wide { grid-column: 1 / -1; }
+.progress-overall .stat-sub { font-size: 0.65rem; color: var(--muted); margin-top: 0.15rem; }
+
+.progress-ring-wrap { text-align: center; margin-bottom: 1.2rem; }
+.progress-ring-wrap svg { transform: rotate(-90deg); filter: drop-shadow(0 0 12px rgba(59,130,246,0.15)); }
+.progress-ring-label { font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; }
+
+.source-progress-list { width: 100%; }
+.source-progress-item {
+  background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius);
+  padding: 0.9rem 1rem; margin-bottom: 0.45rem; cursor: pointer; transition: all 0.2s;
+  box-shadow: var(--shadow-card);
+}
+.source-progress-item:hover { border-color: rgba(59,130,246,0.25); background: var(--card-hover); transform: translateY(-1px); }
+.source-progress-item.expanded { border-color: rgba(59,130,246,0.4); box-shadow: var(--shadow-elevated); }
+.source-progress-header { display: flex; justify-content: space-between; align-items: center; }
+.source-progress-name { font-weight: 700; font-size: 0.9rem; }
+.source-progress-stats { display: flex; gap: 0.6rem; font-size: 0.7rem; color: var(--muted); }
+.source-progress-stats .mastered-count { color: var(--correct); font-weight: 700; }
+.source-progress-stats .weak-count { color: var(--wrong); font-weight: 700; }
+.source-progress-stats .not-seen-count { color: var(--muted); font-weight: 600; }
+.source-progress-bar {
+  width: 100%; height: 5px; background: rgba(255,255,255,0.05); border-radius: 3px;
+  margin-top: 0.6rem; overflow: hidden; display: flex;
+}
+.source-progress-bar .bar-mastered { background: linear-gradient(90deg, var(--correct), #4ade80); height: 100%; transition: width 0.4s; }
+.source-progress-bar .bar-practiced { background: linear-gradient(90deg, var(--accent), var(--accent-light)); height: 100%; transition: width 0.4s; }
+.source-progress-bar .bar-weak { background: linear-gradient(90deg, var(--wrong), #f87171); height: 100%; transition: width 0.4s; }
+
+.word-detail-list {
+  margin-top: 0.8rem; display: none; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.5rem;
+  max-height: 300px; overflow-y: auto;
+}
+.word-detail-list::-webkit-scrollbar { width: 3px; }
+.word-detail-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+.source-progress-item.expanded .word-detail-list { display: block; }
+.word-detail-row {
+  display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.8rem;
+  border-radius: 4px; transition: background 0.1s;
+}
+.word-detail-row:hover { background: rgba(255,255,255,0.02); }
+.word-detail-row:last-child { border-bottom: none; }
+.word-detail-status { width: 20px; text-align: center; flex-shrink: 0; font-size: 0.8rem; }
+.word-detail-name { flex: 1; font-weight: 500; color: var(--text); }
+.word-detail-counts { display: flex; gap: 0.4rem; font-size: 0.72rem; flex-shrink: 0; }
+.word-detail-counts .correct-count { color: var(--correct); font-weight: 700; }
+.word-detail-counts .wrong-count { color: var(--wrong); font-weight: 700; }
+.word-detail-row.mastered .word-detail-name { color: var(--correct); }
+.word-detail-row.weak .word-detail-name { color: var(--wrong); }
+.word-detail-row.unseen .word-detail-name { color: var(--muted); font-style: italic; }
+
+.progress-legend {
+  display: flex; gap: 0.8rem; justify-content: center; margin-bottom: 1rem; font-size: 0.68rem; color: var(--muted); font-weight: 500;
+}
+.progress-legend span { display: flex; align-items: center; gap: 0.3rem; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.legend-dot.mastered { background: var(--correct); box-shadow: 0 0 6px var(--correct-glow); }
+.legend-dot.practiced { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); }
+.legend-dot.weak { background: var(--wrong); box-shadow: 0 0 6px var(--wrong-glow); }
+.legend-dot.unseen { background: rgba(255,255,255,0.12); }
+
+/* Word Reference */
+.ref-select {
+  padding: 0.55rem 0.8rem; border-radius: 10px; border: 1.5px solid var(--card-border);
+  background: var(--card); color: var(--text); font-size: 0.82rem; font-family: inherit;
+  cursor: pointer; appearance: auto; transition: border-color 0.2s;
+}
+.ref-select:focus { border-color: var(--accent); outline: none; }
+.ref-list { width: 100%; }
+.ref-source-group { margin-bottom: 1.2rem; }
+.ref-source-title {
+  font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--accent-light); margin-bottom: 0.5rem; padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(59,130,246,0.15);
+}
+.ref-word-item {
+  background: var(--card); border: 1px solid var(--card-border); border-radius: 12px;
+  padding: 0.8rem 1rem; margin-bottom: 0.35rem; cursor: pointer; transition: all 0.2s;
+  box-shadow: var(--shadow-card);
+}
+.ref-word-item:hover { border-color: rgba(59,130,246,0.25); background: var(--card-hover); transform: translateY(-1px); }
+.ref-word-item.expanded { border-color: rgba(59,130,246,0.4); box-shadow: var(--shadow-elevated); transform: none; }
+.ref-word-header { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+.ref-word-en { font-weight: 700; font-size: 0.88rem; color: var(--text); }
+.ref-word-de { font-size: 0.78rem; color: var(--trans-color); font-style: italic; flex-shrink: 0; }
+.ref-word-details {
+  display: none; margin-top: 0.7rem; padding-top: 0.7rem;
+  border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.82rem; line-height: 1.6;
+}
+.ref-word-item.expanded .ref-word-details { display: block; animation: fadeDetail 0.2s ease-out; }
+@keyframes fadeDetail { from { opacity: 0; } to { opacity: 1; } }
+.ref-detail-label { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-top: 0.5rem; margin-bottom: 0.15rem; }
+.ref-detail-label:first-child { margin-top: 0; }
+.ref-detail-text { color: var(--text-secondary); }
+
+/* Custom scrollbar global */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+/* Selection color */
+::selection { background: rgba(59,130,246,0.3); color: var(--text); }
+</style>
+</head>
+<body>
+
+<h1><span>2nd Grade Vocab Trainer</span></h1>
+<p class="subtitle">Practice &bull; Learn &bull; Master</p>
+<p class="school-name">VEHO &ndash; Gymnasium und wirtschaftskundliches Realgymnasium der Dominikanerinnen</p>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="screen active">
+  <div class="login-card">
+    <h2>Welcome!</h2>
+    <!-- Step 1: Name entry -->
+    <div id="login-step-name">
+      <p>Enter your name to start practicing</p>
+      <input type="text" class="login-input" id="login-name" placeholder="Your name..." autocomplete="off" autocapitalize="words">
+      <div class="login-error" id="login-error"></div>
+      <button class="btn btn-primary btn-block" id="login-btn" onclick="handleNameSubmit()">Continue</button>
+    </div>
+    <!-- Step 2: PIN entry (for returning students) -->
+    <div id="login-step-pin" class="pin-section">
+      <p>Welcome back, <span class="pin-name" id="pin-display-name"></span>!</p>
+      <p>Enter your 4-digit PIN</p>
+      <input type="text" class="pin-input" id="login-pin" placeholder="••••" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+      <div class="login-error" id="pin-error"></div>
+      <button class="btn btn-primary btn-block" onclick="handlePinSubmit()">Log In</button>
+      <button class="pin-back-btn" onclick="showNameStep()">← Back</button>
+    </div>
+    <!-- Step 3: Set PIN (for new students) -->
+    <div id="login-step-set-pin" class="pin-section">
+      <p>Hi <span class="pin-name" id="set-pin-display-name"></span>! 👋</p>
+      <p>Choose a 4-digit PIN to secure your account</p>
+      <input type="text" class="pin-input" id="set-pin" placeholder="••••" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+      <p style="font-size:0.75rem; color: var(--muted); margin-top:-0.5rem; margin-bottom:0.8rem;">Remember this PIN — you'll need it to log in!</p>
+      <div class="login-error" id="set-pin-error"></div>
+      <button class="btn btn-primary btn-block" onclick="handleSetPin()">Create Account</button>
+      <button class="pin-back-btn" onclick="showNameStep()">← Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- HOME SCREEN -->
+<div id="home-screen" class="screen">
+  <div class="welcome-bar">
+    <div class="welcome-name" id="welcome-name">Welcome <small>2nd Grade</small></div>
+    <div class="welcome-xp" id="welcome-xp"></div>
+    <button class="logout-btn" onclick="logout()">Log Out</button>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-card"><div class="stat-value" id="stat-sessions">0</div><div class="stat-label">Sessions</div></div>
+    <div class="stat-card"><div class="stat-value" id="stat-accuracy">–</div><div class="stat-label">Accuracy</div></div>
+    <div class="stat-card"><div class="stat-value" id="stat-mastered">0</div><div class="stat-label">Mastered</div></div>
+    <div class="stat-card"><div class="stat-value" id="stat-streak">0</div><div class="stat-label">Streak 🔥</div></div>
+  </div>
+
+
+  <div class="badge-row" id="badge-row"></div>
+
+  <div class="daily-card" id="daily-card">
+    <div class="daily-card-header">
+      <span class="daily-card-title">⚡ Daily Challenge</span>
+      <span class="daily-card-date" id="daily-date"></span>
+    </div>
+    <div class="daily-card-desc">10 words · same for everyone today</div>
+    <div id="daily-action"></div>
+  </div>
+
+  <div class="card">
+    <h3>Select Sources</h3>
+    <div class="source-section">
+      <div class="source-section-label unit-label">📘 MORE! 2 Units</div>
+      <div class="source-grid" id="source-grid-units"></div>
+    </div>
+    <div class="quick-btns">
+      <button class="quick-btn" onclick="selectAll('all')">Select All</button>
+      <button class="quick-btn" onclick="selectAll('none')">Clear</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Exercise Type</h3>
+    <div class="type-grid" id="type-grid">
+      <button class="type-btn selected" data-type="mix" onclick="selectType(this)" title="Random mix of all exercise types">Mix</button>
+      <button class="type-btn" data-type="context" onclick="selectType(this)" title="Complete the sentence — first letter + exact letter count shown">Context (easy)</button>
+      <button class="type-btn" data-type="context-hard" onclick="selectType(this)" title="Complete the sentence — only the first letter is shown, no letter count">Context (hard)</button>
+      <button class="type-btn" data-type="definition" onclick="selectType(this)" title="Read an English definition — first letters and word count shown">Definition (easy)</button>
+      <button class="type-btn" data-type="definition-hard" onclick="selectType(this)" title="Read an English definition — no hints given">Definition (hard)</button>
+      <button class="type-btn" data-type="translation" onclick="selectType(this)" title="See the German word and type the English translation">Translation</button>
+    </div>
+  </div>
+
+  <div class="word-count-display" id="word-count">Select sources to begin</div>
+
+  <div class="home-actions">
+    <button class="btn btn-primary btn-block" id="start-btn" disabled onclick="startPractice()">Start Practice</button>
+    <button class="btn btn-review btn-block btn-small" id="review-btn" style="display:none;" onclick="startSmartReview()">🔄 Smart Review</button>
+    <div class="home-actions-row">
+      <button class="btn btn-secondary btn-small" onclick="showProgressScreen()">📊 My Progress</button>
+      <button class="btn btn-secondary btn-small" onclick="showLeaderboard()">🏆 Leaderboard</button>
+      <button class="btn btn-secondary btn-small" onclick="showWordReference()">📖 Word Reference</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- LEADERBOARD SCREEN -->
+<div id="leaderboard-screen" class="screen">
+  <div class="progress-nav">
+    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+  </div>
+  <h2 style="margin-bottom:0.5rem;">🏆 Class Leaderboard</h2>
+  <div id="lb-main"></div>
+  <hr class="lb-divider">
+  <div class="lb-section-title">⚡ Today's Challenge</div>
+  <div id="lb-daily"></div>
+</div>
+
+<!-- PROGRESS SCREEN -->
+<div id="progress-screen" class="screen">
+  <div class="progress-nav">
+    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+  </div>
+
+  <!-- Overall ring + stats -->
+  <div class="progress-ring-wrap">
+    <svg width="140" height="140" viewBox="0 0 140 140">
+      <circle cx="70" cy="70" r="60" stroke="rgba(255,255,255,0.06)" stroke-width="10" fill="none"/>
+      <circle id="ring-mastered" cx="70" cy="70" r="60" stroke="#22c55e" stroke-width="10" fill="none"
+        stroke-dasharray="377" stroke-dashoffset="377" stroke-linecap="round"/>
+      <circle id="ring-practiced" cx="70" cy="70" r="60" stroke="#3b82f6" stroke-width="10" fill="none"
+        stroke-dasharray="377" stroke-dashoffset="377" stroke-linecap="round"/>
+      <text x="70" y="62" text-anchor="middle" fill="#f1f1f4" font-size="28" font-weight="800"
+        style="transform:rotate(90deg);transform-origin:70px 70px" id="ring-pct">0%</text>
+      <text x="70" y="82" text-anchor="middle" fill="#a1a1b5" font-size="11" font-weight="500"
+        style="transform:rotate(90deg);transform-origin:70px 70px">mastered</text>
+    </svg>
+  </div>
+
+  <div class="progress-overall">
+    <div class="stat-card">
+      <div class="stat-value" id="prog-total-words">0</div>
+      <div class="stat-label">Total Words</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="prog-mastered" style="color:var(--correct)">0</div>
+      <div class="stat-label">Mastered</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="prog-practiced" style="color:var(--accent)">0</div>
+      <div class="stat-label">Practiced</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="prog-weak" style="color:var(--wrong)">0</div>
+      <div class="stat-label">Weak</div>
+    </div>
+    <div class="stat-card wide">
+      <div class="stat-value" id="prog-unseen">0</div>
+      <div class="stat-label">Not Yet Practiced</div>
+    </div>
+  </div>
+
+  <div class="progress-legend">
+    <span><span class="legend-dot mastered"></span> Mastered</span>
+    <span><span class="legend-dot practiced"></span> Practiced</span>
+    <span><span class="legend-dot weak"></span> Weak</span>
+    <span><span class="legend-dot unseen"></span> Unseen</span>
+  </div>
+
+  <div class="card">
+    <h3>By Source</h3>
+    <div class="source-progress-list" id="source-progress-list"></div>
+  </div>
+</div>
+
+<!-- WORD REFERENCE SCREEN -->
+<div id="reference-screen" class="screen">
+  <div class="progress-nav">
+    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+  </div>
+
+  <div class="card" style="margin-bottom:0.8rem;">
+    <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+      <input type="text" class="answer-input" id="ref-search" placeholder="Search words..." oninput="filterReference()" style="flex:1; min-width:150px; margin:0;">
+      <select id="ref-source-filter" class="ref-select" onchange="filterReference()">
+        <option value="all">All Sources</option>
+      </select>
+    </div>
+    <div id="ref-count" style="font-size:0.72rem; color:var(--muted); margin-top:0.5rem;"></div>
+  </div>
+
+  <div class="ref-list" id="ref-list"></div>
+</div>
+
+<!-- PRACTICE SCREEN -->
+<div id="practice-screen" class="screen">
+  <div class="progress-wrap">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    <div class="progress-text"><span id="progress-count">0/0</span><span id="progress-score">Score: 0</span></div>
+  </div>
+  <div class="quiz-card" id="quiz-card">
+    <div class="task-type-label" id="task-label">Context</div>
+    <div class="quiz-prompt" id="quiz-prompt"></div>
+    <div class="answer-row">
+      <input type="text" class="answer-input" id="answer-input" placeholder="Type your answer..." autocomplete="off" autocapitalize="none" spellcheck="false">
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="quiz-actions" id="quiz-actions">
+      <button class="btn btn-secondary" id="skip-btn" onclick="skipWord()">Skip</button>
+      <button class="btn btn-primary" id="check-btn" onclick="checkAnswer()">Check</button>
+    </div>
+    <div class="source-tag" id="source-tag"></div>
+  </div>
+  <button class="btn btn-danger btn-small" onclick="endPractice()" style="align-self:center;opacity:0.6;">End Practice</button>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div id="results-screen" class="screen">
+  <div class="results-score">
+    <div class="big-score" id="final-score">0%</div>
+    <div class="score-label" id="final-label">0 of 0 correct</div>
+    <div class="save-status" id="save-status"></div>
+  </div>
+  <div class="card">
+    <h3>Results</h3>
+    <div class="results-list" id="results-list"></div>
+  </div>
+  <div class="results-actions">
+    <button class="btn btn-primary" onclick="retryWrong()">Practice Wrong Words</button>
+    <button class="btn btn-secondary" onclick="goHome()">New Practice</button>
+  </div>
+</div>
+
+<script>
+// ===== FIREBASE =====
+firebase.initializeApp({
+  apiKey: "AIzaSyDBZaWpfNXamve3OiiqFG1HdoA-KMa3un8",
+  authDomain: "veho-vocab.firebaseapp.com",
+  projectId: "veho-vocab",
+  storageBucket: "veho-vocab.firebasestorage.app",
+  messagingSenderId: "623091115688",
+  appId: "1:623091115688:web:8c8fcbc87a623056d8449d"
+});
+const db = firebase.firestore();
+const CLASS_ID = '2nd-grade';
+const classRef = db.collection('classes').doc(CLASS_ID);
+const studentsRef = classRef.collection('students');
+
+// ===== VOCABULARY DATA =====
+const vocabData = {
+"Unit 1": [
+{w:"English",g:"Englisch",d:"The language people speak in Britain and the USA",s:"We have _____ class every Monday and Wednesday.",a:[]},
+{w:"French",g:"Französisch",d:"The language people speak in France",s:"My sister is learning _____ at school this year.",a:[]},
+{w:"music",g:"Musik",d:"Sounds that people sing or play on instruments",s:"We play guitar and sing in our _____ lesson.",a:[]},
+{w:"maths",g:"Mathematik",d:"The subject where you work with numbers",s:"I like _____ because I am good with numbers.",a:["math"]},
+{w:"geography",g:"Geografie",d:"The subject about countries and the world",s:"In _____ we are learning about mountains and rivers.",a:[]},
+{w:"science",g:"Naturwissenschaften",d:"The subject about how the world works",s:"We did a cool experiment in _____ class today.",a:["sciences"]},
+{w:"physical education (PE)",g:"Sport, Leibeserziehung",d:"The school subject where you run and play sports",s:"We play football and run in _____ class.",cf:"PE",a:["PE","physical education"]},
+{w:"art",g:"Kunst",d:"The subject where you draw and paint",s:"I painted a picture of my dog in _____ class.",a:[]},
+{w:"history",g:"Geschichte",d:"The subject about things that happened long ago",s:"We learned about the Romans in _____ today.",a:[]},
+{w:"information technology (IT)",g:"Informatik",d:"The school subject about computers",s:"We use laptops in _____ class every Friday.",cf:"IT",a:["IT","information technology"]},
+{w:"design and technology",g:"Werken",d:"The subject where you make things with your hands",s:"We built a small car in _____ last week.",cf:"design and technology",a:["design and technology"]},
+{w:"glad",g:"froh",d:"Happy about something good",s:"She was very _____ when she found her lost cat.",a:[]},
+{w:"kilometre",g:"Kilometer",d:"A way to measure how far something is (1000 metres)",s:"The park is only one _____ from our house.",a:["kilometer","kilometres","kilometers"]},
+{w:"to stay at home",g:"zu Hause bleiben",d:"To not go out and be in your house",s:"It is raining, so I want to _____ today.",cf:"stay at home",a:["stay at home","stayed at home","stays at home"]},
+{w:"to travel",g:"reisen",d:"To go from one place to another place",s:"My family _____ to Italy every summer.",cf:"travels",a:["travel","travels","travelled","traveled"]},
+{w:"as soon as",g:"sobald (wie)",d:"At the same moment that something happens",s:"I eat breakfast _____ I wake up.",cf:"as soon as",a:["as soon as"]},
+{w:"to get dressed",g:"sich anziehen",d:"To put your clothes on",s:"Every morning I _____ before breakfast.",cf:"get dressed",a:["get dressed","gets dressed","got dressed"]},
+{w:"to go for a walk",g:"spazieren gehen",d:"To walk outside for fun or exercise",s:"We _____ in the park with our dog every evening.",cf:"go for a walk",a:["go for a walk","went for a walk","goes for a walk"]},
+{w:"lesson",g:"Unterrichtsstunde",d:"A time at school when you learn something",s:"Our English _____ starts at eight o'clock.",a:["lessons"]},
+{w:"to prepare",g:"(zu-)bereiten",d:"To get something ready",s:"My dad _____ dinner for the family every evening.",cf:"prepares",a:["prepare","prepares","prepared"]},
+{w:"to put on",g:"anziehen (Kleidung)",d:"To place clothes on your body",s:"It is cold outside, so _____ a warm jacket.",cf:"put on",a:["put on","puts on"]},
+{w:"supper",g:"Abendessen",d:"The meal you eat in the evening",s:"We always have _____ together at seven o'clock.",a:["suppers"]},
+{w:"daily",g:"täglich",d:"Something that happens every day",s:"Brushing your teeth is part of your _____ routine.",a:[]},
+{w:"calendar",g:"Kalender",d:"A list that shows all the days and months of a year",s:"I wrote the test date on my _____.",a:["calendars"]},
+{w:"grandmother",g:"Großmutter",d:"Your mum's or dad's mother",s:"My _____ always bakes the best cakes.",a:["grandmothers"]},
+{w:"joke",g:"Witz",d:"A short funny story that makes you laugh",s:"Tom told a funny _____ and everyone laughed.",a:["jokes"]},
+{w:"scary",g:"furchterregend, unheimlich",d:"Something that makes you feel afraid",s:"The old house in our street looks very _____.",a:[]},
+{w:"spring",g:"Frühling",d:"The time of year after winter when flowers grow",s:"The trees get green leaves in _____.",a:[]},
+{w:"area",g:"Gebiet, Region",d:"A part of a place or town",s:"There is a nice playground in our _____.",a:["areas"]},
+{w:"to book",g:"buchen",d:"To pay for a place or ticket before you go",s:"We _____ a hotel room for our holiday last week.",cf:"booked",a:["book","booked","books"]},
+{w:"popular",g:"beliebt",d:"Liked by many people",s:"This game is very _____ with kids at our school.",a:[]},
+{w:"shadow",g:"Schatten",d:"A dark shape on the ground when something blocks the sun",s:"I can see my _____ on the ground when the sun shines.",a:["shadows"]},
+{w:"to visit",g:"besichtigen",d:"To go to a place to see it or someone",s:"We _____ our grandparents every Sunday.",cf:"visit",a:["visit","visits","visited"]},
+{w:"colourful",g:"bunt, farbenfroh",d:"Having many bright colours",s:"She is wearing a _____ dress with red, blue, and yellow.",a:["colorful"]},
+{w:"along",g:"entlang",d:"From one end to the other of something",s:"We walked _____ the river and saw some ducks.",a:[]},
+{w:"to crawl",g:"kriechen",d:"To move slowly on the ground like a baby or a snake",s:"The baby _____ across the floor to get her toy.",cf:"crawled",a:["crawl","crawled","crawls"]},
+{w:"to take a rest",g:"sich ausruhen",d:"To stop and relax for a short time",s:"After the long walk, we sat down to _____.",cf:"take a rest",a:["take a rest","took a rest","takes a rest"]},
+{w:"(school) subject",g:"(Schul-)Fach",d:"A topic you learn about at school",s:"What is your favourite _____ at school?",cf:"subject",a:["subject","subjects","school subject"]},
+{w:"break",g:"Pause",d:"A short time to rest between lessons",s:"We play in the playground during _____.",a:["breaks"]},
+{w:"timetable",g:"Stundenplan",d:"A list that shows when your lessons are",s:"I always check my _____ to see what lessons I have.",a:["timetables"]},
+{w:"bicycle lane",g:"Radweg",d:"A special path on the road for bikes",s:"You should ride your bike on the _____.",cf:"bicycle lane",a:["bicycle lane","bicycle lanes","bike lane"]},
+{w:"king",g:"König",d:"A man who rules a country",s:"The _____ lived in a big castle on the hill.",a:["kings"]},
+{w:"noisy",g:"laut, geräuschvoll",d:"Making a lot of loud sounds",s:"The classroom was very _____ during the break.",a:[]},
+{w:"queen",g:"Königin",d:"A woman who rules a country",s:"The _____ wore a beautiful golden crown.",a:["queens"]},
+{w:"rubbish",g:"Müll, Abfall",d:"Things you throw away because you do not need them",s:"Please put your _____ in the bin.",a:[]},
+{w:"online safety",g:"Internetsicherheit",d:"How to stay safe when you use the internet",s:"Our teacher talked about _____ and how to protect our passwords.",cf:"online safety",a:["online safety"]},
+{w:"opinion",g:"Meinung",d:"What you think about something",s:"In my _____, chocolate ice cream is the best.",a:["opinions"]},
+{w:"webpage",g:"Internetseite",d:"A page on the internet with information",s:"I found a nice _____ about dinosaurs.",a:["webpages","web page","web pages"]},
+],
+"Unit 2": [
+{w:"to organise",g:"organisieren",d:"To plan and set up something",s:"Let's _____ a birthday party for Mum.",cf:"organise",a:["organise","organises","organised","organize","organized"]},
+{w:"surprise party",g:"Überraschungsparty",d:"A party that someone does not know about before",s:"We planned a _____ for my sister.",cf:"surprise party",a:["surprise party","surprise parties"]},
+{w:"admission fee",g:"Eintritt, Eintrittspreis",d:"The money you pay to go into a place",s:"The _____ for the zoo is five euros.",cf:"admission fee",a:["admission fee","admission fees"]},
+{w:"artist",g:"Künstler/Künstlerin",d:"Someone who makes pictures, music, or other creative things",s:"This painting is beautiful. The _____ is very talented.",a:["artists"]},
+{w:"exhibition",g:"Ausstellung",d:"A place where people show art or other things",s:"We went to see a photo _____ at the town hall.",a:["exhibitions"]},
+{w:"dirty",g:"dreckig, schmutzig",d:"Not clean",s:"My shoes are very _____ because I played in the mud.",a:[]},
+{w:"modern",g:"modern",d:"New and from the time we live in now",s:"Their school is very _____ with big windows and computers.",a:[]},
+{w:"museum",g:"Museum",d:"A building where you can see old or interesting things",s:"We saw old coins and swords at the _____.",a:["museums"]},
+{w:"to be part of",g:"Teil von etw. sein",d:"To belong to something bigger",s:"This song is _____ the new album.",cf:"part of",a:["be part of","is part of","was part of"]},
+{w:"sculpture",g:"Skulptur",d:"Art made from stone, wood, or metal that you can walk around",s:"There is a big _____ of a horse in the park.",a:["sculptures"]},
+{w:"to be worth",g:"wert sein",d:"To have a price or value",s:"This old painting is _____ a lot of money.",cf:"worth",a:["be worth","is worth","was worth"]},
+{w:"What's the matter?",g:"Was ist los?",d:"A question you ask when someone looks sad or worried",s:"You look sad. _____?",cf:"What's the matter",a:["What's the matter","What is the matter","Whats the matter"]},
+{w:"anyone",g:"irgendjemand",d:"Any person at all",s:"Is _____ at home? I knocked but nobody opened.",a:["anybody"]},
+{w:"behaviour",g:"Verhalten",d:"How a person acts and what they do",s:"Good _____ in class makes the teacher happy.",a:["behavior"]},
+{w:"to contact",g:"kontaktieren",d:"To call, write, or send a message to someone",s:"Please _____ me if you need help.",cf:"contact",a:["contact","contacts","contacted"]},
+{w:"mess",g:"Unordnung, Durcheinander",d:"When things are not tidy and everywhere",s:"My room is a big _____. I need to clean it.",a:["messes"]},
+{w:"to pass on",g:"weitergeben",d:"To give something to another person",s:"Can you _____ this letter to your mum?",cf:"pass on",a:["pass on","passed on","passes on"]},
+{w:"password",g:"Passwort",d:"A secret word you use to open your account",s:"Never tell your _____ to other people.",a:["passwords"]},
+{w:"to post",g:"posten, einen Beitrag verfassen (online)",d:"To put a message or picture on the internet",s:"She _____ a funny photo of her cat online yesterday.",cf:"posted",a:["post","posted","posts"]},
+{w:"posting",g:"Posting, Beitrag (online)",d:"A message or picture on the internet",s:"Did you read his new _____ on social media?",a:["postings"]},
+{w:"such",g:"solch, so (ein)",d:"A word to make something stronger",s:"It was _____ a nice day that we went to the lake.",a:[]},
+{w:"tip",g:"Hinweis, Tipp",d:"A helpful idea or piece of advice",s:"Here is a good _____ for your test: read the questions first.",a:["tips"]},
+{w:"possible",g:"möglich",d:"Something that can happen or be done",s:"Is it _____ to finish this homework in ten minutes?",a:[]},
+{w:"awesome",g:"großartig, beeindruckend",d:"Really great and amazing",s:"The fireworks last night were _____!",a:[]},
+{w:"boring",g:"langweilig",d:"Not interesting at all",s:"This TV show is so _____. Let's watch something else.",a:[]},
+{w:"confusing",g:"verwirrend",d:"Hard to understand",s:"The instructions were very _____ and I made mistakes.",a:[]},
+{w:"difficult",g:"schwierig",d:"Not easy to do or understand",s:"The last question on the test was really _____.",a:[]},
+{w:"exciting",g:"spannend, aufregend",d:"Making you feel happy and full of energy",s:"Going on a roller coaster is really _____!",a:[]},
+{w:"funny",g:"lustig, komisch",d:"Something that makes you laugh",s:"The clown at the party was very _____.",a:["funnier","funniest"]},
+{w:"embarrassed",g:"verlegen, beschämt",d:"Feeling bad because you did something silly",s:"I felt so _____ when I fell in front of everyone.",a:[]},
+{w:"plate",g:"Teller",d:"A flat round thing you put food on",s:"Put the pasta on the _____ and start eating.",a:["plates"]},
+{w:"secret",g:"Geheimnis",d:"Something you do not tell other people",s:"Can you keep a _____? Don't tell anyone!",a:["secrets"]},
+{w:"upset",g:"verärgert, aufgebracht",d:"Feeling sad or angry about something bad",s:"She was _____ because someone took her pencil case.",a:[]},
+{w:"to add",g:"hinzufügen",d:"To put something more to what is already there",s:"You can _____ sugar to your tea if you want.",cf:"add",a:["add","adds","added"]},
+{w:"to fail",g:"scheitern; durchfallen",d:"To not pass a test or not do well enough",s:"I studied hard because I did not want to _____ the exam.",cf:"fail",a:["fail","fails","failed"]},
+{w:"I promise.",g:"Ich verspreche es.",d:"Words you say to show you will do something for sure",s:"I will help you tomorrow. _____",cf:"I promise",a:["I promise"]},
+],
+"Unit 3": [
+{w:"witch",g:"Hexe",d:"A woman in stories who does magic",s:"The _____ flew across the sky on her broom.",a:["witches"]},
+{w:"ghost",g:"Geist",d:"The spirit of a dead person that you can sometimes see",s:"My little brother is afraid of the _____ in this story.",a:["ghosts"]},
+{w:"pumpkin bucket",g:"Kürbiseimer",d:"A small bag or box shaped like an orange vegetable for sweets",s:"The children carry a _____ to collect sweets.",cf:"pumpkin bucket",a:["pumpkin bucket","pumpkin buckets"]},
+{w:"vampire",g:"Vampir",d:"A creature in stories that comes out at night and drinks blood",s:"He dressed up as a _____ with a long black cape.",a:["vampires"]},
+{w:"trick or treat",g:"Süßes oder Saures",d:"Words children say at doors to get sweets on 31 October",s:"The kids shouted _____ at every house on the street.",cf:"trick or treat",a:["trick or treat"]},
+{w:"apple bobbing",g:"Äpfeltauchen",d:"A game where you try to catch fruit in water with your mouth",s:"We played _____ at the party and got very wet.",cf:"apple bobbing",a:["apple bobbing"]},
+{w:"mask",g:"Maske",d:"Something you wear over your face to look different",s:"She wore a scary _____ and nobody knew who she was.",a:["masks"]},
+{w:"tradition",g:"Tradition",d:"Something people do every year because they always did it",s:"Singing carols at Christmas is a nice _____.",a:["traditions"]},
+{w:"to fear",g:"(sich) fürchten (vor)",d:"To be afraid of something",s:"My dog _____ loud noises like thunder.",cf:"fears",a:["fear","fears","feared"]},
+{w:"to cut off",g:"abschneiden",d:"To remove a piece of something with a sharp tool",s:"Dad _____ the top of the orange vegetable with a big knife.",cf:"cut off",a:["cut off","cuts off"]},
+{w:"front window",g:"Vorderfenster",d:"The glass at the front of a house that you look through",s:"We put candles on the _____ for the holiday.",cf:"front window",a:["front window","front windows"]},
+{w:"to keep",g:"(be-)halten",d:"To not give away or throw away",s:"Can I _____ this book? I really like it.",cf:"keep",a:["keep","keeps","kept"]},
+{w:"to be proud (of)",g:"stolz sein (auf)",d:"To feel very good about something you or someone else did",s:"My parents were _____ of me when I won the race.",cf:"proud",a:["be proud","proud of","proud"]},
+{w:"stairs",g:"Treppe",d:"Steps inside a building that go up or down",s:"I ran up the _____ to my room after school.",a:[]},
+{w:"sticker",g:"Aufkleber, Sticker",d:"A small piece of paper with a picture that you can stick on things",s:"I put a star _____ on my notebook.",a:["stickers"]},
+{w:"sweets",g:"Süßigkeiten",d:"Small sugary foods like chocolate or gummy bears",s:"I ate too many _____ and now my tummy hurts.",a:[]},
+{w:"Trick or treat!",g:"Süßes oder Saures (Frage beim Halloween-Umzug)",d:"What children say at the door on 31 October",s:"We rang the doorbell and shouted '_____'",cf:"Trick or treat!",a:["Trick or treat!","Trick or treat"]},
+{w:"knife (pl knives)",g:"Messer",d:"A sharp tool you use to cut food",s:"Be careful with that _____! It is very sharp.",cf:"knife",a:["knife","knives"]},
+{w:"century",g:"Jahrhundert",d:"A hundred years",s:"We live in the 21st _____.",a:["centuries"]},
+{w:"costume",g:"Kostüm",d:"Special clothes you wear to look like someone else",s:"She wore a cat _____ with ears and a tail.",a:["costumes"]},
+{w:"couldn't",g:"konnte/n nicht",d:"Was not able to",s:"I _____ find my keys this morning.",a:["could not"]},
+{w:"cute",g:"niedlich, süß",d:"Pretty and lovely to look at",s:"Look at that puppy! It is so _____.",a:["cuter","cutest"]},
+{w:"dress",g:"Kleid",d:"A piece of clothing for girls that covers the body and legs",s:"She wore a red _____ to the school dance.",a:["dresses"]},
+{w:"graveyard",g:"Friedhof",d:"A place where dead people are put under the ground",s:"The old _____ next to the church looks spooky at night.",a:["graveyards"]},
+{w:"myself",g:"mich selbst, mir selbst",d:"A word for 'me' when you do something alone",s:"I made this birthday card all by _____.",a:[]},
+{w:"shall",g:"sollen; wollen",d:"A word to ask about what to do next",s:"_____ we go to the park or stay at home?",cf:"Shall",a:["shall"]},
+{w:"sick",g:"übel; krank",d:"Not feeling well in your body",s:"I feel _____ today. I think I ate something bad.",a:[]},
+{w:"superheroine",g:"Superheldin",d:"A strong woman in a story who saves people",s:"My favourite _____ can fly and is super fast.",a:["superheroines"]},
+{w:"wild",g:"wild",d:"Not calm or gentle; full of energy",s:"The children were very _____ at the party, jumping everywhere.",a:["wilder","wildest"]},
+{w:"to scare",g:"Angst machen, erschrecken",d:"To make someone feel afraid",s:"My brother likes to _____ me in the dark.",cf:"scare",a:["scare","scares","scared"]},
+{w:"cycle helmet",g:"Fahrradhelm",d:"A hard hat you wear on your head when riding a bike",s:"Always wear your _____ when you ride your bike.",cf:"cycle helmet",a:["cycle helmet","cycle helmets","bike helmet"]},
+{w:"guys",g:"Leute",d:"A friendly word for a group of people",s:"Hey _____, do you want to play football after school?",a:[]},
+{w:"to lose",g:"verlieren",d:"To not have something any more because you cannot find it",s:"Don't _____ your phone again! Keep it in your bag.",cf:"lose",a:["lose","loses","lost"]},
+{w:"picnic",g:"Picknick",d:"A meal you eat outside, sitting on the grass",s:"We had a _____ in the park on a sunny day.",a:["picnics"]},
+],
+"Unit 4": [
+{w:"mosquito",g:"Moskito, Stechmücke",d:"A tiny flying insect that bites you and makes you itch",s:"A _____ bit me on the arm last night.",a:["mosquitos","mosquitoes"]},
+{w:"pigeon",g:"Taube",d:"A grey bird you often see in cities and parks",s:"There are many _____ in the town square.",cf:"pigeons",a:["pigeon","pigeons"]},
+{w:"parrot",g:"Papagei",d:"A bright bird that can copy what people say",s:"The _____ in the zoo can say 'hello' and 'goodbye'.",a:["parrots"]},
+{w:"ostrich",g:"Strauß",d:"A very big bird that cannot fly but runs fast",s:"An _____ is taller than most people.",a:["ostriches"]},
+{w:"chimpanzee",g:"Schimpanse",d:"An animal like a monkey that is very smart",s:"The _____ at the zoo likes to eat bananas.",a:["chimpanzees","chimp","chimps"]},
+{w:"antelope",g:"Antilope",d:"A fast animal with long legs that lives in Africa",s:"We saw an _____ running across the field in the film.",a:["antelopes"]},
+{w:"bat",g:"Fledermaus",d:"A small animal that flies at night and sleeps upside down",s:"A _____ flew out of the old barn when it got dark.",a:["bats"]},
+{w:"giraffe",g:"Giraffe",d:"A very tall animal with a long neck and spots",s:"The _____ is the tallest animal in the world.",a:["giraffes"]},
+{w:"rhino",g:"Nashorn",d:"A big grey animal with a horn on its nose",s:"A _____ looks slow but can run very fast.",a:["rhinos"]},
+{w:"cheetah",g:"Gepard",d:"A spotted cat that is the fastest land animal",s:"The _____ can run faster than any other animal.",a:["cheetahs"]},
+{w:"anaconda",g:"Anakonda",d:"A very long and heavy snake that lives near water",s:"The _____ in the river was as long as a car.",a:["anacondas"]},
+{w:"crocodile",g:"Krokodil",d:"A big reptile with a long mouth full of sharp teeth",s:"The _____ was lying in the sun next to the river.",a:["crocodiles"]},
+{w:"dolphin",g:"Delfin",d:"A friendly sea animal that jumps out of the water",s:"We saw a _____ jump out of the sea on holiday.",a:["dolphins"]},
+{w:"whale",g:"Wal",d:"The biggest animal in the sea",s:"A blue _____ is the largest animal on Earth.",a:["whales"]},
+{w:"shark",g:"Hai",d:"A big fish with sharp teeth that lives in the sea",s:"Some people are afraid of swimming because of _____.",cf:"sharks",a:["shark","sharks"]},
+{w:"(two days) ago",g:"vor (zwei Tagen)",d:"In the past, before now",s:"I started reading this book three days _____.",cf:"ago",a:["ago"]},
+{w:"farmer",g:"Bauer/Bäuerin",d:"A person who grows food or keeps animals on a farm",s:"The _____ gets up early to feed the cows.",a:["farmers"]},
+{w:"human",g:"Mensch",d:"A person, a man, woman, or child",s:"Every _____ needs food, water, and sleep.",a:["humans"]},
+{w:"incredible",g:"unglaublich",d:"Very hard to believe because it is so amazing",s:"The view from the mountain was _____.",a:["incredibly"]},
+{w:"dangerous",g:"gefährlich",d:"Something that can hurt you",s:"Playing near the road is very _____.",a:[]},
+{w:"hairy",g:"haarig, stark behaart",d:"Having a lot of hair or fur on the body",s:"My uncle has very _____ arms.",a:["hairier","hairiest"]},
+{w:"heavy",g:"schwer",d:"Hard to pick up because it has a lot of weight",s:"My school bag is too _____ today. I have so many books.",a:["heavier","heaviest"]},
+{w:"strong",g:"stark",d:"Having a lot of power in your body",s:"My dad is very _____. He can carry big boxes.",a:["stronger","strongest"]},
+{w:"climate change",g:"Klimawandel",d:"When the weather of the world slowly becomes different",s:"_____ is a big problem for animals in cold places.",cf:"Climate change",a:["climate change"]},
+{w:"fast",g:"schnell",d:"Moving with a lot of speed, not slow",s:"She is a very _____ runner and always wins the race.",a:["faster","fastest"]},
+{w:"female",g:"weiblich; Weibchen (Tierwelt)",d:"A girl or woman, or an animal that can have babies",s:"The _____ lion takes care of the baby lions.",a:["females"]},
+{w:"male",g:"männlich",d:"A boy or man, or a father animal",s:"The _____ peacock has beautiful blue and green feathers.",a:["males"]},
+{w:"nobody",g:"niemand",d:"Not any person, no one",s:"I looked around but _____ was in the room.",a:["no one"]},
+{w:"scientist",g:"Wissenschaftler/Wissenschaftlerin",d:"A person who studies how the world works",s:"The _____ discovered a new type of fish in the sea.",a:["scientists"]},
+{w:"to die out",g:"aussterben",d:"When the last of a kind of animal or plant is gone forever",s:"Dinosaurs _____ millions of years before us.",cf:"died out",a:["die out","died out","dies out","dying out"]},
+{w:"less",g:"weniger",d:"A smaller amount, not as much",s:"I eat _____ sugar now because I want to be healthy.",a:[]},
+{w:"to carry",g:"tragen; hier: übertragen",d:"To hold something and take it somewhere",s:"Can you help me _____ these bags to the car?",cf:"carry",a:["carry","carries","carried"]},
+{w:"centimetre",g:"Zentimeter",d:"A small unit to measure how long something is",s:"This pencil is about 15 _____ long.",cf:"centimetres",a:["centimetre","centimetres","centimeter","centimeters"]},
+{w:"desert",g:"Wüste",d:"A very dry and hot place with sand and almost no rain",s:"It is very hot in the _____ during the day.",a:["deserts"]},
+{w:"to die",g:"sterben",d:"To stop living",s:"The flowers _____ when they do not get water.",cf:"die",a:["die","dies","died"]},
+{w:"mammal",g:"Säugetier",d:"An animal that drinks milk from its mother when it is a baby",s:"A dog is a _____ because it feeds its babies with milk.",a:["mammals"]},
+{w:"ton",g:"Tonne (1000 kg)",d:"A very heavy weight, the same as 1000 kilograms",s:"An elephant can weigh more than five _____.",cf:"tons",a:["ton","tons","tonnes"]},
+{w:"venomous",g:"giftig",d:"Having poison that can make you very sick or kill you",s:"Some snakes are _____ and you should stay away from them.",a:[]},
+{w:"to weigh",g:"wiegen",d:"To find out how heavy something is",s:"The baby _____ four kilograms when she was born.",cf:"weighed",a:["weigh","weighs","weighed"]},
+{w:"length",g:"Länge",d:"How long something is from one end to the other",s:"The _____ of the classroom is about ten metres.",a:["lengths"]},
+{w:"speed",g:"Geschwindigkeit, Tempo",d:"How fast something moves",s:"The car was going at a very high _____.",a:["speeds"]},
+{w:"intelligent",g:"intelligent",d:"Very good at thinking and learning new things",s:"Dogs are _____ animals and can learn many tricks.",a:[]},
+{w:"reason",g:"Grund",d:"Why something happens or why you do something",s:"What is the _____ you are late for school?",a:["reasons"]},
+{w:"to share",g:"teilen; zeigen",d:"To give part of what you have to someone else",s:"My sister _____ her chocolate with me every day.",cf:"shares",a:["share","shares","shared"]},
+{w:"luck",g:"Glück",d:"When good things happen to you by chance",s:"Good _____ on your test tomorrow!",a:[]},
+{w:"powerful",g:"mächtig, kräftig",d:"Very strong and full of energy",s:"Elephants are very _____ animals.",a:[]},
+{w:"smart",g:"schlau",d:"Good at thinking and learning quickly",s:"Our new puppy is very _____. He already knows his name.",a:["smarter","smartest"]},
+{w:"truck",g:"Lastwagen",d:"A very big vehicle used to move heavy things",s:"A big _____ brought new furniture to our school.",a:["trucks"]},
+{w:"forever",g:"für immer",d:"For all time, never ending",s:"Best friends are _____!",a:[]},
+{w:"to protect",g:"(be-)schützen",d:"To keep someone or something safe from danger",s:"We must _____ wild animals and their homes.",cf:"protect",a:["protect","protects","protected"]},
+],
+"Unit 5": [
+{w:"cinema",g:"Kino",d:"A place where you go to watch films on a big screen",s:"We are going to the _____ to see a new film tonight.",a:["cinemas"]},
+{w:"church",g:"Kirche",d:"A building where people go to pray",s:"There is an old _____ in the centre of our town.",a:["churches"]},
+{w:"bank",g:"Bank",d:"A place where you keep your money safe",s:"My mum went to the _____ to get some money.",a:["banks"]},
+{w:"restaurant",g:"Restaurant",d:"A place where you can buy and eat a meal",s:"We ate pizza at a nice _____ near the lake.",a:["restaurants"]},
+{w:"railway station",g:"Bahnhof",d:"A place where trains stop so people can get on or off",s:"We waited at the _____ for the train to Vienna.",cf:"railway station",a:["railway station","railway stations","train station"]},
+{w:"chemist's",g:"Apotheke",d:"A shop where you buy medicine when you are sick",s:"I went to the _____ to buy something for my cold.",a:["chemist"]},
+{w:"tourist office",g:"Touristeninformation",d:"A place where visitors can get maps and information",s:"We got a free map from the _____.",cf:"tourist office",a:["tourist office","tourist offices"]},
+{w:"music shop",g:"Musikgeschäft",d:"A shop where you can buy instruments or songs",s:"I bought a new guitar at the _____.",cf:"music shop",a:["music shop","music shops"]},
+{w:"post office",g:"Postamt",d:"A place where you send letters and packages",s:"I went to the _____ to send a letter to my grandma.",cf:"post office",a:["post office","post offices"]},
+{w:"supermarket",g:"Supermarkt",d:"A big shop where you buy food and other things",s:"We buy milk and bread at the _____ every week.",a:["supermarkets"]},
+{w:"hospital",g:"Krankenhaus",d:"A place where doctors help sick or hurt people",s:"My friend broke his arm and went to the _____.",a:["hospitals"]},
+{w:"police station",g:"Polizeistation",d:"A building where police officers work",s:"We went to the _____ to report the lost bag.",cf:"police station",a:["police station","police stations"]},
+{w:"to go past",g:"vorbeigehen",d:"To walk by something without stopping",s:"You _____ the church and then turn left.",cf:"go past",a:["go past","goes past","went past"]},
+{w:"to go straight ahead",g:"geradeaus gehen",d:"To walk forward without turning",s:"_____ and the shop is at the end of the road.",cf:"Go straight ahead",a:["go straight ahead","goes straight ahead","went straight ahead"]},
+{w:"to cross the street",g:"die Straße überqueren",d:"To walk from one side of the road to the other",s:"Look both ways before you _____.",cf:"cross the street",a:["cross the street","crosses the street","crossed the street"]},
+{w:"to turn left",g:"links abbiegen",d:"To change your direction and go to the left side",s:"_____ at the traffic lights and you will see the park.",cf:"Turn left",a:["turn left","turns left","turned left"]},
+{w:"to take the second right",g:"die zweite rechts nehmen",d:"To turn at the second road on your right side",s:"Walk down the main road and _____.",cf:"take the second right",a:["take the second right","took the second right","takes the second right"]},
+{w:"round the corner",g:"um die Ecke",d:"Just past where two streets meet",s:"The bakery is _____. You can see it from here.",cf:"round the corner",a:["round the corner","around the corner"]},
+{w:"as far as",g:"bis zu",d:"All the way to a certain place",s:"Walk _____ the park and then stop.",cf:"as far as",a:["as far as"]},
+{w:"opposite",g:"gegenüber",d:"On the other side, facing something",s:"The school is _____ the supermarket.",a:[]},
+{w:"next to",g:"neben",d:"Very close to something, right beside it",s:"My house is _____ the bakery.",cf:"next to",a:["next to"]},
+{w:"to cross",g:"überqueren",d:"To go from one side to the other",s:"We _____ the bridge to get to the other side of the river.",cf:"crossed",a:["cross","crosses","crossed"]},
+{w:"map",g:"(Land-)Karte",d:"A picture that shows where places are",s:"We used a _____ to find the way to the hotel.",a:["maps"]},
+{w:"second",g:"zweiter/zweite/zweites; Sekunde",d:"The one after the first; also a very short time",s:"Take the _____ street on the right.",a:["seconds"]},
+{w:"to go straight on",g:"geradeaus weitergehen",d:"To keep walking forward in the same direction",s:"Don't turn here. Just _____.",cf:"go straight on",a:["go straight on","goes straight on","went straight on"]},
+{w:"airport",g:"Flughafen",d:"A place where planes take off and land",s:"We went to the _____ very early to catch our plane.",a:["airports"]},
+{w:"to change trains",g:"umsteigen",d:"To get off one train and get on another",s:"We had to _____ in Linz to get to Salzburg.",cf:"change trains",a:["change trains","changed trains","changes trains"]},
+{w:"most of the time",g:"meistens",d:"Almost always, nearly every time",s:"_____ I walk to school, but sometimes I take the bus.",cf:"Most of the time",a:["most of the time"]},
+{w:"pocket",g:"Tasche (bei Kleidungsstücken)",d:"A small bag in your clothes where you put things",s:"He put his hands in his _____ because they were cold.",cf:"pockets",a:["pocket","pockets"]},
+{w:"slow",g:"langsam",d:"Not fast, taking a long time",s:"This bus is very _____. We will be late for school.",a:["slower","slowest"]},
+{w:"somewhere",g:"irgendwo",d:"In a place, but you do not know exactly where",s:"I left my pen _____ but I cannot find it.",a:[]},
+{w:"underground",g:"U-Bahn",d:"A train that goes under the ground in a big city",s:"In London, many people take the _____ to work.",a:[]},
+{w:"market square",g:"Marktplatz",d:"An open space in a town where people sell things",s:"Every Saturday there is a big market on the _____.",cf:"market square",a:["market square","market squares"]},
+{w:"simply",g:"einfach",d:"In an easy and clear way",s:"_____ follow the road and you will find it.",cf:"Simply",a:["simply"]},
+{w:"comment",g:"Kommentar",d:"Words you say or write about something",s:"She wrote a nice _____ under the photo.",a:["comments"]},
+{w:"to comment",g:"kommentieren",d:"To say or write what you think about something",s:"Many people _____ on her photos online.",cf:"commented",a:["comment","commented","comments"]},
+{w:"feedback",g:"Feedback",d:"When someone tells you what they think about your work",s:"The teacher gave us good _____ on our project.",a:[]},
+{w:"guest",g:"Gast",d:"A person who comes to your house or a place",s:"We had a special _____ at school today. A police officer talked to us.",a:["guests"]},
+{w:"to offer",g:"anbieten",d:"To say you will give something to someone",s:"My neighbour _____ to help us move the table.",cf:"offered",a:["offer","offers","offered"]},
+{w:"opening",g:"Eröffnung",d:"When a new shop or place starts for the first time",s:"There is a big _____ of a new ice cream shop today!",a:["openings"]},
+{w:"positive",g:"positiv",d:"Good and helpful, not bad",s:"The teacher always says _____ things about my work.",a:[]},
+{w:"review",g:"Rezension",d:"When someone writes what they think about a film, book, or place",s:"I read a good _____ of the new film online.",a:["reviews"]},
+{w:"the worst",g:"der/die/das schlechteste",d:"The most bad, the opposite of the best",s:"That was _____ meal I ever had. I hated it.",cf:"the worst",a:["the worst","worst"]},
+{w:"to bother",g:"stören",d:"To make someone a bit angry because you take their time",s:"Sorry to _____ you, but can you help me?",cf:"bother",a:["bother","bothers","bothered"]},
+{w:"bus stop",g:"Bushaltestelle",d:"A place on the road where you wait for the bus",s:"I waited at the _____ for ten minutes in the rain.",cf:"bus stop",a:["bus stop","bus stops"]},
+{w:"fountain",g:"(Spring-)Brunnen",d:"Water that goes up into the air in a public place",s:"There is a beautiful _____ in the middle of the square.",a:["fountains"]},
+{w:"to interrupt",g:"unterbrechen",d:"To start talking when someone else is speaking",s:"Please don't _____ me when I am talking.",cf:"interrupt",a:["interrupt","interrupts","interrupted"]},
+{w:"politely",g:"höflich",d:"In a nice and respectful way",s:"She asked _____ if she could sit down.",a:[]},
+{w:"traffic lights",g:"Verkehrsampel",d:"Red, yellow, and green lights that tell cars when to stop or go",s:"Wait for the green _____ before you cross the road.",cf:"traffic lights",a:["traffic lights","traffic light"]},
+],
+"Unit 6": [
+{w:"sun",g:"Sonne",d:"The big bright thing in the sky that gives us light and heat",s:"The _____ was shining and the sky was blue.",a:[]},
+{w:"sea",g:"Meer",d:"The big water around land, salty and very wide",s:"We swam in the _____ on our holiday in Greece.",a:["seas"]},
+{w:"beach",g:"Strand",d:"The sandy place next to the water where you can sit",s:"We built a sandcastle on the _____ last summer.",a:["beaches"]},
+{w:"town",g:"Stadt",d:"A place with houses, shops, and streets where people live",s:"Our _____ has a nice park and a swimming pool.",a:["towns"]},
+{w:"motorway",g:"Autobahn",d:"A big wide road where cars drive very fast",s:"There were many trucks on the _____ today.",a:["motorways"]},
+{w:"road",g:"Straße",d:"A long flat path for cars and buses",s:"The new _____ goes from our village to the city.",a:["roads"]},
+{w:"river",g:"Fluss",d:"Water that moves through the land from the mountains to the sea",s:"We saw fish swimming in the _____.",a:["rivers"]},
+{w:"village",g:"Dorf",d:"A very small town with only a few houses",s:"My grandma lives in a small _____ in the mountains.",a:["villages"]},
+{w:"field",g:"Feld",d:"A big open piece of land where food grows or animals eat",s:"The cows were eating grass in the _____.",a:["fields"]},
+{w:"hill",g:"Hügel",d:"A high part of the land, but smaller than a mountain",s:"We ran up the _____ and looked at the view.",a:["hills"]},
+{w:"valley",g:"Tal",d:"The low land between two mountains or hills",s:"A small river runs through the _____.",a:["valleys"]},
+{w:"lake",g:"See",d:"A big area of water with land all around it",s:"We went swimming in the _____ on a hot day.",a:["lakes"]},
+{w:"forest",g:"Wald",d:"A big area with many trees close together",s:"We walked through the _____ and heard many birds.",a:["forests"]},
+{w:"mountains",g:"Berge",d:"Very high rocky land that is hard to climb",s:"We could see snow on top of the _____.",a:["mountain"]},
+{w:"stars",g:"Sterne",d:"Small bright lights you see in the sky at night",s:"We looked at the _____ in the sky before going to bed.",a:["star"]},
+{w:"moon",g:"Mond",d:"The round bright thing in the sky at night",s:"The _____ was big and bright last night.",a:["moons"]},
+{w:"to build a tree house",g:"ein Baumhaus bauen",d:"To make a small room in a tree from wood",s:"My dad helped me _____ in the big oak tree.",cf:"build a tree house",a:["build a tree house","built a tree house","builds a tree house"]},
+{w:"camp",g:"Lager, Camp",d:"A place where people sleep in tents or cabins",s:"We slept in tents at the summer _____.",a:["camps"]},
+{w:"life jacket",g:"Schwimmweste",d:"Something you wear over your chest to stay on top of the water",s:"You must wear a _____ when you go on the boat.",cf:"life jacket",a:["life jacket","life jackets"]},
+{w:"guide",g:"Führer/in, Guide",d:"A person who shows you around a new place",s:"The _____ told us all about the old castle.",a:["guides"]},
+{w:"campfire",g:"Lagerfeuer",d:"A fire you make outside to sit around at night",s:"We sat around the _____ and told stories.",a:["campfires"]},
+{w:"picnic",g:"Picknick",d:"A meal you eat outside, sitting on the grass",s:"We had a _____ near the river with sandwiches and juice.",a:["picnics"]},
+{w:"canoe",g:"Kanu",d:"A small light boat you move with a paddle",s:"We got into the _____ and went down the river.",a:["canoes"]},
+{w:"canoeing",g:"Kanufahren",d:"The activity of going in a small boat on a river",s:"_____ is my favourite activity at summer camp.",cf:"Canoeing",a:["canoeing"]},
+{w:"waterfall",g:"Wasserfall",d:"Water that falls down from a high place over rocks",s:"We could hear the _____ before we saw it.",a:["waterfalls"]},
+{w:"rock climbing",g:"Klettern",d:"Going up big rocks or walls using your hands and feet",s:"_____ is exciting but you need to be careful.",cf:"Rock climbing",a:["rock climbing"]},
+{w:"bottom",g:"unten; unterer/untere/unteres",d:"The lowest part of something",s:"The boat sank to the _____ of the lake.",a:["bottoms"]},
+{w:"left-hand",g:"linker/linke/linkes",d:"On the left side",s:"The shop is on the _____ side of the road.",a:[]},
+{w:"middle",g:"Mitte",d:"The centre part, not the edges",s:"There is a big tree in the _____ of the park.",a:[]},
+{w:"right-hand",g:"rechter/rechte/rechtes",d:"On the right side",s:"My name is on the _____ page of the list.",a:[]},
+{w:"anorak",g:"Anorak",d:"A warm jacket that keeps the rain away",s:"Take your _____ — it might rain this afternoon.",a:["anoraks"]},
+{w:"hard hat",g:"Schutzhelm",d:"A strong hat that keeps your head safe from things falling",s:"Workers on a building site must wear a _____.",cf:"hard hat",a:["hard hat","hard hats"]},
+{w:"absolutely",g:"völlig, absolut",d:"Totally, completely",s:"This pizza is _____ delicious!",a:[]},
+{w:"actually",g:"eigentlich; tatsächlich",d:"Really, in fact",s:"I thought the film was bad, but it was _____ quite good.",a:[]},
+{w:"adventure camp",g:"Abenteuercamp",d:"A place where children do fun outdoor activities",s:"We spent three days at an _____ in the mountains.",cf:"adventure camp",a:["adventure camp","adventure camps"]},
+{w:"to be afraid (of)",g:"Angst haben (vor)",d:"To feel scared about something",s:"My little sister is _____ the dark.",cf:"afraid of",a:["be afraid","afraid of","afraid"]},
+{w:"although",g:"obwohl",d:"Even if, but still",s:"I went outside _____ it was raining.",a:[]},
+{w:"to care",g:"sich kümmern",d:"To think something is important and worry about it",s:"She _____ about her little brother and helps him every day.",cf:"cares",a:["care","cares","cared"]},
+{w:"drive",g:"Fahrt",d:"A trip in a car from one place to another",s:"It was a long _____ from Vienna to Salzburg.",a:["drives"]},
+{w:"gate",g:"Tor",d:"A big door in a wall or fence that you walk or drive through",s:"We opened the _____ and walked into the garden.",a:["gates"]},
+{w:"to be good at sth.",g:"etw. gut können, gut in etw. sein",d:"To do something well",s:"My friend is very _____ drawing pictures.",cf:"good at",a:["be good at","good at"]},
+{w:"once upon a time",g:"es war einmal",d:"Words that start a fairy tale",s:"_____, a girl lived in a little house in the woods.",cf:"Once upon a time",a:["once upon a time"]},
+{w:"sheep (pl sheep)",g:"Schaf",d:"A farm animal with white wool on its body",s:"There were many _____ on the green hill.",cf:"sheep",a:["sheep"]},
+{w:"shepherd",g:"Schäfer/Schäferin",d:"A person whose job is to look after woolly farm animals",s:"The _____ walked across the field with his dog.",a:["shepherds"]},
+{w:"to trust",g:"vertrauen",d:"To believe that someone is good and honest",s:"I _____ my best friend with all my secrets.",cf:"trust",a:["trust","trusts","trusted"]},
+{w:"while",g:"Weile",d:"A short time",s:"We waited for a _____ and then the bus came.",a:[]},
+{w:"to wash up",g:"abspülen, abwaschen",d:"To clean the dishes after eating",s:"Can you help me _____ after dinner?",cf:"wash up",a:["wash up","washed up","washes up"]},
+{w:"alive",g:"lebendig, am Leben",d:"Not dead, still living",s:"The little bird fell from the tree but it was still _____.",a:[]},
+{w:"cry",g:"Schrei",d:"A loud sound you make when you are hurt or scared",s:"We heard a loud _____ from the garden.",a:["cries"]},
+{w:"I'm off now.",g:"Ich bin jetzt weg.",d:"Words you say when you are leaving",s:"See you tomorrow. _____",cf:"I'm off now",a:["I'm off now","I am off now"]},
+{w:"Poor you!",g:"Du Armer!/Arme!",d:"Words you say to someone who is having a bad time",s:"You fell and hurt your knee? _____",cf:"Poor you",a:["Poor you","Poor you!"]},
+],
+"Unit 7": [
+{w:"to do nothing",g:"nichts tun",d:"To not do anything at all, just rest",s:"On Sunday I want to _____ and just sit on the sofa.",cf:"do nothing",a:["do nothing","does nothing","did nothing"]},
+{w:"to play basketball",g:"Basketball spielen",d:"To take part in a game where you throw a ball into a high net",s:"I _____ with my friends every Saturday morning.",cf:"play basketball",a:["play basketball","plays basketball","played basketball"]},
+{w:"to stay at a friend's house",g:"bei einem Freund übernachten",d:"To sleep at your friend's home for one night or more",s:"Can I _____ on Friday night?",cf:"stay at a friend's house",a:["stay at a friend's house","stayed at a friend's house"]},
+{w:"to tidy your room",g:"dein Zimmer aufräumen",d:"To make your room clean and neat",s:"Mum says I must _____ before I can go out.",cf:"tidy my room",a:["tidy your room","tidy my room","tidy his room","tidy her room","tidied my room"]},
+{w:"to have a party",g:"eine Party machen",d:"To get friends together to celebrate or have fun",s:"We are going to _____ for my birthday next week.",cf:"have a party",a:["have a party","has a party","had a party"]},
+{w:"to do the shopping",g:"einkaufen gehen",d:"To go to the shop and buy things you need",s:"My mum always _____ on Saturday morning.",cf:"does the shopping",a:["do the shopping","does the shopping","did the shopping"]},
+{w:"to do your homework",g:"Hausaufgaben machen",d:"To finish the school work your teacher gave you",s:"I always _____ right after school.",cf:"do my homework",a:["do your homework","do my homework","does his homework","did my homework"]},
+{w:"to watch a film",g:"einen Film schauen",d:"To look at a movie on TV or at the cinema",s:"We are going to _____ on the sofa tonight.",cf:"watch a film",a:["watch a film","watches a film","watched a film"]},
+{w:"honestly",g:"ehrlich; wirklich",d:"In a true way, not telling lies",s:"_____, I did not eat the last biscuit!",cf:"Honestly",a:["honestly"]},
+{w:"instead",g:"stattdessen",d:"In place of something, as another choice",s:"I don't want tea. Can I have juice _____?",a:[]},
+{w:"to take it easy",g:"sich entspannen",d:"To rest and not do hard work",s:"You worked a lot today. Now just _____.",cf:"take it easy",a:["take it easy","takes it easy","took it easy"]},
+{w:"to be ashamed",g:"sich schämen",d:"To feel bad because you did something wrong or silly",s:"He was very _____ after he broke the window.",cf:"ashamed",a:["be ashamed","ashamed"]},
+{w:"to come over",g:"vorbeikommen",d:"To visit someone at their home",s:"Do you want to _____ after school and play?",cf:"come over",a:["come over","comes over","came over"]},
+{w:"communication",g:"Kommunikation",d:"When people talk or write to each other",s:"Good _____ is important between friends.",a:[]},
+{w:"excuse",g:"Ausrede",d:"A reason you give for something bad you did",s:"That is not a good _____ for being late.",a:["excuses"]},
+{w:"group chat",g:"Gruppenchat",d:"A place online where many friends talk together",s:"We have a _____ for our class on the phone.",cf:"group chat",a:["group chat","group chats"]},
+{w:"social media",g:"soziale Medien",d:"Apps and websites where people share photos and messages",s:"Many young people spend a lot of time on _____.",cf:"social media",a:["social media"]},
+{w:"to tell a lie",g:"lügen",d:"To say something that is not true",s:"You should never _____. Always say the truth.",cf:"tell a lie",a:["tell a lie","told a lie","tells a lie"]},
+{w:"truth",g:"Wahrheit",d:"What is real and not made up",s:"Please tell me the _____. What happened?",a:[]},
+{w:"to be worried",g:"besorgt sein",d:"To feel that something bad might happen",s:"Mum was _____ because I came home late.",cf:"worried",a:["be worried","worried"]},
+{w:"to crash",g:"einen Unfall bauen, gegen etw. fahren",d:"To hit something hard, often by accident",s:"The bike _____ into the wall and the boy fell off.",cf:"crashed",a:["crash","crashes","crashed"]},
+{w:"to get into trouble",g:"in Schwierigkeiten geraten, Ärger bekommen",d:"To do something that makes you get punished",s:"If you don't listen, you will _____.",cf:"get into trouble",a:["get into trouble","got into trouble","gets into trouble"]},
+{w:"fancy dress party",g:"Kostümparty",d:"A party where everyone wears special clothes to look different",s:"I wore a pirate hat to the _____.",cf:"fancy dress party",a:["fancy dress party","fancy dress parties"]},
+{w:"disappointment",g:"Enttäuschung",d:"The sad feeling when something is not as good as you hoped",s:"Her face showed _____ when the trip was cancelled.",a:[]},
+{w:"German",g:"Deutsch",d:"The language people speak in Austria and Germany",s:"We have _____ class every Tuesday and Thursday.",a:[]},
+{w:"row",g:"(Sitz-)Reihe",d:"A line of seats or people next to each other",s:"We sat in the front _____ at the cinema.",a:["rows"]},
+{w:"sold out",g:"ausverkauft",d:"When there is nothing left to buy because everything is gone",s:"The concert tickets are all _____. There are no more.",cf:"sold out",a:["sold out"]},
+{w:"That's a pity.",g:"Das ist schade!",d:"Words you say when you feel sorry about something",s:"You can't come to the party? _____",cf:"That's a pity",a:["That's a pity","That is a pity"]},
+{w:"ticket",g:"Eintrittskarte, Ticket",d:"A piece of paper that lets you go into a place or ride a bus",s:"I bought a _____ for the football match.",a:["tickets"]},
+{w:"What a shame!",g:"Wie schade!",d:"Words you say when something sad or bad happens",s:"The match was cancelled because of rain. _____",cf:"What a shame",a:["What a shame","What a shame!"]},
+],
+"Unit 8": [
+{w:"spaceship",g:"Raumschiff",d:"A vehicle that flies through the sky to other worlds",s:"The _____ flew past the moon and into deep darkness.",a:["spaceships"]},
+{w:"commander",g:"Kommandant/in",d:"The person in charge who tells others what to do",s:"The _____ told everyone on the ship to get ready.",a:["commanders"]},
+{w:"spacesuit",g:"Raumanzug",d:"Special clothes you wear when you go outside a ship in the sky",s:"You need a _____ so you can breathe outside the ship.",a:["spacesuits"]},
+{w:"alien",g:"Außerirdische/r",d:"A creature that comes from another world",s:"In the film, the _____ was green and had big eyes.",a:["aliens"]},
+{w:"UFO",g:"UFO",d:"A strange flying thing in the sky that nobody can explain",s:"Some people say they saw a _____ over the city last night.",a:["UFOs"]},
+{w:"space centre",g:"Raumfahrtzentrum",d:"A building where people plan trips to the sky and other worlds",s:"We visited the _____ and saw real rockets.",cf:"space centre",a:["space centre","space center","space centres"]},
+{w:"planet",g:"Planet",d:"A big round thing in the sky that goes around a star",s:"Earth is the _____ where we all live.",a:["planets"]},
+{w:"boss",g:"Chef/Chefin",d:"The person who is in charge at work",s:"My mum's _____ called her about a meeting.",a:["bosses"]},
+{w:"cable",g:"Kabel",d:"A thick wire used to connect things",s:"The TV does not work because the _____ is broken.",a:["cables"]},
+{w:"capital",g:"Hauptstadt",d:"The most important city of a country",s:"London is the _____ of England.",a:["capitals"]},
+{w:"to connect",g:"anschließen; verbinden",d:"To join two things together",s:"Can you _____ your phone to the speaker?",cf:"connect",a:["connect","connects","connected"]},
+{w:"hero, heroine",g:"Held, Heldin",d:"A brave person who helps or saves other people",s:"The firefighter was a real _____ and saved the cat.",cf:"hero",a:["hero","heroine","heroes","heroines"]},
+{w:"machine",g:"Maschine",d:"Something built to do a job, like a washing or coffee maker",s:"This _____ makes fresh orange juice in ten seconds.",a:["machines"]},
+{w:"to repair",g:"reparieren",d:"To fix something that is broken",s:"My dad _____ my bike after the wheel came off.",cf:"repaired",a:["repair","repairs","repaired"]},
+{w:"space",g:"Weltall",d:"Everything outside our world, where the stars are",s:"One day I want to travel into _____.",a:[]},
+{w:"statue",g:"Statue",d:"A figure of a person or animal made from stone or metal",s:"There is a big _____ of a horse in the town centre.",a:["statues"]},
+{w:"to take over",g:"erobern, die Führung übernehmen",d:"To get control of something",s:"In the story, robots _____ the whole city.",cf:"take over",a:["take over","took over","takes over"]},
+{w:"traveller",g:"Reisender/Reisende",d:"A person who goes from place to place",s:"The _____ had a big backpack and a map.",a:["travellers","traveler","travelers"]},
+{w:"visitor",g:"Besucher/Besucherin",d:"A person who comes to see a place or a person",s:"Our school had a special _____ from England today.",a:["visitors"]},
+{w:"key",g:"Schlüssel",d:"A small metal thing you use to open a lock",s:"I forgot my _____ and couldn't get into the house.",a:["keys"]},
+{w:"crew",g:"Besatzung",d:"The group of people who work on a ship or plane",s:"The _____ on the plane was very friendly.",a:["crews"]},
+{w:"aeroplane",g:"Flugzeug",d:"A big vehicle with wings that flies through the sky",s:"The _____ flew over our house and made a loud noise.",a:["aeroplanes","airplane","airplanes"]},
+{w:"expert",g:"Experte/Expertin",d:"A person who knows a lot about something",s:"She is an _____ on animals and works at the zoo.",a:["experts"]},
+{w:"hoax",g:"Streich; Täuschung",d:"A trick that makes people believe something that is not true",s:"The story about the monster was just a _____.",a:["hoaxes"]},
+{w:"investigation",g:"Untersuchung, Ermittlung",d:"When people try to find out what really happened",s:"The police started an _____ to find the missing painting.",a:["investigations"]},
+{w:"photograph",g:"Foto",d:"A picture taken with a camera",s:"She showed me an old _____ of her grandparents.",a:["photographs","photo","photos"]},
+{w:"to destroy",g:"zerstören",d:"To break something so badly it cannot be fixed",s:"The storm _____ many trees in the park last night.",cf:"destroyed",a:["destroy","destroys","destroyed"]},
+{w:"to kidnap",g:"entführen",d:"To take a person away by force",s:"In the film, bad people _____ the prince.",cf:"kidnap",a:["kidnap","kidnaps","kidnapped"]},
+{w:"nonsense",g:"Unsinn",d:"Something silly that does not make sense",s:"Don't talk _____! Of course the Earth is round.",a:[]},
+{w:"comfortable",g:"bequem",d:"Nice to sit or lie on, making you feel good",s:"This sofa is very _____. I could sit here all day.",a:[]},
+{w:"Calm down!",g:"Beruhige dich!",d:"Words you say to someone who is too excited or scared",s:"_____! Everything is going to be fine.",cf:"Calm down",a:["Calm down","Calm down!"]},
+{w:"in that case",g:"in diesem Fall",d:"If the situation is like that, then",s:"You don't like fish? _____, let's order chicken.",cf:"In that case",a:["in that case"]},
+],
+"Unit 9": [
+{w:"grapes",g:"Trauben",d:"Small round fruit that grows in groups, purple or green",s:"I had some _____ with my lunch. They were very sweet.",a:[]},
+{w:"plums",g:"Pflaumen",d:"Soft round fruit that is purple on the outside",s:"We picked _____ from the tree in our garden.",a:["plum"]},
+{w:"pumpkin pie",g:"Kürbiskuchen",d:"A sweet dish made from an orange vegetable, often eaten in autumn",s:"My grandma makes the best _____ every October.",cf:"pumpkin pie",a:["pumpkin pie","pumpkin pies"]},
+{w:"rice pudding",g:"Milchreis",d:"A soft sweet dish made from white grains cooked in milk",s:"We had _____ for dessert and it was warm and creamy.",cf:"rice pudding",a:["rice pudding"]},
+{w:"chocolate ice cream",g:"Schokoladeneis",d:"A cold sweet treat with a brown, sweet flavour",s:"I always choose _____ when we go to the ice cream shop.",cf:"chocolate ice cream",a:["chocolate ice cream"]},
+{w:"turkey",g:"Truthahn",d:"A big bird that people eat at special dinners",s:"In America, many families eat _____ at Thanksgiving.",a:["turkeys"]},
+{w:"ham",g:"Schinken",d:"Meat from a pig, often eaten in sandwiches",s:"I want a _____ and cheese sandwich, please.",a:[]},
+{w:"beef",g:"Rindfleisch",d:"Meat from a cow",s:"We had _____ with vegetables for dinner yesterday.",a:[]},
+{w:"chicken",g:"Huhn, Hühnerfleisch",d:"A bird that gives eggs, or the meat from that bird",s:"Mum is making _____ soup for lunch today.",a:["chickens"]},
+{w:"apple juice",g:"Apfelsaft",d:"A drink made from the sweet fruit that grows on trees",s:"Can I have a glass of _____ please?",cf:"apple juice",a:["apple juice"]},
+{w:"cheesecake",g:"Käsekuchen",d:"A sweet cake made with a soft white cream on top",s:"The _____ at this café is really delicious.",a:["cheesecakes"]},
+{w:"pancakes",g:"Pfannkuchen",d:"Flat round food made from eggs and flour, cooked in a pan",s:"We had _____ with jam for breakfast this morning.",a:["pancake"]},
+{w:"mineral water",g:"Mineralwasser",d:"Water with tiny bubbles that you can buy in a bottle",s:"I would like a bottle of _____ please.",cf:"mineral water",a:["mineral water"]},
+{w:"tomato (pl tomatoes)",g:"Tomate",d:"A red fruit you put in salads and on pizza",s:"Can you cut the _____ for the salad?",cf:"tomato",a:["tomato","tomatoes"]},
+{w:"cabbage",g:"Kohl",d:"A big round green vegetable with many leaves",s:"We grew _____ in our garden last year.",a:["cabbages"]},
+{w:"sausages",g:"Würstchen",d:"Meat shaped like a long tube, often grilled or fried",s:"We had _____ and mashed potatoes for dinner.",a:["sausage"]},
+{w:"lamb",g:"Lamm, Lammfleisch",d:"A young woolly farm animal, or the meat from it",s:"The _____ in the field was playing with its mother.",a:["lambs"]},
+{w:"pears",g:"Birnen",d:"Green or yellow fruit shaped like a bell",s:"These _____ are really juicy and sweet.",a:["pear"]},
+{w:"peppers",g:"Paprika",d:"Vegetables that can be red, green, or yellow",s:"I like red _____ on my pizza.",a:["pepper"]},
+{w:"onions",g:"Zwiebeln",d:"Round white or brown vegetables that make your eyes water",s:"Mum is cutting _____ and her eyes are full of tears.",a:["onion"]},
+{w:"olives",g:"Oliven",d:"Small green or black fruit often used in salads or on pizza",s:"Do you want _____ on your pizza?",a:["olive"]},
+{w:"mushrooms",g:"Pilze",d:"Small things that grow in forests and some you can eat",s:"I found some _____ in the garden but we did not eat them.",a:["mushroom"]},
+{w:"potato (pl potatoes)",g:"Kartoffel",d:"A round brown vegetable that grows under the ground",s:"We had baked _____ with butter for dinner.",cf:"potato",a:["potato","potatoes"]},
+{w:"peaches",g:"Pfirsiche",d:"Soft round fruit with a fuzzy skin, orange inside",s:"The _____ from the market were sweet and juicy.",a:["peach"]},
+{w:"strawberries",g:"Erdbeeren",d:"Small red fruit that grows close to the ground",s:"We picked _____ at the farm and made jam from them.",a:["strawberry"]},
+{w:"chef",g:"Koch/Köchin",d:"A person who cooks food in a place where you eat out",s:"The _____ made a wonderful pasta dish.",a:["chefs"]},
+{w:"recipe",g:"Rezept",d:"A list of steps that tells you how to cook something",s:"I found a great _____ for chocolate cake online.",a:["recipes"]},
+{w:"waiter",g:"Kellner",d:"A person who brings food and drinks to your table",s:"The _____ brought us the menu and some water.",a:["waiters","waitress","waitresses"]},
+{w:"cloche",g:"Speiseglocke",d:"A metal cover over a plate that keeps the food warm",s:"The _____ covered the plate until the guest was ready to eat.",a:["cloches"]},
+{w:"menu",g:"Speisekarte",d:"A list of food and drinks you can order in a place to eat",s:"Let me look at the _____ and choose something.",a:["menus"]},
+{w:"slice",g:"Stück; Scheibe",d:"A thin piece cut from something bigger",s:"Can I have another _____ of bread, please?",a:["slices"]},
+{w:"actor, actress",g:"Schauspieler, Schauspielerin",d:"A person who acts in films or on stage",s:"My favourite _____ is in a new film this summer.",cf:"actor",a:["actor","actress","actors","actresses"]},
+{w:"main course",g:"Hauptgang, Hauptspeise",d:"The biggest and most important dish of a meal",s:"For the _____ I had fish with vegetables.",cf:"main course",a:["main course","main courses"]},
+{w:"to pour",g:"einschenken, schütten",d:"To make a liquid flow out of a bottle or jug",s:"Can you _____ some water into my glass?",cf:"pour",a:["pour","pours","poured"]},
+{w:"soup",g:"Suppe",d:"A warm liquid food made from vegetables or meat",s:"On cold days I love to eat a bowl of hot _____.",a:["soups"]},
+{w:"starter",g:"Vorspeise",d:"A small dish you eat before the big dish",s:"We had garlic bread as a _____ before the pasta.",a:["starters"]},
+{w:"straightaway",g:"sofort",d:"Right now, without waiting",s:"I will bring your drinks _____.",a:["straight away"]},
+{w:"completely",g:"vollständig",d:"Totally, with nothing missing",s:"The glass was _____ empty. There was no water left.",a:[]},
+{w:"crane",g:"Kran",d:"A very tall machine that lifts heavy things at a building site",s:"We watched the big _____ lift steel beams onto the new building.",a:["cranes"]},
+{w:"to drop",g:"fallen (lassen)",d:"To let something fall from your hand",s:"Be careful! Don't _____ the plate.",cf:"drop",a:["drop","drops","dropped"]},
+{w:"to entertain",g:"unterhalten",d:"To do something fun so people enjoy themselves",s:"The clown _____ the children at the birthday party.",cf:"entertained",a:["entertain","entertains","entertained"]},
+{w:"glasses (pl)",g:"Brille",d:"Two small pieces of glass you wear in front of your eyes to see better",s:"I need my _____ to read the board at school.",a:[]},
+{w:"platform",g:"Plattform",d:"A flat raised area where you can stand or build on",s:"The band played on a small _____ in the park.",a:["platforms"]},
+{w:"to serve",g:"servieren",d:"To bring food or drinks to someone at a table",s:"The waiter _____ us our food with a big smile.",cf:"served",a:["serve","serves","served"]},
+{w:"several",g:"einige, mehrere",d:"More than two but not very many",s:"I have _____ friends in my new class.",a:[]},
+{w:"stew",g:"Eintopf",d:"A hot dish made by cooking meat and vegetables together slowly",s:"Grandma's _____ is the best thing to eat on a cold winter day.",a:["stews"]},
+{w:"fridge",g:"Kühlschrank",d:"A cold box in the kitchen where you keep food fresh",s:"Put the milk back in the _____ or it will go bad.",a:["fridges"]},
+{w:"to complain",g:"sich beschweren",d:"To say you are not happy about something",s:"The man _____ because his food was cold.",cf:"complained",a:["complain","complains","complained"]},
+{w:"consumer",g:"Konsument/Konsumentin",d:"A person who buys things in a shop or online",s:"Every _____ has the right to send a broken product back.",a:["consumers"]},
+{w:"delivery",g:"Lieferung",d:"When someone brings something you ordered to your door",s:"The pizza _____ came in only twenty minutes.",a:["deliveries"]},
+{w:"to download",g:"herunterladen",d:"To get a file, song, or app from the internet onto your device",s:"I _____ a new game on my tablet yesterday.",cf:"downloaded",a:["download","downloads","downloaded"]},
+{w:"refund",g:"Rückerstattung",d:"Money you get back when you return something you bought",s:"The shop gave me a _____ because the shoes were too small.",a:["refunds"]},
+{w:"certain",g:"sicher, gewiss",d:"Very sure about something",s:"I am _____ that tomorrow is a holiday.",a:[]},
+{w:"to change one's mind",g:"seine Meinung ändern",d:"To think something different from before",s:"I wanted pizza but I _____ and chose pasta.",cf:"changed my mind",a:["change my mind","changed my mind","changes his mind","change your mind"]},
+{w:"gym",g:"Turnhalle; Fitnesscenter",d:"A room or building where people do sport or exercise",s:"We play volleyball in the _____ on Fridays.",a:["gyms"]},
+{w:"to miss",g:"hier: verpassen",d:"To be too late and not catch a bus, train, or event",s:"Run faster or you will _____ the school bus!",cf:"miss",a:["miss","misses","missed"]},
+],
+"Unit 10": [
+{w:"auntie",g:"Tantchen",d:"A friendly name for your parent's sister",s:"My _____ always brings me a present when she visits.",a:["aunties","aunty"]},
+{w:"calm",g:"ruhig, gelassen",d:"Quiet and not nervous or angry",s:"The teacher told us to stay _____ and sit down.",a:["calmer","calmest"]},
+{w:"girlfriend",g:"feste Freundin",d:"A girl or woman that someone is dating",s:"My brother's _____ came to our house for dinner.",a:["girlfriends"]},
+{w:"to be proud of",g:"stolz sein auf",d:"To feel very good about what you or someone else did",s:"She was _____ her drawing because it looked great.",cf:"proud of",a:["be proud of","proud of"]},
+{w:"sense of humour",g:"Sinn für Humor",d:"The ability to find things funny and make others laugh",s:"My dad has a great _____. He makes everyone laugh.",cf:"sense of humour",a:["sense of humour","sense of humor"]},
+{w:"ugly",g:"hässlich",d:"Not nice to look at",s:"The old building was grey and _____.",a:["uglier","ugliest"]},
+{w:"virus",g:"Virus",d:"A tiny thing that can make you sick",s:"I caught a _____ and had to stay in bed for three days.",a:["viruses"]},
+{w:"to breathe",g:"(ein-)atmen",d:"To take air in and out through your nose or mouth",s:"It is hard to _____ when you run very fast.",cf:"breathe",a:["breathe","breathes","breathed"]},
+{w:"to burn",g:"(ver-)brennen",d:"To make fire, or to get hurt by fire or something hot",s:"We _____ wood to make a warm fire in the garden.",cf:"burn",a:["burn","burns","burned","burnt"]},
+{w:"foreign language",g:"Fremdsprache",d:"A language that is not the one you speak at home",s:"Learning a _____ can be hard but also a lot of fun.",cf:"foreign language",a:["foreign language","foreign languages"]},
+{w:"to panic",g:"in Panik geraten",d:"To feel very scared and not know what to do",s:"Don't _____! I will help you find your bag.",cf:"panic",a:["panic","panics","panicked"]},
+{w:"tractor",g:"Traktor",d:"A big machine with big wheels that farmers use",s:"The farmer drove his _____ across the field.",a:["tractors"]},
+{w:"tool",g:"Werkzeug",d:"Something you hold in your hand to build or fix things",s:"A hammer is a _____ you use to put nails into wood.",a:["tools"]},
+{w:"divorced",g:"geschieden",d:"When two married people have ended their marriage",s:"His parents are _____ and he lives with his mum.",a:[]},
+{w:"to be related to",g:"mit jdm. verwandt sein",d:"To be in the same family as someone",s:"Are you _____ the new boy in class? He has the same last name.",cf:"related to",a:["be related to","related to"]},
+{w:"to delete",g:"löschen",d:"To remove something, like a file or message",s:"I _____ the old photos from my phone yesterday.",cf:"deleted",a:["delete","deletes","deleted"]},
+{w:"file",g:"Ordner; Datei",d:"A place on your computer where you keep documents or pictures",s:"I saved my homework in a _____ on the computer.",a:["files"]},
+{w:"to print out",g:"ausdrucken",d:"To make a paper copy of something from the computer",s:"Can you _____ this document for me?",cf:"print out",a:["print out","prints out","printed out"]},
+{w:"public",g:"öffentlich; in der Öffentlichkeit",d:"For everyone, not just one person",s:"The library is a _____ place — anyone can go there.",a:[]},
+{w:"ice skating",g:"Eislaufen",d:"Moving on a frozen surface wearing special shoes with blades",s:"We went _____ at the rink in the city centre.",cf:"ice skating",a:["ice skating"]},
+{w:"fault",g:"Schuld",d:"When something bad is because of you",s:"It was my _____ that we were late. I forgot my bag.",a:["faults"]},
+{w:"hopefully",g:"hoffentlich",d:"You want this to happen and think it will",s:"_____ it will be sunny for our school trip tomorrow.",cf:"Hopefully",a:["hopefully"]},
+],
+"Unit 11": [
+{w:"wardrobe",g:"Kleiderschrank",d:"A tall piece of furniture where you hang your clothes",s:"I put my dresses and jackets in the _____.",a:["wardrobes"]},
+{w:"bed",g:"Bett",d:"The place where you sleep at night",s:"I go to _____ at nine o'clock every night.",a:["beds"]},
+{w:"bedside table",g:"Nachttisch",d:"A small table next to where you sleep",s:"I put my phone on the _____ before I go to sleep.",cf:"bedside table",a:["bedside table","bedside tables"]},
+{w:"carpet",g:"Teppich(boden)",d:"A soft covering on the floor that you walk on",s:"We have a new blue _____ in the living room.",a:["carpets"]},
+{w:"fridge",g:"Kühlschrank",d:"A cold box in the kitchen where you keep food fresh",s:"The milk is in the _____. Can you get it?",a:["fridges"]},
+{w:"cooker",g:"Herd",d:"A machine in the kitchen where you heat food",s:"Be careful near the _____ — it is very hot.",a:["cookers"]},
+{w:"curtain",g:"Vorhang",d:"A piece of cloth that hangs over a window",s:"Close the _____ please. The sun is too bright.",cf:"curtains",a:["curtain","curtains"]},
+{w:"sink",g:"Spülbecken",d:"The place in the kitchen where you wash dishes",s:"Put the dirty plates in the _____ please.",a:["sinks"]},
+{w:"cupboard",g:"Schrank",d:"A piece of furniture with doors where you keep cups and food",s:"The glasses are in the _____ above the kitchen counter.",a:["cupboards"]},
+{w:"table",g:"Tisch",d:"A flat piece of furniture with legs where you eat or work",s:"We eat dinner at the _____ every evening.",a:["tables"]},
+{w:"chair",g:"Stuhl",d:"A piece of furniture you sit on, with a back and four legs",s:"Please sit on the _____ and wait for your turn.",a:["chairs"]},
+{w:"sofa",g:"Sofa",d:"A long soft seat for two or more people in the living room",s:"The whole family sits on the _____ to watch TV.",a:["sofas"]},
+{w:"armchair",g:"Sessel",d:"A big soft seat with sides where you rest your arms",s:"Grandpa always reads his book in his favourite _____.",a:["armchairs"]},
+{w:"lamp",g:"Lampe",d:"A thing that gives you light when it is dark",s:"Turn on the _____ please. I cannot see my book.",a:["lamps"]},
+{w:"radiator",g:"Heizkörper",d:"A metal thing on the wall that makes the room warm",s:"My cat loves to sleep next to the _____.",a:["radiators"]},
+{w:"rug",g:"Teppich",d:"A small soft cover you put on the floor",s:"There is a nice _____ in front of the fireplace.",a:["rugs"]},
+{w:"roof",g:"Dach",d:"The top part of a building that keeps the rain out",s:"A bird is sitting on the _____ of our house.",a:["roofs"]},
+{w:"wall",g:"Wand, Mauer",d:"The flat side of a room or building",s:"I put a poster of my favourite band on my bedroom _____.",a:["walls"]},
+{w:"window",g:"Fenster",d:"A glass opening in a room that lets you see outside",s:"Open the _____ please. It is too hot in here.",a:["windows"]},
+{w:"staircase",g:"Treppe",d:"Steps inside a building that take you up or down",s:"Be careful on the _____. The steps are slippery.",a:["staircases"]},
+{w:"cellar",g:"Keller",d:"A room under the ground floor of a house",s:"We keep old boxes and bottles in the _____.",a:["cellars"]},
+{w:"trailer (American English)",g:"Wohnwagen",d:"A home on wheels that you can pull with a car",s:"They live in a _____ near the lake in summer.",a:["trailers"]},
+{w:"tree house",g:"Baumhaus",d:"A small room built in a tree to play in",s:"We read books and played games in our _____.",cf:"tree house",a:["tree house","tree houses","treehouse"]},
+{w:"stilts",g:"Stelzen",d:"Long sticks or poles that hold something up above the ground",s:"In some countries, houses stand on _____ over the water.",a:[]},
+{w:"reed",g:"Schilf",d:"A tall plant that grows near water",s:"The birds hide in the _____ at the edge of the lake.",a:["reeds"]},
+{w:"island",g:"Insel",d:"A piece of land with water all around it",s:"We took a boat to a small _____ in the lake.",a:["islands"]},
+{w:"ground",g:"Boden",d:"The flat surface you walk on outside",s:"The apple fell from the tree to the _____.",a:[]},
+{w:"ours",g:"unsere/r/s",d:"A word that means it belongs to us",s:"That house is not theirs. It is _____.",a:[]},
+{w:"theirs",g:"ihre/r/s",d:"A word that means it belongs to them",s:"Our garden is small, but _____ is very big.",a:[]},
+{w:"mine",g:"meine/r/s",d:"A word that means it belongs to me",s:"This blue bag is _____. I bought it last week.",a:[]},
+{w:"hers",g:"ihre/r/s (Singular)",d:"A word that means it belongs to her",s:"That is not my jacket. It is _____.",a:[]},
+{w:"his",g:"seine/r/s",d:"A word that means it belongs to him",s:"Tom forgot _____ lunch box at home today.",a:[]},
+{w:"yours",g:"deine/r/s; Ihre/r/s",d:"A word that means it belongs to you",s:"Is this pencil _____? It has your name on it.",a:[]},
+{w:"furniture",g:"Möbel",d:"Things like tables, chairs, and beds in a room",s:"We need new _____ for the living room.",a:[]},
+{w:"whose",g:"wessen",d:"A question word to ask who owns something",s:"_____ bag is this? Someone left it in the classroom.",cf:"Whose",a:["whose"]},
+{w:"American",g:"Amerikaner/in; amerikanisch",d:"A person from the USA, or something from that country",s:"My pen pal is _____. She lives in New York.",a:["Americans"]},
+{w:"cellar",g:"Keller",d:"A room below a house, used to store things",s:"Dad went to the _____ to get some boxes.",a:["cellars"]},
+{w:"Central Asia",g:"Zentralasien",d:"The area in the middle of the biggest continent",s:"Some families in _____ live in special round tents.",cf:"Central Asia",a:["Central Asia"]},
+{w:"electricity",g:"Elektrizität",d:"The power that makes lights, TVs, and fridges work",s:"We had no _____ last night because of the storm.",a:[]},
+{w:"to float",g:"treiben; schweben",d:"To stay on top of water without going down",s:"The toy boat _____ on the water in the bathtub.",cf:"floated",a:["float","floats","floated"]},
+{w:"moveable",g:"beweglich",d:"Can be moved from one place to another",s:"The desk has wheels so it is _____.",a:["movable"]},
+{w:"underneath",g:"unterhalb",d:"Below or under something",s:"The cat is sleeping _____ the kitchen table.",a:[]},
+{w:"to transport",g:"transportieren",d:"To take something from one place to another",s:"We used a big van to _____ the old furniture.",cf:"transport",a:["transport","transports","transported"]},
+{w:"hammock",g:"Hängematte",d:"A piece of cloth you hang between two trees and lie in",s:"I love reading in the _____ in our garden.",a:["hammocks"]},
+{w:"cotton",g:"Baumwolle",d:"A soft white material used to make clothes",s:"This T-shirt is made of _____ and feels very soft.",a:[]},
+{w:"leather",g:"Leder",d:"Material made from animal skin, used for shoes and bags",s:"My dad has a brown _____ jacket that he wears every winter.",a:[]},
+{w:"material",g:"Material",d:"What something is made of",s:"What _____ is your school bag made of?",a:["materials"]},
+{w:"metal",g:"Metall",d:"A hard shiny thing like iron or gold",s:"The spoon is made of _____.",a:["metals"]},
+{w:"pattern",g:"Muster",d:"A design with shapes, lines, or colours on something",s:"My new dress has a flower _____ on it.",a:["patterns"]},
+{w:"plain",g:"einfarbig",d:"Only one colour, with no design on it",s:"She wore a _____ white T-shirt with jeans.",a:[]},
+{w:"plastic",g:"Plastik",d:"A light, cheap material used to make many things",s:"We should use less _____ to help the environment.",a:[]},
+{w:"pond",g:"Teich",d:"A small area of water, smaller than a lake",s:"There are frogs in the _____ in our garden.",a:["ponds"]},
+{w:"seat",g:"(Sitz-)Platz",d:"A place where you sit, like a chair or bench",s:"Please take a _____ and wait for the doctor.",a:["seats"]},
+{w:"spotted",g:"gepunktet",d:"Having small round shapes on it",s:"She wore a _____ dress with white dots on a red background.",a:[]},
+{w:"strap",g:"Band",d:"A thin piece of cloth or other stuff that holds something",s:"The _____ of my watch broke and it fell off.",a:["straps"]},
+{w:"striped",g:"gestreift",d:"Having long lines of different colours",s:"He wore a _____ shirt with blue and white lines.",a:[]},
+],
+"Unit 12": [
+{w:"headache",g:"Kopfschmerzen",d:"A pain in your head that makes it hard to think",s:"I have a bad _____ and need to lie down.",a:["headaches"]},
+{w:"toothache",g:"Zahnschmerzen",d:"A pain in your tooth that really hurts",s:"I can't eat anything because I have a _____.",a:["toothaches"]},
+{w:"earache",g:"Ohrenschmerzen",d:"A pain deep inside your ear",s:"My left ear hurts. I think I have an _____.",a:["earaches"]},
+{w:"stomach ache",g:"Bauchschmerzen",d:"A pain in your tummy",s:"I ate too much cake and now I have a _____.",cf:"stomach ache",a:["stomach ache","stomachache","tummy ache"]},
+{w:"pain in ankle",g:"Schmerzen im Knöchel",d:"When the joint above your foot hurts",s:"I can't walk well because of the _____.",cf:"pain in my ankle",a:["pain in ankle","pain in my ankle","pain in the ankle"]},
+{w:"knee",g:"Knie",d:"The joint in the middle of your leg that bends",s:"I fell and hurt my _____ on the playground.",a:["knees"]},
+{w:"backache",g:"Rückenschmerzen",d:"A pain along the back of your body",s:"My grandpa has _____ and finds it hard to sit for long.",a:["backaches"]},
+{w:"throat",g:"Hals",d:"The inside part of your neck where food goes down",s:"My _____ hurts when I try to swallow water.",a:["throats"]},
+{w:"bath",g:"Bad",d:"When you sit in warm water to get clean",s:"After playing in the mud, I need a hot _____.",a:["baths"]},
+{w:"medicine",g:"Medizin",d:"Something you take to feel better when you are sick",s:"The doctor gave me some _____ for my cold.",a:["medicines"]},
+{w:"memory",g:"Gedächtnis",d:"The part of your mind that remembers things",s:"She has a very good _____ and never forgets a birthday.",a:["memories"]},
+{w:"patient",g:"Patient/Patientin",d:"A person who is sick and sees a doctor",s:"The doctor is talking to her _____ about the test results.",a:["patients"]},
+{w:"spoon",g:"Löffel",d:"A small tool with a round part you use to eat soup",s:"I need a _____ for my yoghurt, not a fork.",a:["spoons"]},
+{w:"blood",g:"Blut",d:"The red liquid inside your body",s:"There was a little _____ on his knee after he fell.",a:[]},
+{w:"lamp post",g:"Laternenmast",d:"A tall pole with a light on top next to the road",s:"The car hit the _____ on the corner of the street.",cf:"lamp post",a:["lamp post","lamp posts","lamppost"]},
+{w:"cure",g:"Heilmittel",d:"Something that makes a sick person well again",s:"Scientists are looking for a _____ for many diseases.",a:["cures"]},
+{w:"to cure",g:"heilen",d:"To make someone healthy again after being sick",s:"This special tea can help _____ a cold faster.",cf:"cure",a:["cure","cures","cured"]},
+{w:"dentist",g:"Zahnarzt/Zahnärztin",d:"A doctor who looks after your teeth",s:"I go to the _____ twice a year to check my teeth.",a:["dentists"]},
+{w:"to mash",g:"zerdrücken, zerstampfen",d:"To press food into a soft mixture",s:"We _____ the potatoes and added butter.",cf:"mashed",a:["mash","mashes","mashed"]},
+{w:"to mix",g:"vermischen",d:"To put two or more things together and stir them",s:"_____ the eggs and the flour in a big bowl.",cf:"Mix",a:["mix","mixes","mixed"]},
+{w:"taste",g:"Geschmack",d:"How food or drink feels in your mouth",s:"This soup has a really nice _____.",a:["tastes"]},
+{w:"toothpaste",g:"Zahnpasta",d:"A cream you put on your toothbrush to clean your teeth",s:"I need new _____. The tube is empty.",a:[]},
+{w:"worm",g:"Wurm",d:"A small long thin animal without legs that lives in the earth",s:"I found a _____ in the garden when I was digging.",a:["worms"]},
+{w:"smell",g:"Geruch",d:"What you notice with your nose",s:"The _____ of fresh bread made me hungry.",a:["smells"]},
+{w:"first aid",g:"Erste Hilfe",d:"The first help you give to someone who is hurt",s:"We learned _____ at school so we can help in an emergency.",cf:"first aid",a:["first aid"]},
+{w:"helpful",g:"hilfsbereit",d:"Wanting to help and doing things for others",s:"My classmate is very _____. She always shares her notes.",a:[]},
+{w:"horrible",g:"schrecklich",d:"Very bad or very ugly",s:"The weather was _____ yesterday — rain all day!",a:[]},
+{w:"pupil",g:"Schüler/Schülerin",d:"A child who goes to school",s:"Every _____ in our class has to do a presentation.",a:["pupils"]},
+{w:"since",g:"seit",d:"From a time in the past until now",s:"I have lived in Vienna _____ I was five years old.",a:[]},
+{w:"Believe me!",g:"Glaub mir!",d:"Words you say when you want someone to know you are telling the truth",s:"It's true, I saw a fox in the garden! _____",cf:"Believe me",a:["Believe me","Believe me!"]},
+{w:"to injure",g:"verletzen",d:"To hurt a part of your body",s:"She _____ her leg while playing football yesterday.",cf:"injured",a:["injure","injures","injured"]},
+{w:"It doesn't matter.",g:"Das macht nichts, egal",d:"Words to say something is not important or not a problem",s:"I forgot my pencil. — _____. You can use mine.",cf:"It doesn't matter",a:["It doesn't matter","It does not matter"]},
+{w:"writer",g:"Schriftsteller/-in",d:"A person who writes books or stories",s:"My favourite _____ has a new book coming out next month.",a:["writers"]},
+],
+"Unit 13": [
+{w:"snowy",g:"schneereich, verschneit",d:"When there is a lot of white frozen water on the ground",s:"It was a cold, _____ day and the children played outside.",a:["snowier","snowiest"]},
+{w:"thunderstorm",g:"Gewitter",d:"A storm with loud booms and bright flashes in the sky",s:"We stayed inside because of the big _____ last night.",a:["thunderstorms"]},
+{w:"cloudy",g:"bewölkt",d:"When grey shapes cover the sky and you cannot see the sun",s:"It is very _____ today. I think it will rain.",a:["cloudier","cloudiest"]},
+{w:"windy",g:"windig",d:"When the air moves a lot and blows things around",s:"Hold your hat! It is very _____ outside.",a:["windier","windiest"]},
+{w:"rainy",g:"regnerisch",d:"When water falls from the sky for a long time",s:"Take your umbrella. It is going to be a _____ day.",a:["rainier","rainiest"]},
+{w:"sunny",g:"sonnig",d:"When the sky is clear and bright with no clouds",s:"It is a _____ day — perfect for a picnic in the park.",a:["sunnier","sunniest"]},
+{w:"foggy",g:"neblig",d:"When the air is thick and grey and you cannot see far",s:"Drive slowly — it is very _____ this morning.",a:["foggier","foggiest"]},
+{w:"hot",g:"heiß",d:"A very high temperature that makes you feel warm",s:"It is so _____ today! Let's go swimming in the pool.",a:["hotter","hottest"]},
+{w:"cold",g:"kalt",d:"A low temperature that makes you want a warm coat",s:"Wear a thick jacket — it is very _____ outside.",a:["colder","coldest"]},
+{w:"weather presenter / meteorologist",g:"Wettermoderator/in / Meteorologe/Meteorologin",d:"A person on TV who tells you what the sky and air will be like",s:"The _____ said it will be warm tomorrow.",cf:"weather presenter",a:["weather presenter","meteorologist","weather presenters","meteorologists"]},
+{w:"coast",g:"Küste",d:"The land next to the sea",s:"We drove to the _____ and spent the day by the water.",a:["coasts"]},
+{w:"to continue",g:"andauern; weitergehen",d:"To keep going and not stop",s:"The bad weather will _____ all week.",cf:"continue",a:["continue","continues","continued"]},
+{w:"cool",g:"kühl",d:"A little bit cold, but not too much",s:"The evenings are _____ in September.",a:["cooler","coolest"]},
+{w:"degree",g:"Grad (°)",d:"A unit to measure how warm or cold it is",s:"Tomorrow it will be 25 _____ — nice and warm!",cf:"degrees",a:["degree","degrees"]},
+{w:"dry",g:"trocken",d:"Having no water or rain",s:"The summer was very _____. It did not rain for weeks.",a:["drier","driest"]},
+{w:"formula",g:"Formel",d:"A special set of numbers and letters to work something out",s:"We used a _____ to change Fahrenheit to Celsius.",a:["formulas","formulae"]},
+{w:"to give way",g:"ausweichen, Platz machen",d:"To change and be replaced by something else",s:"The clouds will _____ to sunshine in the afternoon.",cf:"give way",a:["give way","gives way","gave way"]},
+{w:"scale",g:"Skala, Maßstab",d:"A set of numbers used to measure something",s:"On a _____ of one to ten, how much do you like maths?",a:["scales"]},
+{w:"sunshine",g:"Sonnenschein",d:"The warm bright light that comes from the star in the sky",s:"We had lovely _____ all day and stayed outside.",a:[]},
+{w:"temperature",g:"Temperatur",d:"How warm or cold something is",s:"The _____ dropped to zero last night.",a:["temperatures"]},
+{w:"to clear up",g:"hier: aufheitern",d:"When bad sky conditions go away and it gets nice",s:"Don't worry — the rain will _____ by lunchtime.",cf:"clear up",a:["clear up","clears up","cleared up"]},
+{w:"fog",g:"Nebel",d:"A thick grey cloud near the ground that makes it hard to see",s:"I could not see the road because of the thick _____.",a:["fogs"]},
+{w:"forecast",g:"Vorhersage",d:"A report that tells you what the sky and air will be like",s:"I checked the _____ and it said it would rain.",a:["forecasts"]},
+{w:"hope",g:"Hoffnung",d:"The feeling that something good will happen",s:"There is _____ that the weather will get better soon.",a:["hopes"]},
+{w:"outlook",g:"Aussicht, Ausblick",d:"What things will probably be like in the future",s:"The _____ for the weekend is warm and dry.",a:["outlooks"]},
+{w:"small talk",g:"Small Talk, Plauderei",d:"A friendly chat about light topics like the sky and air",s:"British people love _____ about the weather.",cf:"small talk",a:["small talk"]},
+{w:"thick",g:"dicht; dick",d:"Wide, heavy, or closely packed together",s:"She wore a _____ winter coat to stay warm.",a:["thicker","thickest"]},
+{w:"towards",g:"in Richtung, auf ... zu",d:"In the direction of something",s:"Walk _____ the park and you will find the shop.",a:[]},
+{w:"Have a nice day!",g:"Einen schönen Tag noch!",d:"A friendly thing you say when someone is leaving",s:"See you tomorrow. _____",cf:"Have a nice day",a:["Have a nice day","Have a nice day!"]},
+{w:"to make sure",g:"sich versichern, darauf achten",d:"To check that something is right or done",s:"_____ you close the windows before you leave.",cf:"Make sure",a:["make sure","makes sure","made sure"]},
+{w:"to rise",g:"(an-)steigen",d:"To go up, to get higher",s:"In summer, temperatures _____ above thirty degrees.",cf:"rise",a:["rise","rises","rose","risen"]},
+{w:"axe",g:"Axt",d:"A heavy tool with a sharp metal part used to cut wood",s:"The farmer used an _____ to chop the firewood.",a:["axes"]},
+{w:"bright",g:"hell",d:"Full of light, easy to see",s:"The stars were very _____ in the sky last night.",a:["brighter","brightest"]},
+{w:"flash of light",g:"Lichtblitz",d:"A very quick burst of brightness",s:"There was a _____ in the sky, then thunder.",cf:"flash of light",a:["flash of light","flashes of light"]},
+{w:"to shine",g:"scheinen",d:"To give off light",s:"The sun _____ through the clouds after the rain stopped.",cf:"shone",a:["shine","shines","shone","shined"]},
+{w:"average",g:"durchschnittlich",d:"The normal or middle amount",s:"The _____ price of a meal here is ten euros.",a:[]},
+{w:"below",g:"unter(-halb); unten",d:"Lower than something, under",s:"The temperature dropped _____ zero and it was freezing.",a:[]},
+{w:"generally",g:"im Allgemeinen",d:"Most of the time, usually",s:"Summers in Austria are _____ warm and nice.",a:[]},
+{w:"inch (pl inches)",g:"Zoll",d:"A small unit to measure length, used in the UK and USA",s:"My phone screen is about six _____ wide.",cf:"inches",a:["inch","inches"]},
+{w:"mild",g:"mild",d:"Not too hot and not too cold, gentle",s:"The winters here are quite _____. It rarely snows.",a:["milder","mildest"]},
+{w:"mile",g:"Meile (= 1,6 Kilometer)",d:"A unit to measure how far something is, used in the UK and USA",s:"The next town is about five _____ from here.",cf:"miles",a:["mile","miles"]},
+{w:"rainfall",g:"Niederschlag",d:"The amount of water that comes down from the sky",s:"This area has a lot of _____ in autumn.",a:[]},
+{w:"to record",g:"aufzeichnen",d:"To write down or save information",s:"Scientists _____ the temperatures every day.",cf:"record",a:["record","records","recorded"]},
+{w:"sea level",g:"Meeresspiegel",d:"The average height of the sea, used to measure how high land is",s:"This city is 300 metres above _____.",cf:"sea level",a:["sea level"]},
+{w:"throughout the year",g:"das ganze Jahr (über)",d:"During every part of the year, all twelve months",s:"It is warm in this country _____.",cf:"throughout the year",a:["throughout the year"]},
+{w:"western",g:"westlich",d:"In or from the west, where the sun goes down",s:"The _____ part of Austria is very mountainous.",a:[]},
+{w:"wet",g:"nass",d:"Covered with water or full of water",s:"My shoes are _____ because I walked through a puddle.",a:["wetter","wettest"]},
+{w:"heavy rain",g:"starker Regen",d:"When a lot of water falls from the sky very fast",s:"We could not play outside because of the _____.",cf:"heavy rain",a:["heavy rain"]},
+{w:"tan",g:"(Sonnen-)Bräune",d:"When your skin gets darker because of the sun",s:"You have a nice _____! Were you on holiday?",a:["tans"]},
+{w:"binoculars",g:"Fernglas",d:"A tool with two lenses you look through to see things far away",s:"I used my _____ to watch the birds on the lake.",a:[]},
+{w:"career",g:"Karriere",d:"The job or work someone does for many years",s:"She wants a _____ as a doctor when she finishes school.",a:["careers"]},
+{w:"to earn",g:"(Geld) verdienen",d:"To get money by working",s:"My brother _____ money by helping at a bakery after school.",cf:"earns",a:["earn","earns","earned"]},
+{w:"to be mad about sth.",g:"für etw. schwärmen",d:"To like something very, very much",s:"My sister is _____ horses. She rides every day.",cf:"mad about",a:["be mad about","mad about"]},
+],
+"Unit 14": [
+{w:"roller-skating",g:"Rollschuhlaufen",d:"Moving on shoes with small wheels on the bottom",s:"We went _____ in the park and it was so much fun!",cf:"roller-skating",a:["roller-skating","roller skating"]},
+{w:"sportsman and sportswoman",g:"Sportler und Sportlerin",d:"A man or woman who does sport, often for a job",s:"She is a famous _____ who has won many prizes.",cf:"sportswoman",a:["sportsman","sportswoman","sportsman and sportswoman"]},
+{w:"ice skating",g:"Eislaufen",d:"Moving on a frozen surface wearing shoes with blades",s:"We went _____ on the lake when it froze in January.",cf:"ice skating",a:["ice skating"]},
+{w:"snowboarding",g:"Snowboarden",d:"Sliding down a white mountain on one wide board",s:"I tried _____ for the first time and fell many times!",cf:"snowboarding",a:["snowboarding"]},
+{w:"skiing",g:"Skifahren",d:"Sliding down a white mountain using two long boards on your feet",s:"We go _____ in the Alps every winter holiday.",cf:"skiing",a:["skiing"]},
+{w:"surfing",g:"Surfen",d:"Standing on a board and riding waves in the sea",s:"_____ looks amazing but it is hard to stay on the board.",cf:"Surfing",a:["surfing"]},
+{w:"mountain climbing",g:"Bergsteigen",d:"Going up very high rocky land using ropes and your body",s:"_____ is exciting but can be very tiring.",cf:"Mountain climbing",a:["mountain climbing"]},
+{w:"windsurfing",g:"Windsurfen",d:"Standing on a board with a sail and moving over water",s:"My uncle loves _____ on the lake in summer.",cf:"windsurfing",a:["windsurfing"]},
+{w:"swimming",g:"Schwimmen",d:"Moving through water using your arms and legs",s:"_____ is great exercise and helps you stay fit.",cf:"Swimming",a:["swimming"]},
+{w:"mountain biking",g:"Mountainbiken",d:"Riding a bike on rough paths and hills",s:"We went _____ in the hills and got very dirty.",cf:"mountain biking",a:["mountain biking"]},
+{w:"cycling",g:"Radfahren",d:"Riding a bicycle from one place to another",s:"I go _____ to school every day. It takes ten minutes.",cf:"cycling",a:["cycling"]},
+{w:"skateboarding",g:"Skateboardfahren",d:"Riding a small board with wheels under your feet",s:"He learned _____ when he was ten years old.",cf:"skateboarding",a:["skateboarding"]},
+{w:"to grow up",g:"erwachsen werden; aufwachsen",d:"To get bigger and become an adult",s:"I want to be a pilot when I _____.",cf:"grow up",a:["grow up","grows up","grew up"]},
+{w:"member",g:"Mitglied",d:"A person who belongs to a group or a team",s:"She is a _____ of the school basketball team.",a:["members"]},
+{w:"professional",g:"professionell; hauptberuflich",d:"Doing something as a job, not just for fun",s:"He wants to become a _____ football player one day.",a:["professionals"]},
+{w:"race",g:"Wettfahrt; Rennen",d:"A competition to see who can go the fastest",s:"I came first in the running _____ at sports day!",a:["races"]},
+{w:"serious",g:"ernst(haft); gravierend",d:"Important and not funny, or very bad",s:"Luckily, the accident was not _____. Nobody got hurt.",a:[]},
+{w:"to appear",g:"erscheinen",d:"To be seen or to come into view",s:"A rainbow _____ in the sky after the rain stopped.",cf:"appeared",a:["appear","appears","appeared"]},
+{w:"competition",g:"Wettbewerb",d:"An event where people try to win",s:"Our school won the singing _____ last month.",a:["competitions"]},
+{w:"challenge",g:"Herausforderung",d:"Something new and hard that you must try to do",s:"Learning to ride a bike was a big _____ for me.",a:["challenges"]},
+{w:"distance",g:"Abstand, Distanz",d:"How far it is from one place to another",s:"The _____ from our house to the school is two kilometres.",a:["distances"]},
+{w:"extreme",g:"extrem",d:"Very, very strong or far from normal",s:"Bungee jumping is an _____ sport that not everyone likes.",a:["extremely"]},
+{w:"flood",g:"Flut",d:"A lot of water that covers land that is usually dry",s:"After three days of rain, there was a terrible _____.",a:["floods"]},
+{w:"to manage",g:"etw. schaffen",d:"To be able to do something, even if it is hard",s:"I _____ to finish all my homework before dinner.",cf:"managed",a:["manage","manages","managed"]},
+{w:"official",g:"offiziell",d:"Agreed on and accepted by the people in charge",s:"The _____ start time of the match is three o'clock.",a:["officially"]},
+{w:"rather",g:"ziemlich, eher",d:"A little bit, quite",s:"The water in the pool was _____ cold today.",a:[]},
+{w:"to snorkel",g:"schnorcheln",d:"To swim with a tube so you can look under water",s:"We _____ in the clear blue sea and saw lots of fish.",cf:"snorkelled",a:["snorkel","snorkels","snorkelled","snorkeled"]},
+{w:"to take part (in)",g:"an etw. teilnehmen",d:"To join in and do something with other people",s:"She _____ in the school play last year.",cf:"took part",a:["take part","takes part","took part"]},
+{w:"without",g:"ohne",d:"Not having something, missing something",s:"I went to school _____ my lunch box today.",a:[]},
+{w:"world record",g:"Weltrekord",d:"The best result ever for something in the whole world",s:"He broke the _____ for the 100-metre sprint.",cf:"world record",a:["world record","world records"]},
+{w:"nil",g:"null",d:"The number zero in a game or match",s:"Our team won the football match three to _____.",a:[]},
+{w:"on one's own",g:"alleine",d:"By yourself, with nobody else",s:"I did my homework all _____.",cf:"on my own",a:["on my own","on his own","on her own","on your own","on one's own"]},
+{w:"to score",g:"erreichen, erzielen (Tore)",d:"To get a point or a goal in a game",s:"She _____ two goals in the football match today.",cf:"scored",a:["score","scores","scored"]},
+{w:"to tackle",g:"attackieren (im Sport)",d:"To try to take the ball from another player in a game",s:"He _____ the other player and won the ball back.",cf:"tackled",a:["tackle","tackles","tackled"]},
+{w:"waste of time",g:"Zeitverschwendung",d:"Something that uses your time but gives you nothing good",s:"Watching that film was a _____. It was so bad.",cf:"waste of time",a:["waste of time"]},
+{w:"equipment",g:"Ausrüstung",d:"The things you need to do a sport or job",s:"You need a helmet and knee pads — that's the _____ for skating.",a:[]},
+{w:"success",g:"Erfolg",d:"When you do well and reach what you wanted",s:"The school play was a big _____. Everyone loved it.",a:["successes"]},
+],
+"Unit 15": [
+{w:"to feed your pet",g:"dein Haustier füttern",d:"To give food to the animal you keep at home",s:"Don't forget to _____ before you go to school.",cf:"feed your pet",a:["feed your pet","feed my pet","feeds her pet","fed my pet"]},
+{w:"to clean out the litter tray",g:"das Katzenklo sauber machen",d:"To take the dirty stuff out of where a cat goes to the toilet",s:"It's your turn to _____ today.",cf:"clean out the litter tray",a:["clean out the litter tray","cleaned out the litter tray"]},
+{w:"to clean out your pet's cage",g:"den Käfig deines Haustieres säubern",d:"To make the home of a small animal nice and clean",s:"You must _____ every week so the hamster stays healthy.",cf:"clean out your pet's cage",a:["clean out your pet's cage","clean out my pet's cage","cleaned out the cage"]},
+{w:"to play with your pet",g:"mit deinem Haustier spielen",d:"To have fun and do activities with your animal",s:"I love to _____ in the garden after school.",cf:"play with my pet",a:["play with your pet","play with my pet","plays with her pet"]},
+{w:"to dry your pet",g:"dein Haustier abtrocknen",d:"To use a towel to take water off your animal",s:"After the bath, you need to _____ with a big towel.",cf:"dry your pet",a:["dry your pet","dry my pet","dried the dog"]},
+{w:"to stroke",g:"streicheln",d:"To move your hand softly over an animal's fur",s:"The cat loves it when you _____ her head gently.",cf:"stroke",a:["stroke","strokes","stroked"]},
+{w:"to brush",g:"bürsten",d:"To use a special tool to make hair or fur smooth",s:"I _____ my dog every morning so his fur looks nice.",cf:"brush",a:["brush","brushes","brushed"]},
+{w:"to walk your pet",g:"mit deinem Haustier spazieren gehen",d:"To take your animal outside for a walk",s:"I _____ every morning before school and every evening.",cf:"walk my dog",a:["walk your pet","walk my dog","walks the dog","walked the dog"]},
+{w:"to take your pet to the vet",g:"dein Haustier zum Tierarzt bringen",d:"To bring your animal to the animal doctor for a check",s:"We need to _____ because she is not eating well.",cf:"take our cat to the vet",a:["take your pet to the vet","take my pet to the vet","took the dog to the vet"]},
+{w:"to give your pet a bath",g:"dein Haustier baden",d:"To wash your animal with water and soap",s:"It is time to _____. He smells really bad!",cf:"give the dog a bath",a:["give your pet a bath","give my dog a bath","gave the cat a bath"]},
+{w:"cage",g:"Käfig",d:"A box made of metal bars where you keep small animals",s:"The hamster runs around in his _____ all night.",a:["cages"]},
+{w:"litter tray",g:"Katzenklo",d:"A box with special sand where a cat goes to the toilet",s:"We put the _____ in the bathroom for the cat.",cf:"litter tray",a:["litter tray","litter trays","litter box"]},
+{w:"vet (veterinarian)",g:"Tierarzt/Tierärztin",d:"A doctor for animals",s:"The _____ said our dog is healthy and strong.",cf:"vet",a:["vet","veterinarian","vets"]},
+{w:"to have got a fear of",g:"Angst haben vor",d:"To be very scared of something",s:"My mum has _____ spiders. She screams every time.",cf:"got a fear of",a:["have got a fear of","has got a fear of","have a fear of"]},
+{w:"to keep sb. company",g:"jdm. Gesellschaft leisten",d:"To be with someone so they are not alone",s:"My cat always _____ when I am home alone.",cf:"keeps me company",a:["keep me company","keeps me company","kept me company"]},
+{w:"Neither do I.",g:"Ich auch nicht.",d:"Words you say to agree when someone says they don't like or do something",s:"I don't like getting up early. — _____",cf:"Neither do I",a:["Neither do I","Neither do I."]},
+{w:"So do I.",g:"Ich auch.",d:"Words you say to agree when someone says they like or do something",s:"I love pizza! — _____",cf:"So do I",a:["So do I","So do I."]},
+{w:"space",g:"Platz; Raum",d:"An empty area where you can put things or move around",s:"We don't have enough _____ for a big dog in our flat.",a:["spaces"]},
+{w:"Antarctic Ocean",g:"Antarktischer Ozean",d:"The very cold sea around the south of the world",s:"Penguins swim in the _____ to catch fish.",cf:"Antarctic Ocean",a:["Antarctic Ocean"]},
+{w:"emperor penguin",g:"Kaiserpinguin",d:"The biggest kind of black and white bird that cannot fly",s:"The _____ is taller than other types of penguin.",cf:"emperor penguin",a:["emperor penguin","emperor penguins"]},
+{w:"to release",g:"befreien, frei lassen",d:"To let an animal or person go free",s:"They _____ the bird back into the wild after it got better.",cf:"released",a:["release","releases","released"]},
+{w:"sand",g:"Sand",d:"Tiny pieces of rock you find at the seaside or in a desert",s:"We built a castle out of _____ on the shore.",a:["sands"]},
+{w:"pyjamas",g:"Pyjama, Schlafanzug",d:"Soft clothes you wear when you go to sleep",s:"I put on my _____ and brushed my teeth before going to sleep.",a:["pajamas"]},
+{w:"to tidy (up)",g:"aufräumen",d:"To make a place clean and neat by putting things where they belong",s:"Please _____ your room before your friends come over.",cf:"tidy up",a:["tidy","tidy up","tidies up","tidied up"]},
+],
+};
+
+// ===== APP STATE =====
+let state = {
+  studentId: null,
+  studentName: null,
+  studentData: null,
+  progressData: {},
+  selectedSources: new Set(),
+  exerciseType: 'mix',
+  words: [],
+  currentIdx: 0,
+  score: 0,
+  answered: false,
+  results: [],
+  currentType: null,
+};
+
+
+// ===== GAMIFICATION =====
+const XP_TABLE = { 'context': 5, 'context-hard': 8, 'definition': 6, 'definition-hard': 10, 'translation': 7 };
+const BADGE_DEFS = [
+  { id:'first-session', icon:'⭐', name:'First Steps', desc:'Complete your first session', check:(d)=>(d.totalSessions||0)>=1 },
+  { id:'ten-sessions', icon:'🔥', name:'On Fire', desc:'Complete 10 sessions', check:(d)=>(d.totalSessions||0)>=10 },
+  { id:'fifty-sessions', icon:'🚀', name:'Unstoppable', desc:'Complete 50 sessions', check:(d)=>(d.totalSessions||0)>=50 },
+  { id:'mastered-10', icon:'🧠', name:'Quick Learner', desc:'Master 10 words', check:(d,m)=>m>=10 },
+  { id:'mastered-50', icon:'📚', name:'Word Collector', desc:'Master 50 words', check:(d,m)=>m>=50 },
+  { id:'mastered-100', icon:'🏆', name:'Vocabulary Champion', desc:'Master 100 words', check:(d,m)=>m>=100 },
+  { id:'mastered-all', icon:'👑', name:'Master of All', desc:'Master every single word', check:(d,m)=>{ let t=0; for(const s of Object.values(vocabData)) t+=s.length; return m>=t; }},
+  { id:'perfect-round', icon:'💯', name:'Flawless', desc:'Score 10/10 or higher in one round', check:(d,m,r)=>r&&r.length>=10&&r.every(x=>x.correct) },
+  { id:'streak-3', icon:'🔥', name:'3-Day Streak', desc:'Practice 3 days in a row', check:(d)=>(d.streak||0)>=3 },
+  { id:'streak-7', icon:'⚡', name:'Weekly Warrior', desc:'Practice 7 days in a row', check:(d)=>(d.streak||0)>=7 },
+  { id:'all-types', icon:'🎨', name:'Explorer', desc:'Try all 5 exercise types', check:(d)=>(d.exerciseTypesUsed||[]).length>=5 },
+  { id:'daily-first', icon:'🌅', name:'Daily Challenger', desc:'Complete your first daily challenge', check:(d)=>Object.keys(d.dailyChallengeLog||{}).length>=1 },
+  { id:'daily-perfect', icon:'✨', name:'Daily Genius', desc:'Score 100% on a daily challenge', check:(d)=>Object.values(d.dailyChallengeLog||{}).some(v=>v.pct===100) },
+];
+
+function dailySeed(dateStr, classId) {
+  let h = 0; const s = dateStr + classId;
+  for (let i = 0; i < s.length; i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+  return h;
+}
+function seededRandom(seed) {
+  return function() {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function getTodayStr() { return new Date().toISOString().slice(0, 10); }
+
+function getDailyChallengeWords() {
+  const allWords = [];
+  for (const [src, entries] of Object.entries(vocabData)) {
+    for (const e of entries) allWords.push({ ...e, source: src });
+  }
+  const rng = seededRandom(dailySeed(getTodayStr(), CLASS_ID));
+  for (let i = allWords.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [allWords[i], allWords[j]] = [allWords[j], allWords[i]];
+  }
+  return allWords.slice(0, 10);
+}
+
+function getDailyChallengeTypes() {
+  const types = ['context', 'context-hard', 'definition', 'definition-hard', 'translation'];
+  const rng = seededRandom(dailySeed(getTodayStr(), CLASS_ID) + 999);
+  return Array.from({length: 10}, () => types[Math.floor(rng() * types.length)]);
+}
+
+function calculateSessionXP(results) {
+  let xp = 0;
+  for (const r of results) {
+    if (r.correct) xp += (XP_TABLE[r.type] || 5);
+  }
+  if (results.length >= 5 && results.every(r => r.correct)) xp += 20;
+  const streak = Math.min(state.studentData?.streak || 0, 7);
+  xp += streak * 5;
+  return xp;
+}
+
+function updateStreak(data) {
+  const today = getTodayStr();
+  const last = data.lastSessionDate || '';
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  if (last === today) return { streak: data.streak || 1, lastSessionDate: today };
+  if (last === yesterday) return { streak: (data.streak || 0) + 1, lastSessionDate: today };
+  return { streak: 1, lastSessionDate: today };
+}
+
+async function checkBadges(data, results) {
+  const mastered = getTotalMastered();
+  const earned = data.badges || [];
+  const newBadges = [];
+  for (const b of BADGE_DEFS) {
+    if (earned.includes(b.id)) continue;
+    if (b.check(data, mastered, results)) newBadges.push(b);
+  }
+  if (newBadges.length > 0) {
+    const allBadges = [...earned, ...newBadges.map(b => b.id)];
+    await studentsRef.doc(state.studentId).update({ badges: allBadges });
+    state.studentData.badges = allBadges;
+    showBadgePopups(newBadges);
+  }
+}
+
+function showBadgePopups(badges) {
+  let delay = 0;
+  for (const b of badges) {
+    setTimeout(() => {
+      document.getElementById('badge-popup-icon').textContent = b.icon;
+      document.getElementById('badge-popup-name').textContent = b.name;
+      document.getElementById('badge-popup').classList.add('show');
+      setTimeout(() => document.getElementById('badge-popup').classList.remove('show'), 3000);
+    }, delay);
+    delay += 3500;
+  }
+}
+
+function renderBadgeRow() {
+  const row = document.getElementById('badge-row');
+  const earned = state.studentData?.badges || [];
+  if (earned.length === 0) {
+    row.innerHTML = '<div class="badge-icon empty" onclick="showBadgeModal()" title="Earn badges by practising!">🏅</div>';
+    return;
+  }
+  row.innerHTML = earned.map(id => {
+    const b = BADGE_DEFS.find(x => x.id === id);
+    return b ? `<div class="badge-icon" onclick="showBadgeModal()" title="${b.name}">${b.icon}</div>` : '';
+  }).join('');
+}
+
+function showBadgeModal() {
+  const list = document.getElementById('badge-modal-list');
+  const earned = state.studentData?.badges || [];
+  list.innerHTML = BADGE_DEFS.map(b => {
+    const has = earned.includes(b.id);
+    return `<div class="badge-item ${has ? '' : 'locked'}"><div class="badge-item-icon">${b.icon}</div><div class="badge-item-info"><div class="badge-item-name">${has ? b.name : '???'}</div><div class="badge-item-desc">${b.desc}</div></div></div>`;
+  }).join('');
+  document.getElementById('badge-modal').classList.add('show');
+}
+
+function renderDailyCard() {
+  const today = getTodayStr();
+  const dateEl = document.getElementById('daily-date');
+  const actionEl = document.getElementById('daily-action');
+  dateEl.textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  const log = state.studentData?.dailyChallengeLog || {};
+  if (log[today]) {
+    actionEl.innerHTML = `<div class="daily-card-done">✅ Done today: ${log[today].score}/${log[today].total} (${log[today].pct}%)</div>`;
+  } else {
+    actionEl.innerHTML = '<button class="btn-daily" onclick="startDailyChallenge()">Start Challenge</button>';
+  }
+}
+
+let isDailyChallenge = false;
+let dailyChallengeTypes = [];
+
+function startDailyChallenge() {
+  isDailyChallenge = true;
+  state.exerciseType = 'mix';
+  state.words = getDailyChallengeWords();
+  dailyChallengeTypes = getDailyChallengeTypes();
+  state.currentIdx = 0;
+  state.score = 0;
+  state.results = [];
+  state.answered = false;
+  showScreen('practice-screen');
+  showWord();
+}
+
+async function saveDailyChallengeResult() {
+  const today = getTodayStr();
+  const score = state.score;
+  const total = state.words.length;
+  const pct = Math.round((score / total) * 100);
+  await studentsRef.doc(state.studentId).update({
+    [`dailyChallengeLog.${today}`]: { score, total, pct }
+  });
+  if (!state.studentData.dailyChallengeLog) state.studentData.dailyChallengeLog = {};
+  state.studentData.dailyChallengeLog[today] = { score, total, pct };
+  // Daily challenge bonus XP
+  let bonusXP = 15;
+  if (pct === 100) bonusXP += 30;
+  await studentsRef.doc(state.studentId).update({
+    xp: firebase.firestore.FieldValue.increment(bonusXP)
+  });
+  state.studentData.xp = (state.studentData.xp || 0) + bonusXP;
+}
+
+async function showLeaderboard() {
+  showScreen('leaderboard-screen');
+  const snapshot = await studentsRef.get();
+  const students = [];
+  snapshot.forEach(doc => {
+    const d = doc.data();
+    students.push({ id: doc.id, name: d.name, xp: d.xp || 0, daily: d.dailyChallengeLog || {} });
+  });
+  // Main leaderboard
+  students.sort((a, b) => b.xp - a.xp);
+  const medals = ['🥇', '🥈', '🥉'];
+  document.getElementById('lb-main').innerHTML = students.map((s, i) => {
+    const isMe = s.id === state.studentId;
+    const rank = i < 3 ? medals[i] : `${i + 1}.`;
+    return `<div class="lb-row ${isMe ? 'me' : ''}"><span class="lb-rank">${rank}</span><span class="lb-name">${s.name}${isMe ? ' ← you' : ''}</span><span class="lb-xp">${s.xp.toLocaleString()} XP</span></div>`;
+  }).join('') || '<p style="color:var(--muted);text-align:center;padding:1rem;">No students yet</p>';
+  // Daily challenge leaderboard
+  const today = getTodayStr();
+  const dailyStudents = students.filter(s => s.daily[today]).map(s => ({ ...s, ...s.daily[today] })).sort((a, b) => b.score - a.score);
+  document.getElementById('lb-daily').innerHTML = dailyStudents.map((s, i) => {
+    const isMe = s.id === state.studentId;
+    return `<div class="lb-row ${isMe ? 'me' : ''}"><span class="lb-rank">${i + 1}.</span><span class="lb-name">${s.name}</span><span class="lb-score">${s.score}/${s.total}</span></div>`;
+  }).join('') || "<p style=\"color:var(--muted);text-align:center;padding:0.5rem;font-size:0.85rem;\">No one has done today's challenge yet</p>";
+}
+
+function getSmartReviewWords(limit = 20) {
+  const candidates = [];
+  for (const [src, entries] of Object.entries(vocabData)) {
+    const slug = slugify(src);
+    const prog = state.progressData[slug];
+    if (!prog || !prog.words) continue;
+    for (const entry of entries) {
+      const p = prog.words[entry.w];
+      if (!p) continue;
+      const c = p.c || 0, w = p.w || 0;
+      if (c >= 3 && c > w) continue;
+      let priority = 0;
+      const total = c + w;
+      if (total > 0) priority += (w / total) * 10;
+      priority += Math.min(w, 5);
+      if (c === 2 && w <= 1) priority += 3;
+      if (total >= 5 && w >= c) priority += 4;
+      if (priority > 0) candidates.push({ ...entry, source: src, priority });
+    }
+  }
+  candidates.sort((a, b) => b.priority - a.priority);
+  return candidates.slice(0, limit);
+}
+
+function startSmartReview() {
+  const words = getSmartReviewWords();
+  if (words.length === 0) return;
+  state.selectedSources.clear();
+  words.forEach(w => state.selectedSources.add(w.source));
+  state.words = words;
+  state.exerciseType = 'mix';
+  state.currentIdx = 0;
+  state.score = 0;
+  state.results = [];
+  state.answered = false;
+  isDailyChallenge = false;
+  showScreen('practice-screen');
+  showWord();
+}
+
+// ===== FIREBASE HELPERS =====
+function slugify(name) {
+  return name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+}
+
+let pendingLoginName = '';
+let pendingLoginId = '';
+
+
+function showNameStep() {
+  document.getElementById('login-step-name').style.display = '';
+  document.getElementById('login-step-pin').style.display = 'none';
+  document.getElementById('login-step-set-pin').style.display = 'none';
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('pin-error').style.display = 'none';
+  document.getElementById('set-pin-error').style.display = 'none';
+}
+
+
+// ===== PROFANITY FILTER =====
+const _pf = (function() {
+  // Compact word list: English + German common profanity/slurs
+  const words = [
+    // English profanity
+    'fuck','shit','ass','asshole','bitch','bastard','dick','cock','cunt',
+    'wanker','piss','slut','whore','twat','bollocks','wank','tits',
+    'penis','vagina','anus','dildo','porn','sexy','nude','naked','hentai',
+    'butthole','arsehole','jackass','dumbass','dipshit','bullshit',
+    'motherfucker','fucker','fucking','shitty','douchebag',
+    'douche','prick','jerkoff','blowjob','handjob',
+    // English racial slurs & dogwhistles
+    'nigger','nigga','nigg','negro','negroid','coon','darkie','spic',
+    'spick','wetback','beaner','chink','chinky','gook','zipperhead',
+    'slant','slanteye','jap','paki','raghead','towelhead','sandnigger',
+    'camel jockey','redskin','injun','kike','heeb','yid',
+    'cracker','honky','gringo','wigger','halfbreed',
+    'fag','faggot','dyke','tranny','shemale','retard','retarded',
+    'mongol','mongoloid','spaz','spastic','cripple',
+    // Dogwhistles & hate symbols
+    'fourteen words','1488','heil','sieg heil','white power',
+    'white pride','rahowa','zog','goyim','dindu',
+    'jogger','despite','groyper','fren','boogaloo',
+    // German profanity
+    'fick','ficken','ficker','scheiße','scheisse','scheiss','arsch',
+    'arschloch','fotze','hurensohn','hure','wichser','wichsen','schwanz',
+    'schwuchtel','missgeburt','spast','spasti','vollidiot',
+    'drecksau','schlampe','nutte','pisser','kacke','wixxer','wixxen',
+    // German racial slurs & hate speech
+    'neger','kanake','kanack','kameltreiber','kümmeltürke','kuemmeltuerke',
+    'schlitzauge','polacke','zigeuner','zigo','itaker','spaghettifresser',
+    'nazi','hitler','holocaust','vergasung','judensau','judenschwein',
+    'ausländer raus','auslander raus','volksverräter','volksverraeter',
+    'umvolkung','lügenpresse','luegenpresse','untermensch',
+    'nsdap','reichsbürger','reichsbuerger','sieg heil','heil hitler'
+  ];
+  // Leetspeak substitutions
+  const leet = {'0':'o','1':'i','3':'e','4':'a','5':'s','7':'t','@':'a','!':'i','$':'s'};
+  function normalize(s) {
+    return s.toLowerCase().replace(/[0134579@!$]/g, c => leet[c] || c).replace(/[^a-zäöüß]/g, '');
+  }
+  return function(name) {
+    const n = normalize(name);
+    for (const w of words) {
+      if (n.includes(w)) return true;
+    }
+    return false;
+  };
+})();
+
+async function handleNameSubmit() {
+  const nameInput = document.getElementById('login-name');
+  const name = nameInput.value.trim();
+  if (!name) { showLoginError('Please enter your name'); return; }
+  if (name.length < 2) { showLoginError('Name must be at least 2 characters'); return; }
+  if (_pf(name)) { showLoginError("That name is not allowed. Please choose another."); return; }
+
+  const id = slugify(name);
+  pendingLoginName = name;
+  pendingLoginId = id;
+
+  document.getElementById('login-btn').disabled = true;
+  document.getElementById('login-btn').textContent = 'Checking...';
+
+  try {
+    const doc = await studentsRef.doc(id).get();
+    if (doc.exists && doc.data().pin) {
+      // Returning student with PIN → ask for PIN
+      document.getElementById('pin-display-name').textContent = doc.data().name;
+      document.getElementById('login-step-name').style.display = 'none';
+      document.getElementById('login-step-pin').style.display = 'block';
+      document.getElementById('login-pin').value = '';
+      document.getElementById('pin-error').style.display = 'none';
+      setTimeout(() => document.getElementById('login-pin').focus(), 100);
+    } else if (doc.exists && !doc.data().pin) {
+      // Existing student without PIN (legacy) → ask them to set one
+      document.getElementById('set-pin-display-name').textContent = doc.data().name;
+      document.getElementById('login-step-name').style.display = 'none';
+      document.getElementById('login-step-set-pin').style.display = 'block';
+      document.getElementById('set-pin').value = '';
+      document.getElementById('set-pin-error').style.display = 'none';
+      setTimeout(() => document.getElementById('set-pin').focus(), 100);
+    } else {
+      // New student → set PIN
+      document.getElementById('set-pin-display-name').textContent = name;
+      document.getElementById('login-step-name').style.display = 'none';
+      document.getElementById('login-step-set-pin').style.display = 'block';
+      document.getElementById('set-pin').value = '';
+      document.getElementById('set-pin-error').style.display = 'none';
+      setTimeout(() => document.getElementById('set-pin').focus(), 100);
+    }
+  } catch (e) {
+    console.error('Name check error:', e);
+    showLoginError('Connection error. Check your internet and try again.');
+  }
+  document.getElementById('login-btn').disabled = false;
+  document.getElementById('login-btn').textContent = 'Continue';
+}
+
+async function handlePinSubmit() {
+  const pin = document.getElementById('login-pin').value.trim();
+  if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+    showPinError('pin-error', 'Please enter a 4-digit PIN');
+    return;
+  }
+
+  try {
+    const doc = await studentsRef.doc(pendingLoginId).get();
+    if (!doc.exists) { showPinError('pin-error', 'Student not found'); return; }
+    const data = doc.data();
+    if (data.pin !== pin) {
+      showPinError('pin-error', 'Wrong PIN. Try again.');
+      document.getElementById('login-pin').value = '';
+      document.getElementById('login-pin').focus();
+      return;
+    }
+    // PIN correct — log in
+    state.studentData = data;
+    await studentsRef.doc(pendingLoginId).update({ lastActive: firebase.firestore.FieldValue.serverTimestamp() });
+    state.studentId = pendingLoginId;
+    state.studentName = pendingLoginName;
+    localStorage.setItem('2nd-grade-vocab-student', JSON.stringify({ id: pendingLoginId, name: pendingLoginName, pin: pin }));
+    await loadProgress();
+    showHomeScreen();
+  } catch (e) {
+    console.error('PIN login error:', e);
+    showPinError('pin-error', 'Connection error. Try again.');
+  }
+}
+
+async function handleSetPin() {
+  const pin = document.getElementById('set-pin').value.trim();
+  if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+    showPinError('set-pin-error', 'PIN must be exactly 4 digits');
+    return;
+  }
+
+  try {
+    // Check if student already exists (legacy without PIN) or is brand new
+    const existingDoc = await studentsRef.doc(pendingLoginId).get();
+    if (existingDoc.exists) {
+      // Legacy student — just add PIN
+      await studentsRef.doc(pendingLoginId).update({
+        pin: pin,
+        lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      state.studentData = { ...existingDoc.data(), pin: pin };
+    } else {
+      // Brand new student
+      const newStudent = {
+        name: pendingLoginName,
+        pin: pin,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+        totalSessions: 0, totalCorrect: 0, totalAnswered: 0,
+        xp: 0, streak: 0, lastSessionDate: '', badges: [], dailyChallengeLog: {}, exerciseTypesUsed: []
+      };
+      await studentsRef.doc(pendingLoginId).set(newStudent);
+      state.studentData = { ...newStudent, totalSessions: 0, totalCorrect: 0, totalAnswered: 0, xp: 0, streak: 0, badges: [], dailyChallengeLog: {}, exerciseTypesUsed: [] };
+    }
+    state.studentId = pendingLoginId;
+    state.studentName = pendingLoginName;
+    localStorage.setItem('2nd-grade-vocab-student', JSON.stringify({ id: pendingLoginId, name: pendingLoginName, pin: pin }));
+    await loadProgress();
+    showHomeScreen();
+  } catch (e) {
+    console.error('Registration error:', e);
+    showPinError('set-pin-error', 'Connection error. Try again.');
+  }
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function showPinError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+async function loadProgress() {
+  state.progressData = {};
+  try {
+    const snap = await studentsRef.doc(state.studentId).collection('progress').get();
+    snap.forEach(doc => { state.progressData[doc.id] = doc.data(); });
+  } catch (e) { console.error('Error loading progress:', e); }
+}
+
+async function saveSessionResults() {
+  if (!state.studentId || state.results.length === 0) return;
+  const statusEl = document.getElementById('save-status');
+  statusEl.textContent = 'Saving...';
+
+  try {
+    const sources = [...new Set(state.results.map(r => r.word.source))];
+    const pct = state.words.length > 0 ? Math.round((state.score / state.words.length) * 100) : 0;
+
+    // Save session
+    await studentsRef.doc(state.studentId).collection('sessions').add({
+      date: firebase.firestore.FieldValue.serverTimestamp(),
+      sources: sources,
+      type: state.exerciseType,
+      score: state.score,
+      total: state.words.length,
+      pct: pct,
+    });
+
+    // Update student stats + gamification
+    const earnedXP = calculateSessionXP(state.results);
+    const streakUpdate = updateStreak(state.studentData);
+    const usedTypes = [...new Set(state.results.map(r => r.type))];
+    const allUsed = [...new Set([...(state.studentData.exerciseTypesUsed || []), ...usedTypes])];
+
+    await studentsRef.doc(state.studentId).update({
+      totalSessions: firebase.firestore.FieldValue.increment(1),
+      totalCorrect: firebase.firestore.FieldValue.increment(state.score),
+      totalAnswered: firebase.firestore.FieldValue.increment(state.words.length),
+      lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+      xp: firebase.firestore.FieldValue.increment(earnedXP),
+      streak: streakUpdate.streak,
+      lastSessionDate: streakUpdate.lastSessionDate,
+      exerciseTypesUsed: allUsed
+    });
+    state.studentData.xp = (state.studentData.xp || 0) + earnedXP;
+    state.studentData.streak = streakUpdate.streak;
+    state.studentData.lastSessionDate = streakUpdate.lastSessionDate;
+    state.studentData.exerciseTypesUsed = allUsed;
+    state.studentData.totalSessions = (state.studentData.totalSessions || 0) + 1;
+
+    // Update per-source word progress
+    const progressBySource = {};
+    for (const r of state.results) {
+      const src = r.word.source;
+      if (!progressBySource[src]) progressBySource[src] = {};
+      const key = r.word.w;
+      if (!progressBySource[src][key]) progressBySource[src][key] = { c: 0, w: 0 };
+      if (r.correct) progressBySource[src][key].c++;
+      else progressBySource[src][key].w++;
+    }
+
+    for (const [src, words] of Object.entries(progressBySource)) {
+      const slug = slugify(src);
+      const docRef = studentsRef.doc(state.studentId).collection('progress').doc(slug);
+      const existing = state.progressData[slug];
+
+      if (existing && existing.words) {
+        const merged = { ...existing.words };
+        for (const [w, counts] of Object.entries(words)) {
+          if (merged[w]) {
+            merged[w] = { c: (merged[w].c || 0) + counts.c, w: (merged[w].w || 0) + counts.w };
+          } else {
+            merged[w] = counts;
+          }
+        }
+        await docRef.set({ source: src, words: merged });
+        state.progressData[slug] = { source: src, words: merged };
+      } else {
+        await docRef.set({ source: src, words: words });
+        state.progressData[slug] = { source: src, words: words };
+      }
+    }
+
+    // Refresh student data
+    const freshDoc = await studentsRef.doc(state.studentId).get();
+    if (freshDoc.exists) state.studentData = freshDoc.data();
+
+    statusEl.textContent = 'Progress saved!';
+  } catch (e) {
+    console.error('Save error:', e);
+    statusEl.textContent = 'Could not save (offline?)';
+  }
+}
+
+function logout() {
+  localStorage.removeItem('2nd-grade-vocab-student');
+  state.studentId = null;
+  state.studentName = null;
+  state.studentData = null;
+  state.progressData = {};
+  document.getElementById('login-name').value = '';
+  showNameStep();
+  showScreen('login-screen');
+}
+
+// ===== PROGRESS HELPERS =====
+function getSourceProgress(sourceKey) {
+  const slug = slugify(sourceKey);
+  const prog = state.progressData[slug];
+  if (!prog || !prog.words) return { practiced: 0, mastered: 0, total: vocabData[sourceKey].length };
+  const total = vocabData[sourceKey].length;
+  let practiced = 0, mastered = 0;
+  for (const w of Object.values(prog.words)) {
+    practiced++;
+    if (w.c >= 3 && w.c > w.w) mastered++;
+  }
+  return { practiced, mastered, total };
+}
+
+function getTotalMastered() {
+  let total = 0;
+  for (const key of Object.keys(vocabData)) {
+    total += getSourceProgress(key).mastered;
+  }
+  return total;
+}
+
+function getWeakWords() {
+  const weak = [];
+  for (const [src, entries] of Object.entries(vocabData)) {
+    const slug = slugify(src);
+    const prog = state.progressData[slug];
+    if (!prog || !prog.words) continue;
+    for (const entry of entries) {
+      const w = prog.words[entry.w];
+      if (w && w.w > 0 && w.w >= w.c) {
+        weak.push({ ...entry, source: src });
+      }
+    }
+  }
+  return weak;
+}
+
+// ===== PROGRESS SCREEN =====
+function showProgressScreen() {
+  const allSources = Object.keys(vocabData);
+  let totalWords = 0, totalMastered = 0, totalPracticed = 0, totalWeak = 0;
+
+  const sourceDetails = [];
+  for (const key of allSources) {
+    const entries = vocabData[key];
+    const slug = slugify(key);
+    const prog = state.progressData[slug];
+    const words = prog && prog.words ? prog.words : {};
+
+    let mastered = 0, practiced = 0, weak = 0;
+    const wordDetails = [];
+
+    for (const entry of entries) {
+      const w = words[entry.w];
+      let status = 'unseen';
+      let c = 0, wr = 0;
+      if (w) {
+        c = w.c || 0; wr = w.w || 0;
+        practiced++;
+        if (c >= 3 && c > wr) { mastered++; status = 'mastered'; }
+        else if (wr > 0 && wr >= c) { weak++; status = 'weak'; }
+        else { status = 'practiced'; }
+      }
+      wordDetails.push({ word: entry.w, status, c, w: wr });
+    }
+
+    // Sort: weak first, then practiced, then mastered, then unseen
+    const order = { weak: 0, practiced: 1, unseen: 2, mastered: 3 };
+    wordDetails.sort((a, b) => order[a.status] - order[b.status]);
+
+    totalWords += entries.length;
+    totalMastered += mastered;
+    totalPracticed += practiced;
+    totalWeak += weak;
+
+    sourceDetails.push({ key, total: entries.length, mastered, practiced, weak, wordDetails });
+  }
+
+  const unseen = totalWords - totalPracticed;
+
+  // Update ring
+  const circumference = 2 * Math.PI * 60; // ~377
+  const masteredPct = totalWords > 0 ? totalMastered / totalWords : 0;
+  const practicedPct = totalWords > 0 ? (totalPracticed - totalMastered) / totalWords : 0;
+  document.getElementById('ring-mastered').style.strokeDashoffset = circumference - (masteredPct * circumference);
+  document.getElementById('ring-practiced').style.strokeDashoffset = circumference - ((masteredPct + practicedPct) * circumference);
+  document.getElementById('ring-pct').textContent = Math.round(masteredPct * 100) + '%';
+
+  // Update stat cards
+  document.getElementById('prog-total-words').textContent = totalWords;
+  document.getElementById('prog-mastered').textContent = totalMastered;
+  document.getElementById('prog-practiced').textContent = totalPracticed;
+  document.getElementById('prog-weak').textContent = totalWeak;
+  document.getElementById('prog-unseen').textContent = unseen;
+
+  // Build source list
+  const list = document.getElementById('source-progress-list');
+  list.innerHTML = '';
+
+  for (const src of sourceDetails) {
+    const item = document.createElement('div');
+    item.className = 'source-progress-item';
+    const unseenSrc = src.total - src.practiced;
+    const masteredPctSrc = src.total > 0 ? Math.round((src.mastered / src.total) * 100) : 0;
+    const practicedPctSrc = src.total > 0 ? Math.round(((src.practiced - src.mastered - src.weak) / src.total) * 100) : 0;
+    const weakPctSrc = src.total > 0 ? Math.round((src.weak / src.total) * 100) : 0;
+
+    const statusIcons = {
+      mastered: '✅',
+      practiced: '🔵',
+      weak: '⚠️',
+      unseen: '◯',
+    };
+
+    let wordRows = '';
+    for (const wd of src.wordDetails) {
+      wordRows += `<div class="word-detail-row ${wd.status}">
+        <div class="word-detail-status">${statusIcons[wd.status]}</div>
+        <div class="word-detail-name">${wd.word}</div>
+        <div class="word-detail-counts">
+          ${wd.status !== 'unseen' ? `<span class="correct-count">✓${wd.c}</span><span class="wrong-count">✗${wd.w}</span>` : '<span style="color:var(--muted)">—</span>'}
+        </div>
+      </div>`;
+    }
+
+    item.innerHTML = `
+      <div class="source-progress-header">
+        <div class="source-progress-name">${src.key}</div>
+        <div class="source-progress-stats">
+          <span class="mastered-count">✅ ${src.mastered}</span>
+          <span class="weak-count">⚠️ ${src.weak}</span>
+          <span class="not-seen-count">◯ ${unseenSrc}</span>
+        </div>
+      </div>
+      <div class="source-progress-bar">
+        <div class="bar-mastered" style="width:${masteredPctSrc}%"></div>
+        <div class="bar-practiced" style="width:${practicedPctSrc}%"></div>
+        <div class="bar-weak" style="width:${weakPctSrc}%"></div>
+      </div>
+      <div class="word-detail-list">${wordRows}</div>
+    `;
+
+    item.addEventListener('click', () => item.classList.toggle('expanded'));
+    list.appendChild(item);
+  }
+
+  showScreen('progress-screen');
+}
+
+// ===== WORD REFERENCE =====
+function showWordReference() {
+  // Populate source filter dropdown
+  const select = document.getElementById('ref-source-filter');
+  select.innerHTML = '<option value="all">All Sources</option>';
+  for (const key of Object.keys(vocabData)) {
+    const opt = document.createElement('option');
+    opt.value = key; opt.textContent = key;
+    select.appendChild(opt);
+  }
+  document.getElementById('ref-search').value = '';
+  buildReferenceList('all', '');
+  showScreen('reference-screen');
+}
+
+function filterReference() {
+  const source = document.getElementById('ref-source-filter').value;
+  const search = document.getElementById('ref-search').value.trim().toLowerCase();
+  buildReferenceList(source, search);
+}
+
+function buildReferenceList(sourceFilter, searchTerm) {
+  const list = document.getElementById('ref-list');
+  list.innerHTML = '';
+  let totalShown = 0;
+
+  const sources = sourceFilter === 'all' ? Object.keys(vocabData) : [sourceFilter];
+
+  for (const src of sources) {
+    const entries = vocabData[src];
+    if (!entries) continue;
+
+    const filtered = entries.filter(e => {
+      if (!searchTerm) return true;
+      return e.w.toLowerCase().includes(searchTerm) ||
+             e.g.toLowerCase().includes(searchTerm) ||
+             e.d.toLowerCase().includes(searchTerm);
+    });
+
+    if (filtered.length === 0) continue;
+
+    const group = document.createElement('div');
+    group.className = 'ref-source-group';
+    group.innerHTML = `<div class="ref-source-title">${src} · ${filtered.length} words</div>`;
+
+    for (const entry of filtered) {
+      const item = document.createElement('div');
+      item.className = 'ref-word-item';
+      // Clean sentence: replace _____ with the actual word in bold
+      const sentenceDisplay = entry.s.replace('_____', `<strong style="color:var(--accent)">${entry.w}</strong>`);
+      item.innerHTML = `
+        <div class="ref-word-header">
+          <span class="ref-word-en">${entry.w}</span>
+          <span class="ref-word-de">${entry.g}</span>
+        </div>
+        <div class="ref-word-details">
+          <div class="ref-detail-label">Definition</div>
+          <div class="ref-detail-text">${entry.d}</div>
+          <div class="ref-detail-label">Example</div>
+          <div class="ref-detail-text">${sentenceDisplay}</div>
+        </div>
+      `;
+      item.addEventListener('click', () => item.classList.toggle('expanded'));
+      group.appendChild(item);
+    }
+
+    list.appendChild(group);
+    totalShown += filtered.length;
+  }
+
+  document.getElementById('ref-count').textContent = `Showing ${totalShown} word${totalShown !== 1 ? 's' : ''}`;
+}
+
+// ===== UI INIT =====
+function initSourceGrid() {
+  const unitGrid = document.getElementById('source-grid-units');
+  unitGrid.innerHTML = '';
+  for (const key of Object.keys(vocabData)) {
+    const btn = document.createElement('button');
+    btn.className = 'source-btn';
+    btn.dataset.source = key;
+    const prog = getSourceProgress(key);
+    const pct = prog.total > 0 ? Math.round((prog.mastered / prog.total) * 100) : 0;
+    btn.innerHTML = `${key}<span class="count">${vocabData[key].length} words</span><div class="progress-indicator" style="width:${pct}%"></div>`;
+    btn.onclick = () => toggleSource(btn);
+    unitGrid.appendChild(btn);
+  }
+  updateWordCount();
+}
+
+function showHomeScreen() {
+  // Welcome
+  document.getElementById('welcome-name').innerHTML = `${state.studentName} <small>2nd Grade</small>`;
+  document.getElementById('welcome-xp').innerHTML = `⭐ ${(state.studentData?.xp || 0).toLocaleString()} XP`;
+
+  // Stats
+  const d = state.studentData || {};
+  document.getElementById('stat-sessions').textContent = d.totalSessions || 0;
+  const acc = d.totalAnswered > 0 ? Math.round((d.totalCorrect / d.totalAnswered) * 100) + '%' : '–';
+  document.getElementById('stat-accuracy').textContent = acc;
+  const mastered = getTotalMastered();
+  document.getElementById('stat-mastered').textContent = mastered;
+  document.getElementById('stat-streak').textContent = state.studentData?.streak || 0;
+  renderBadgeRow();
+  renderDailyCard();
+
+  // Smart review button (replaces old weak words)
+  const reviewWords2 = getSmartReviewWords();
+  const reviewBtn2 = document.getElementById('review-btn');
+  if (reviewBtn2) {
+    if (reviewWords2.length > 0) {
+      reviewBtn2.style.display = '';
+      reviewBtn2.textContent = `🔄 Smart Review (${reviewWords2.length} words)`;
+    } else {
+      reviewBtn2.style.display = 'none';
+    }
+  }
+
+  initSourceGrid();
+  showScreen('home-screen');
+}
+
+function toggleSource(btn) {
+  const src = btn.dataset.source;
+  if (state.selectedSources.has(src)) {
+    state.selectedSources.delete(src);
+    btn.classList.remove('selected');
+  } else {
+    state.selectedSources.add(src);
+    btn.classList.add('selected');
+  }
+  updateWordCount();
+}
+
+function selectAll(mode) {
+  const btns = document.querySelectorAll('.source-btn');
+  state.selectedSources.clear();
+  btns.forEach(b => b.classList.remove('selected'));
+  if (mode === 'none') { updateWordCount(); return; }
+  btns.forEach(b => {
+    const src = b.dataset.source;
+    const isList = src.startsWith('List');
+    const isUnit = src.startsWith('Unit');
+    if (mode === 'all' || (mode === 'list' && isList) || (mode === 'unit' && isUnit)) {
+      state.selectedSources.add(src);
+      b.classList.add('selected');
+    }
+  });
+  updateWordCount();
+}
+
+function selectType(btn) {
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.exerciseType = btn.dataset.type;
+}
+
+function updateWordCount() {
+  let count = 0;
+  state.selectedSources.forEach(src => { count += vocabData[src].length; });
+  const el = document.getElementById('word-count');
+  const startBtn = document.getElementById('start-btn');
+  if (count === 0) {
+    el.innerHTML = 'Select sources to begin';
+    startBtn.disabled = true;
+  } else {
+    el.innerHTML = `<strong>${count}</strong> words selected`;
+    startBtn.disabled = false;
+  }
+}
+
+// ===== PRACTICE =====
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startPractice() {
+  state.words = [];
+  state.selectedSources.forEach(src => {
+    vocabData[src].forEach(word => { state.words.push({ ...word, source: src }); });
+  });
+  shuffle(state.words);
+  state.currentIdx = 0;
+  state.score = 0;
+  state.results = [];
+  state.answered = false;
+  document.body.classList.add('playing');
+  showScreen('practice-screen');
+  showWord();
+}
+
+function startPracticeWith(words) {
+  state.words = shuffle([...words]);
+  state.currentIdx = 0;
+  state.score = 0;
+  state.results = [];
+  state.answered = false;
+  document.body.classList.add('playing');
+  showScreen('practice-screen');
+  showWord();
+}
+
+function practiceWeakWords() {
+  const weak = getWeakWords();
+  if (weak.length === 0) return;
+  startPracticeWith(weak);
+}
+
+function getTaskType() {
+  if (isDailyChallenge && dailyChallengeTypes.length > 0) return dailyChallengeTypes[state.currentIdx % dailyChallengeTypes.length];
+  if (state.exerciseType !== 'mix') return state.exerciseType;
+  const types = ['context', 'context-hard', 'definition', 'definition-hard', 'translation'];
+  return types[Math.floor(Math.random() * types.length)];
+}
+
+function getContextForm(word) {
+  // If entry has explicit context form, use it
+  if (word.cf) return word.cf;
+  // Auto-strip common prefixes from dictionary form
+  const w = word.w;
+  if (/^to\s+/i.test(w)) return w.replace(/^to\s+/i, '');
+  if (/^a\s+/i.test(w)) return w.replace(/^a\s+/i, '');
+  if (/^an\s+/i.test(w)) return w.replace(/^an\s+/i, '');
+  return w;
+}
+
+function getFirstLetterHint(word, showLetterCount) {
+  // Split on spaces and hyphens (keep separators)
+  const parts = word.trim().split(/(\s+|-)/);
+  const small = new Set(['to','a','an','the','in','on','of','for','at','up','out','by','with','off','down']);
+  if (showLetterCount) {
+    // Easy: show small words fully, content words get first letter + exact underscore count
+    return parts.map(p => {
+      if (/^[\s-]+$/.test(p)) return p;
+      if (small.has(p.toLowerCase()) && parts.filter(x => !/^[\s-]+$/.test(x)).length > 1) return p;
+      return p[0] + '_'.repeat(Math.max(p.length - 1, 1));
+    }).join('');
+  } else {
+    // Hard: just first letter of the whole phrase + one continuous line
+    const allWords = parts.filter(x => !/^[\s-]+$/.test(x));
+    const firstContent = allWords.find(p => !small.has(p.toLowerCase())) || allWords[0];
+    return firstContent[0].toLowerCase() + '_'.repeat(14);
+  }
+}
+
+function showWord() {
+  if (state.currentIdx >= state.words.length) { endPractice(); return; }
+  const word = state.words[state.currentIdx];
+  const type = getTaskType();
+  state.currentType = type;
+  state.answered = false;
+
+  const pct = (state.currentIdx / state.words.length) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-count').textContent = `${state.currentIdx + 1}/${state.words.length}`;
+  document.getElementById('progress-score').textContent = `Score: ${state.score}`;
+
+  const label = document.getElementById('task-label');
+  const isContext = type === 'context' || type === 'context-hard';
+  const isDef = type === 'definition' || type === 'definition-hard';
+  label.className = 'task-type-label ' + (isContext ? 'context' : isDef ? 'definition' : type);
+  label.textContent = isContext ? 'Complete the sentence' : isDef ? 'Guess the word' : 'Translate to English';
+
+  const prompt = document.getElementById('quiz-prompt');
+  if (isContext) {
+    const showLetterCount = type === 'context';
+    const contextForm = getContextForm(word);
+    if (showLetterCount) {
+      const hint = getFirstLetterHint(contextForm, true);
+      prompt.innerHTML = word.s.replace('_____', `<span class="gap">${hint}</span>`);
+    } else {
+      // Hard mode: first letter + one solid CSS line
+      const parts = contextForm.trim().split(/(\s+|-)/);
+      const small = new Set(['to','a','an','the','in','on','of','for','at','up','out','by','with','off','down']);
+      const allWords = parts.filter(x => !/^[\s-]+$/.test(x));
+      const firstContent = allWords.find(p => !small.has(p.toLowerCase())) || allWords[0];
+      const letter = firstContent[0];
+      prompt.innerHTML = word.s.replace('_____', `<span class="gap gap-hard">${letter}<span class="gap-line"></span></span>`);
+    }
+  } else if (isDef) {
+    if (type === 'definition') {
+      // Easy mode: show first letter pattern + word count
+      const cleaned = word.w.replace(/^to\s+/, '').replace(/\(.*?\)/g, '').replace(/\bsth\.?\s*/g, '').replace(/\bsb\.?\s*/g, '').replace(/[.!?]+$/g, '').trim().replace(/\s+/g, ' ');
+      const answerWords = cleaned.split(' ').filter(w => w.length > 0);
+      const wordCount = answerWords.length;
+      const small = new Set(['a','an','the','in','on','of','for','at','up','out','by','with','off','down','your','my','own','too','many','no']);
+      const hintParts = answerWords.map(w => {
+        if (small.has(w.toLowerCase()) && answerWords.length > 1) return w;
+        return w[0] + '_'.repeat(Math.max(w.length - 1, 1));
+      }).join(' ');
+      const countLabel = wordCount === 1 ? '1 word' : `${wordCount} words`;
+      prompt.innerHTML = `<em>${word.d}</em><div class="def-hint"><span class="def-hint-letter">${hintParts}</span><span class="def-hint-count">${countLabel}</span></div>`;
+    } else {
+      // Hard mode: just the definition, no hints
+      prompt.innerHTML = `<em>${word.d}</em>`;
+    }
+  } else {
+    prompt.innerHTML = `<span class="german-word">${word.g}</span>`;
+  }
+
+  document.getElementById('source-tag').textContent = word.source;
+
+  const input = document.getElementById('answer-input');
+  input.value = '';
+  input.className = 'answer-input';
+  input.disabled = false;
+  input.focus();
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+
+  document.getElementById('check-btn').style.display = '';
+  document.getElementById('skip-btn').style.display = '';
+  document.getElementById('check-btn').textContent = 'Check';
+  document.getElementById('check-btn').onclick = checkAnswer;
+}
+
+function normalizeAnswer(str) {
+  return str.toLowerCase().trim().replace(/['']/g, "'").replace(/\s+/g, ' ').replace(/^to\s+/, '').replace(/^a\s+/, '').replace(/^an\s+/, '');
+}
+
+function checkAnswer() {
+  if (state.answered) { nextWord(); return; }
+  const input = document.getElementById('answer-input');
+  const userAnswer = input.value.trim();
+  if (!userAnswer) return;
+
+  const word = state.words[state.currentIdx];
+  const correct = isCorrect(userAnswer, word);
+  state.answered = true;
+
+  const feedback = document.getElementById('feedback');
+  if (correct) {
+    state.score++;
+    input.className = 'answer-input correct';
+    feedback.className = 'feedback correct';
+    feedback.innerHTML = 'Correct!';
+  } else {
+    input.className = 'answer-input wrong';
+    feedback.className = 'feedback wrong';
+    const isCtx = state.currentType === 'context' || state.currentType === 'context-hard';
+    const isDef = state.currentType === 'definition' || state.currentType === 'definition-hard';
+    let displayAnswer;
+    if (isCtx) { displayAnswer = getContextForm(word); }
+    else if (isDef) {
+      displayAnswer = word.w.replace(/^to\s+/, '').replace(/\(.*?\)/g, '').replace(/\bsth\.?\s*/g, '').replace(/\bsb\.?\s*/g, '').replace(/[.!?]+$/g, '').trim().replace(/\s+/g, ' ');
+      if (displayAnswer !== word.w) displayAnswer += ' <span style="font-weight:400;color:var(--muted);font-size:0.85em;">(' + word.w + ')</span>';
+    }
+    else { displayAnswer = word.w; }
+    feedback.innerHTML = `The correct answer is: <span class="correct-answer">${displayAnswer}</span>`;
+  }
+
+  state.results.push({ word, correct, userAnswer, type: state.currentType });
+
+  input.disabled = true;
+  document.getElementById('check-btn').textContent = 'Next';
+  document.getElementById('check-btn').onclick = nextWord;
+  document.getElementById('skip-btn').style.display = 'none';
+}
+
+function spellVariants(s) {
+  const swaps = [
+    [/ise\b/g,'ize'],[/ize\b/g,'ise'],[/ised\b/g,'ized'],[/ized\b/g,'ised'],
+    [/ising\b/g,'izing'],[/izing\b/g,'ising'],[/isation/g,'ization'],[/ization/g,'isation'],
+    [/yse\b/g,'yze'],[/yze\b/g,'yse'],
+    [/our\b/g,'or'],[/([a-z])or\b/g,'$1our'],
+    [/ogue\b/g,'og'],[/elled\b/g,'eled'],[/eled\b/g,'elled'],
+    [/elling\b/g,'eling'],[/eling\b/g,'elling'],
+    [/eller\b/g,'eler'],[/eler\b/g,'eller'],[/ellery\b/g,'elry'],[/elry\b/g,'ellery'],
+    [/ence\b/g,'ense'],[/ense\b/g,'ence'],
+    [/tre\b/g,'ter'],[/ter\b/g,'tre'],
+    [/grey/g,'gray'],[/gray/g,'grey'],
+  ];
+  const v = new Set([s]);
+  for (const [p, r] of swaps) { if (p.test(s)) v.add(s.replace(p, r)); }
+  return [...v];
+}
+
+function isCorrect(userAnswer, word) {
+  const norm = normalizeAnswer(userAnswer);
+  const expected = normalizeAnswer(word.w);
+  const cf = normalizeAnswer(getContextForm(word));
+  const candidates = [expected, cf];
+  if (word.a) word.a.forEach(a => candidates.push(normalizeAnswer(a)));
+  const strip = s => s.replace(/[-_.,!?'"()]/g, '').replace(/\s+/g, ' ').trim();
+  const userV = spellVariants(norm);
+  const userS = spellVariants(strip(norm));
+  for (const c of candidates) {
+    for (const u of userV) { if (u === c) return true; }
+    const sc = strip(c);
+    for (const u of userS) { if (u === sc) return true; }
+  }
+  return false;
+}
+
+function skipWord() {
+  const word = state.words[state.currentIdx];
+  state.results.push({ word, correct: false, userAnswer: '(skipped)', type: state.currentType });
+  nextWord();
+}
+
+function nextWord() { state.currentIdx++; showWord(); }
+
+async function endPractice() {
+  document.body.classList.remove('playing');
+  showScreen('results-screen');
+
+  const pct = state.words.length > 0 ? Math.round((state.score / state.words.length) * 100) : 0;
+  const sessionXP = calculateSessionXP(state.results);
+  document.getElementById('final-score').textContent = pct + '%';
+  document.getElementById('final-label').textContent = `${state.score} of ${state.words.length} correct`;
+  document.getElementById('save-status').innerHTML = `<span style="color:var(--accent2);font-weight:700;">+${sessionXP} XP earned!</span>`;
+  document.getElementById('save-status').textContent = '';
+
+  const list = document.getElementById('results-list');
+  list.innerHTML = '';
+  const sorted = [...state.results].sort((a, b) => a.correct - b.correct);
+  for (const r of sorted) {
+    const item = document.createElement('div');
+    item.className = 'result-item ' + (r.correct ? 'correct' : 'wrong');
+    item.innerHTML = `
+      <span class="result-icon">${r.correct ? '✓' : '✗'}</span>
+      <span class="result-word">${r.word.w}</span>
+      <span class="result-answer">${r.correct ? '' : 'You: ' + r.userAnswer}</span>
+    `;
+    list.appendChild(item);
+  }
+
+  await saveSessionResults();
+  if (isDailyChallenge) await saveDailyChallengeResult();
+  await checkBadges(state.studentData, state.results);
+  isDailyChallenge = false;
+}
+
+function retryWrong() {
+  const wrongWords = state.results.filter(r => !r.correct).map(r => r.word);
+  if (wrongWords.length === 0) { goHome(); return; }
+  startPracticeWith(wrongWords);
+}
+
+function goHome() {
+  document.body.classList.remove('playing');
+  showHomeScreen();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (document.getElementById('login-screen').classList.contains('active')) {
+      if (document.getElementById('login-step-pin').style.display !== 'none') {
+        handlePinSubmit();
+      } else if (document.getElementById('login-step-set-pin').style.display !== 'none') {
+        handleSetPin();
+      } else {
+        handleNameSubmit();
+      }
+    } else if (document.getElementById('practice-screen').classList.contains('active')) {
+      if (state.answered) nextWord();
+      else checkAnswer();
+    }
+  }
+});
+
+// Pull-to-refresh prevention
+(function() {
+  let startY = 0;
+  document.addEventListener('touchstart', function(e) { startY = e.touches[0].pageY; }, { passive: true });
+  document.addEventListener('touchmove', function(e) {
+    if (window.scrollY === 0 && e.touches[0].pageY > startY) e.preventDefault();
+  }, { passive: false });
+})();
+
+// ===== INIT =====
+(async function() {
+  // Check for saved session (auto-login only if PIN matches)
+  const saved = localStorage.getItem('2nd-grade-vocab-student');
+  if (saved) {
+    try {
+      const { id, name, pin } = JSON.parse(saved);
+      if (id && pin) {
+        const doc = await studentsRef.doc(id).get();
+        if (doc.exists && doc.data().pin === pin) {
+          state.studentId = id;
+          state.studentName = name;
+          state.studentData = doc.data();
+          await studentsRef.doc(id).update({ lastActive: firebase.firestore.FieldValue.serverTimestamp() });
+          await loadProgress();
+          showHomeScreen();
+          return;
+        }
+      }
+    } catch (e) { console.error('Auto-login error:', e); }
+    localStorage.removeItem('2nd-grade-vocab-student');
+  }
+})();
+</script>
+
+<div class="badge-popup" id="badge-popup">
+  <div class="badge-popup-icon" id="badge-popup-icon"></div>
+  <div class="badge-popup-text"><span>Badge Unlocked!</span><strong id="badge-popup-name"></strong></div>
+</div>
+
+<div class="badge-modal-overlay" id="badge-modal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="badge-modal">
+    <h3>🏅 Badges</h3>
+    <div id="badge-modal-list"></div>
+    <button class="btn btn-secondary btn-block" style="margin-top:1rem;" onclick="document.getElementById('badge-modal').classList.remove('show')">Close</button>
+  </div>
+</div>
+
+</body>
+</html>
