@@ -795,6 +795,33 @@ body.playing h1, body.playing .subtitle { display: none; }
 
 /* Selection color */
 ::selection { background: rgba(214,48,48,0.3); color: var(--text); }
+
+/* Card slide animation */
+@keyframes cardSlideIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes cardSlideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-40px); } }
+.card-slide-in { animation: cardSlideIn 0.3s cubic-bezier(0.22,1,0.36,1) forwards; }
+.card-slide-out { animation: cardSlideOut 0.2s ease-in forwards; }
+
+/* Correct/wrong flash */
+@keyframes correctFlash { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); } 50% { box-shadow: 0 0 30px 8px rgba(34,197,94,0.15); } 100% { box-shadow: var(--shadow-card); } }
+@keyframes wrongFlash { 0% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); } 50% { box-shadow: 0 0 30px 8px rgba(220,38,38,0.15); } 100% { box-shadow: var(--shadow-card); } }
+.quiz-card.flash-correct { animation: correctFlash 0.6s ease-out; }
+.quiz-card.flash-wrong { animation: wrongFlash 0.6s ease-out; }
+
+/* Word of the Day */
+#wotd-card { background: rgba(200,60,40,0.06); border: 1px solid rgba(200,60,40,0.12); color: #4a3520; border-radius: var(--radius-lg); padding: 1rem 1.1rem; margin-bottom: 0.8rem; width: 100%; }
+#wotd-card .wotd-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; color: var(--accent2); margin-bottom: 0.4rem; }
+#wotd-card .wotd-word { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.2rem; }
+#wotd-card .wotd-german { font-size: 0.9rem; opacity: 0.7; margin-bottom: 0.3rem; }
+#wotd-card .wotd-def { font-size: 0.82rem; opacity: 0.8; font-style: italic; }
+
+/* Weekly Class Goal */
+#weekly-goal { background: rgba(200,60,40,0.04); border: 1px solid rgba(200,60,40,0.1); color: #4a3520; border-radius: var(--radius-lg); padding: 1rem 1.1rem; margin-bottom: 0.8rem; width: 100%; }
+#wg-track { background: rgba(0,0,0,0.06); height: 10px; border-radius: 5px; overflow: hidden; margin: 8px 0; }
+#wg-fill { background: linear-gradient(90deg, #e05040, #f07060); height: 100%; border-radius: 5px; transition: width 0.6s ease; }
+#wg-current { color: #d04030; font-weight: 700; }
+.wg-reached #wg-fill { background: linear-gradient(90deg, #22a55e, #4ade80); }
+.wg-reached #wg-current { color: #1a8a4a; }
 </style>
 </head>
 <body>
@@ -895,6 +922,25 @@ body.playing h1, body.playing .subtitle { display: none; }
     <div id="daily-action"></div>
   </div>
 
+  <div id="wotd-card" style="display:none;">
+    <div class="wotd-label">📝 Word of the Day</div>
+    <div class="wotd-word" id="wotd-word"></div>
+    <div class="wotd-german" id="wotd-german"></div>
+    <div class="wotd-def" id="wotd-def"></div>
+  </div>
+
+  <div id="weekly-goal" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+      <span style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">🎯 Weekly Class Goal</span>
+      <span style="font-size:0.72rem;opacity:0.6;" id="wg-period"></span>
+    </div>
+    <div id="wg-track"><div id="wg-fill" style="width:0%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:0.78rem;">
+      <span><span id="wg-current">0</span> / <span id="wg-target">5000</span> XP</span>
+      <span id="wg-status" style="font-weight:600;"></span>
+    </div>
+  </div>
+
   <div class="card">
     <h3>Select Sources</h3>
     <div class="source-section">
@@ -933,6 +979,9 @@ body.playing h1, body.playing .subtitle { display: none; }
       <button class="btn btn-secondary btn-small" onclick="showProgressScreen()">📊 My Progress</button>
       <button class="btn btn-secondary btn-small" onclick="showLeaderboard()">🏆 Leaderboard</button>
       <button class="btn btn-secondary btn-small" onclick="showWordReference()">📖 Word Reference</button>
+    </div>
+    <div style="text-align:center;margin-top:8px;">
+      <button id="sfx-toggle-btn" onclick="toggleSfx()" style="font-size:13px;padding:8px 16px;border-radius:10px;cursor:pointer;background:rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.08);color:#4a3520;">🔊 Sound: ON</button>
     </div>
   </div>
 </div>
@@ -1961,32 +2010,72 @@ function showComboLost() {
   setTimeout(() => { el.style.display = 'none'; }, 1000);
 }
 
-let _levelUpQueue = [];
 function showLevelUpQueue(levels) {
-  _levelUpQueue = [...levels];
-  _showNextLevelUp();
-}
-function _showNextLevelUp() {
-  if (_levelUpQueue.length === 0) return;
-  const lv = _levelUpQueue.shift();
-  showLevelUp(lv, () => { setTimeout(_showNextLevelUp, 300); });
-}
-function showLevelUp(lv, onDismiss) {
+  if (!levels || levels.length === 0) return;
+  const lv = levels[0]; const remaining = levels.slice(1);
+  SFX.play('levelup');
   const overlay = document.createElement('div');
   overlay.id = 'level-up-overlay';
   overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;animation:fadeIn 0.3s ease;';
-  const zc = ZONE_COLORS[lv.zone];
-  const card = document.createElement('div');
+  const zc = ZONE_COLORS[lv.zone]; const card = document.createElement('div');
   card.style.cssText = `background:linear-gradient(145deg,${zc.bg},${zc.accent});border-radius:20px;padding:32px 40px;text-align:center;color:#fff;max-width:320px;animation:popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);`;
-  const avHtml = state.avatarId ? `<img src="${avatarSrc(state.avatarId)}" style="width:56px;height:56px;border-radius:14px;margin-bottom:8px;">` : '<div style="font-size:42px;margin-bottom:8px;">\u2694\uFE0F</div>';
-  const moreText = _levelUpQueue.length > 0 ? `<div style="font-size:11px;opacity:0.5;margin-top:8px;">${_levelUpQueue.length} more level${_levelUpQueue.length > 1 ? 's' : ''} unlocked!</div>` : '';
-  function dismiss() { overlay.remove(); if (onDismiss) onDismiss(); }
-  card.innerHTML = `${avHtml}<div style="font-size:13px;text-transform:uppercase;letter-spacing:2px;opacity:0.8;">Level Up!</div><div style="font-size:28px;font-weight:700;margin:8px 0 4px;">Lv ${lv.level}</div><div style="font-size:20px;font-weight:600;margin-bottom:4px;">${lv.name}</div><div style="font-size:13px;opacity:0.7;font-style:italic;margin-bottom:20px;">${lv.vibe}</div><div style="display:inline-block;padding:4px 16px;border-radius:12px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;background:rgba(255,255,255,0.2);">${lv.zone} zone</div>${moreText}<div style="margin-top:20px;"><button id="level-up-dismiss-btn" style="background:rgba(255,255,255,0.25);color:#fff;border:none;padding:10px 28px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Nice!</button></div>`;
-  overlay.appendChild(card);
-  card.querySelector('#level-up-dismiss-btn').onclick = dismiss;
-  overlay.addEventListener('click', e => { if (e.target === overlay) dismiss(); });
-  document.body.appendChild(overlay);
-  setTimeout(() => { if (document.getElementById('level-up-overlay')) dismiss(); }, 5000);
+  const moreText = remaining.length > 0 ? `<div style="font-size:11px;opacity:0.6;margin-top:12px;">${remaining.length} more...</div>` : '';
+  card.innerHTML = `<div style="font-size:42px;margin-bottom:8px;">⚔️</div><div style="font-size:13px;text-transform:uppercase;letter-spacing:2px;opacity:0.8;">Level Up!</div><div style="font-size:28px;font-weight:700;margin:8px 0 4px;">Lv ${lv.level}</div><div style="font-size:20px;font-weight:600;margin-bottom:4px;">${lv.name}</div><div style="font-size:13px;opacity:0.7;font-style:italic;margin-bottom:20px;">${lv.vibe}</div><div style="display:inline-block;padding:4px 16px;border-radius:12px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;background:rgba(255,255,255,0.2);">${lv.zone} zone</div>${moreText}<div style="margin-top:20px;"><button onclick="this.closest('#level-up-overlay').remove();showLevelUpQueue(window._levelUpQueue);" style="background:rgba(255,255,255,0.25);color:#fff;border:none;padding:10px 28px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;">${remaining.length > 0 ? 'Next →' : 'Nice!'}</button></div>`;
+  window._levelUpQueue = remaining;
+  overlay.appendChild(card); document.body.appendChild(overlay);
+}
+
+// ===== SOUND EFFECTS =====
+const SFX = {
+  ctx: null, enabled: true,
+  init() {
+    try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+    const saved = localStorage.getItem('sfx-enabled');
+    if (saved !== null) this.enabled = saved === 'true';
+  },
+  play(type) {
+    if (!this.enabled || !this.ctx) return;
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    const c = this.ctx, t = c.currentTime;
+    const o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    if (type === 'correct') {
+      o.frequency.setValueAtTime(523.25, t);
+      o.frequency.setValueAtTime(659.25, t + 0.08);
+      o.frequency.setValueAtTime(783.99, t + 0.16);
+      g.gain.setValueAtTime(0.15, t);
+      g.gain.linearRampToValueAtTime(0, t + 0.35);
+      o.start(t); o.stop(t + 0.35);
+    } else if (type === 'wrong') {
+      o.frequency.setValueAtTime(311, t);
+      o.frequency.setValueAtTime(233, t + 0.12);
+      o.type = 'sawtooth';
+      g.gain.setValueAtTime(0.10, t); g.gain.linearRampToValueAtTime(0, t + 0.3);
+      o.start(t); o.stop(t + 0.3);
+    } else if (type === 'levelup') {
+      const notes = [523.25, 659.25, 783.99, 1046.5];
+      notes.forEach((f, i) => {
+        const oo = c.createOscillator(), gg = c.createGain();
+        oo.connect(gg); gg.connect(c.destination);
+        oo.frequency.setValueAtTime(f, t + i * 0.12);
+        gg.gain.setValueAtTime(0.12, t + i * 0.12);
+        gg.gain.linearRampToValueAtTime(0, t + i * 0.12 + 0.25);
+        oo.start(t + i * 0.12); oo.stop(t + i * 0.12 + 0.25);
+      });
+    } else if (type === 'click') {
+      o.frequency.setValueAtTime(880, t);
+      o.type = 'sine';
+      g.gain.setValueAtTime(0.06, t); g.gain.linearRampToValueAtTime(0, t + 0.06);
+      o.start(t); o.stop(t + 0.06);
+    }
+  }
+};
+function toggleSfx() {
+  SFX.enabled = !SFX.enabled;
+  localStorage.setItem('sfx-enabled', SFX.enabled);
+  const btn = document.getElementById('sfx-toggle-btn');
+  if (btn) btn.textContent = SFX.enabled ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+  SFX.play('click');
 }
 
 // ===== GAMIFICATION =====
@@ -2866,6 +2955,11 @@ function showHomeScreen() {
   }
 
   initSourceGrid();
+  renderWOTD();
+  loadWeeklyGoal();
+  // Update SFX button state
+  const sfxBtn = document.getElementById('sfx-toggle-btn');
+  if (sfxBtn) sfxBtn.textContent = SFX.enabled ? '🔊 Sound: ON' : '🔇 Sound: OFF';
   showScreen('home-screen');
 }
 
@@ -3086,7 +3180,9 @@ function getDistractors(word, count, type) {
       const sameType = (isVerb && /^to\s/.test(e.w)) || (!isVerb && !/^to\s/.test(e.w));
       // Prefer same source (unit) for topical relevance
       const sameSource = src === word.source;
-      const score = (sameType ? 3 : 0) + (sameSource ? 2 : 0) + (shared > 0 ? -5 : 0) + Math.random() * 2;
+      const lenDiff = Math.abs(ans.length - correct.length);
+      const similarLen = lenDiff <= 4 ? 2 : lenDiff <= 8 ? 1 : 0;
+      const score = (sameType ? 4 : 0) + similarLen + (!sameSource ? 1 : 0) + (shared > 0 ? -8 : 0) + Math.random() * 1.5;
       pool.push({ entry: e, score, ans });
     }
   }
@@ -3122,8 +3218,8 @@ function getMCAnswer(word, type) {
     return word.w.replace(/^to\s+/, '').replace(/\(.*?\)/g, '').replace(/\bsth\.?\s*/g, '').replace(/\bsb\.?\s*/g, '').replace(/[.!?]+$/g, '').trim().replace(/\s+/g, ' ');
   }
   if (type === 'mc-context' || type === 'context' || type === 'context-hard') {
-    // For context MC, use the context form (what fits in the blank)
-    return getContextForm(word);
+    const cf = word.cf || word.w;
+    return cf.replace(/^to\s+/i, '').replace(/\(.*?\)/g, '').replace(/\bsth\.?\s*/g, '').replace(/\bsb\.?\s*/g, '').replace(/[.!?]+$/g, '').trim();
   }
   // Definition MC — full word
   return word.w.replace(/^to\s+/, '').replace(/\(.*?\)/g, '').replace(/\bsth\.?\s*/g, '').replace(/\bsb\.?\s*/g, '').replace(/[.!?]+$/g, '').trim().replace(/\s+/g, ' ');
@@ -3172,7 +3268,10 @@ function handleMCClick(btn, correct, word, type, grid) {
   const allBtns = grid.querySelectorAll('.mc-option');
   allBtns.forEach(b => b.classList.add('disabled'));
 
+  const qc2 = document.getElementById('quiz-card');
   if (correct) {
+    SFX.play('correct');
+    if (qc2) { qc2.classList.remove('flash-wrong'); qc2.classList.add('flash-correct'); setTimeout(() => qc2.classList.remove('flash-correct'), 600); }
     btn.classList.add('correct');
     state.score++;
     state.comboStreak++;
@@ -3183,6 +3282,8 @@ function handleMCClick(btn, correct, word, type, grid) {
     if (state.isSpeedRound) showXPFloat();
     setTimeout(() => { nextWord(); }, state.isSpeedRound ? 400 : 800);
   } else {
+    SFX.play('wrong');
+    if (qc2) { qc2.classList.remove('flash-correct'); qc2.classList.add('flash-wrong'); setTimeout(() => qc2.classList.remove('flash-wrong'), 600); }
     if (state.comboStreak >= 3) showComboLost();
     state.comboStreak = 0; state.comboMult = 1; updateComboBadge();
     btn.classList.add('wrong');
@@ -3256,6 +3357,12 @@ function showWord() {
     if (state.isSpeedRound) { endSpeedRound(); return; }
     endPractice(); return;
   }
+  const qc = document.getElementById('quiz-card');
+  if (qc && state.currentIdx > 0) {
+    qc.classList.remove('card-slide-in');
+    qc.classList.add('card-slide-out');
+    setTimeout(() => { qc.classList.remove('card-slide-out'); qc.classList.add('card-slide-in'); }, 200);
+  } else if (qc) { qc.classList.add('card-slide-in'); }
   const word = state.words[state.currentIdx];
   const type = getTaskType();
   state.currentType = type;
@@ -3358,7 +3465,10 @@ function checkAnswer() {
   state.answered = true;
 
   const feedback = document.getElementById('feedback');
+  const qc = document.getElementById('quiz-card');
   if (correct) {
+    SFX.play('correct');
+    if (qc) { qc.classList.remove('flash-wrong'); qc.classList.add('flash-correct'); setTimeout(() => qc.classList.remove('flash-correct'), 600); }
     state.score++;
     state.comboStreak++;
     if (state.comboStreak > state.comboMax) state.comboMax = state.comboStreak;
@@ -3372,6 +3482,8 @@ function checkAnswer() {
       showXPFloat(); setTimeout(nextWord, 400); return;
     }
   } else {
+    SFX.play('wrong');
+    if (qc) { qc.classList.remove('flash-correct'); qc.classList.add('flash-wrong'); setTimeout(() => qc.classList.remove('flash-wrong'), 600); }
     if (state.comboStreak >= 3) showComboLost();
     state.comboStreak = 0; state.comboMult = 1; updateComboBadge();
     input.className = 'answer-input wrong';
@@ -3602,7 +3714,88 @@ function handleSectionSubmit() {
 
 document.getElementById('section-pin')?.addEventListener('keydown', e => { if (e.key === 'Enter') handleSectionSubmit(); });
 
+// ===== WORD OF THE DAY =====
+function getWordOfTheDay() {
+  const allWords = [];
+  for (const [src, entries] of Object.entries(vocabData)) {
+    for (const e of entries) allWords.push(e);
+  }
+  if (allWords.length === 0) return null;
+  const today = new Date().toISOString().slice(0, 10);
+  let h = 0;
+  for (let i = 0; i < today.length; i++) h = Math.imul(31, h) + today.charCodeAt(i) | 0;
+  return allWords[Math.abs(h) % allWords.length];
+}
+
+function renderWOTD() {
+  const word = getWordOfTheDay();
+  const card = document.getElementById('wotd-card');
+  if (!word || !card) return;
+  card.style.display = '';
+  document.getElementById('wotd-word').textContent = word.w;
+  document.getElementById('wotd-german').textContent = word.g;
+  document.getElementById('wotd-def').textContent = word.d || '';
+}
+
+// ===== WEEKLY CLASS GOAL =====
+const WEEKLY_GOAL_TARGET = 5000;
+
+function getWeekBounds() {
+  const now = new Date();
+  const day = now.getDay();
+  const diff = day === 0 ? 6 : day - 1;
+  const mon = new Date(now);
+  mon.setDate(now.getDate() - diff);
+  mon.setHours(0, 0, 0, 0);
+  const sun = new Date(mon);
+  sun.setDate(mon.getDate() + 6);
+  sun.setHours(23, 59, 59, 999);
+  return { start: mon, end: sun };
+}
+
+function getWeekLabel() {
+  const { start, end } = getWeekBounds();
+  const fmt = d => `${d.getDate()}.${d.getMonth() + 1}`;
+  return `${fmt(start)} – ${fmt(end)}`;
+}
+
+async function loadWeeklyGoal() {
+  const el = document.getElementById('weekly-goal');
+  if (!el || !CLASS_ID) return;
+  try {
+    const { start, end } = getWeekBounds();
+    const studentsSnap = await firebase.firestore().collection('classes').doc(CLASS_ID).collection('students').get();
+    let totalXP = 0;
+    const promises = [];
+    studentsSnap.forEach(studentDoc => {
+      const p = studentDoc.ref.collection('sessions')
+        .where('date', '>=', start)
+        .where('date', '<=', end)
+        .get()
+        .then(sessSnap => {
+          sessSnap.forEach(sessDoc => {
+            const s = sessDoc.data();
+            // Estimate XP from score: each correct ~ 5 XP avg
+            totalXP += (s.score || 0) * 5;
+          });
+        });
+      promises.push(p);
+    });
+    await Promise.all(promises);
+    el.style.display = '';
+    const pct = Math.min(100, (totalXP / WEEKLY_GOAL_TARGET) * 100);
+    document.getElementById('wg-fill').style.width = pct + '%';
+    document.getElementById('wg-current').textContent = totalXP.toLocaleString();
+    document.getElementById('wg-target').textContent = WEEKLY_GOAL_TARGET.toLocaleString();
+    document.getElementById('wg-period').textContent = getWeekLabel();
+    const reached = totalXP >= WEEKLY_GOAL_TARGET;
+    el.classList.toggle('wg-reached', reached);
+    document.getElementById('wg-status').textContent = reached ? '✅ Goal reached!' : `${Math.round(pct)}%`;
+  } catch (e) { console.error('Weekly goal error:', e); }
+}
+
 // ===== INIT =====
+SFX.init();
 (async function() {
   initSectionScreen();
 
