@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v2.0 – 2026-03-25 · DomiVocab 2nd Grade -->
+<!-- v2.0.1 – 2026-03-26 · DomiVocab 2nd Grade -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1260,6 +1260,7 @@ function setClassId(id) {
   CLASS_ID = id;
   classRef = db.collection('classes').doc(CLASS_ID);
   studentsRef = classRef.collection('students');
+  if (typeof initBattleRefs === 'function') initBattleRefs();
 }
 
 // ===== VOCABULARY DATA =====
@@ -4020,8 +4021,13 @@ SFX.init();
 
 // ===== BATTLE SYSTEM =====
 const rtdb = firebase.database();
-let battleRoot, presenceRef, invitesRef, roomsRef;
+let battleRoot = null;
+let presenceRef = null;
+let invitesRef = null;
+let roomsRef = null;
+
 function initBattleRefs() {
+  if (!CLASS_ID) return;
   battleRoot = rtdb.ref('battles/' + CLASS_ID);
   presenceRef = battleRoot.child('presence');
   invitesRef = battleRoot.child('invites');
@@ -4294,6 +4300,8 @@ function renderBattleRound(data) {
   if (state.battleRound === round) return;
   state.battleRound = round;
   state.battleAnswered = false;
+  const cdEl = document.getElementById('battle-countdown');
+  if (cdEl) cdEl.style.display = 'none';
   const promptEl = document.getElementById('battle-prompt');
   const inputEl = document.getElementById('battle-input');
   const feedbackEl = document.getElementById('battle-feedback');
