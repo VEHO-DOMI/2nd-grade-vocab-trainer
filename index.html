@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v3.1 – 2026-03-30 · DomiVocab 2nd Grade · Grammar Mode -->
+<!-- v3.1 – 2026-03-31 · DomiVocab 2nd Grade · Grammar Mode -->
 <html lang="en" data-theme="light">
 <head>
 <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme-mode') || 'light');</script>
@@ -8123,9 +8123,10 @@ function renderGrammarItem() {
     default: html += renderTypedAnswer(item, item.t); break;
   }
 
-  // Hint button
-  html += '<div style="text-align:center;margin-top:0.5rem;">' +
-    '<button class="grammar-hint-btn" id="grammar-hint-btn" onclick="showGrammarHint()">💡 Hint</button>' +
+  // Hint + Skip buttons
+  html += '<div style="display:flex;justify-content:center;gap:0.8rem;margin-top:0.5rem;">' +
+    '<button class="grammar-hint-btn" id="grammar-hint-btn" onclick="showGrammarHint()">\uD83D\uDCA1 Hint</button>' +
+    '<button class="grammar-hint-btn" id="grammar-skip-btn" onclick="skipGrammarItem()">Skip \u2192</button>' +
     '</div>';
   html += '<div id="grammar-hint-box" style="display:none;" class="grammar-hint-box"></div>';
   html += '<div id="grammar-feedback-area"></div>';
@@ -8545,6 +8546,20 @@ function nextGrammarItem() {
     sbSelected = [];
     renderGrammarItem();
   }
+}
+
+function skipGrammarItem() {
+  const item = grammarSession.items[grammarSession.index];
+  if (!item) return;
+  grammarSession.results.push({ itemId: item.id, structureId: item.sid, correct: false, answer: '(skipped)', xp: 0 });
+  grammarSession.combo = 0;
+  if (typeof SFX !== 'undefined') SFX.play('click');
+  // Hide skip + hint buttons
+  const skipBtn = document.getElementById('grammar-skip-btn');
+  if (skipBtn) skipBtn.style.display = 'none';
+  const hintBtn = document.getElementById('grammar-hint-btn');
+  if (hintBtn) hintBtn.style.display = 'none';
+  setTimeout(function() { nextGrammarItem(); }, 300);
 }
 
 function exitGrammarPractice() {
