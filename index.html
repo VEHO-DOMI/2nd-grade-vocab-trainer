@@ -10182,12 +10182,14 @@ var campaignCombo = 0;
 
 // --- PROLOGUE ---
 var prologueScenes = [
-  {speaker:'book', text:'You opened me. That means something.', duration:8000},
-  {speaker:'book', text:'I am a book. Not just any book. I am the book that was made for this class. Every word inside me was written for you.', duration:12000},
-  {speaker:'book', text:'But something is wrong. My pages are... fading. Words are disappearing. Someone is erasing me.', emotion:'scared', duration:12000},
-  {speaker:'book', text:'I need your help. If the words vanish, everything inside me vanishes too. The animals, the stories, the people...', emotion:'sad', duration:14000},
-  {speaker:'book', text:'Will you help me save the words? Tap them, choose them, read them, write them. Every correct answer brings a word back to life.', duration:14000},
-  {speaker:'book', text:'Good. Then let us begin. Turn the page.', emotion:'excited', duration:8000}
+  {speakerName:'Narrator', emoji:'&#127979;', text:'This is Watson Manor School. It looks like any other school — classrooms, a gym, a library, a canteen.', duration:8000},
+  {speakerName:'Narrator', emoji:'&#127979;', text:'But this building is old. Very old. It was built in 1898 as a manor — a big, grand house where a rich family once lived. They called it Watson Manor.', duration:12000},
+  {speakerName:'Narrator', emoji:'&#127979;', text:'In 1952, the manor became a school. But parts of the old house are still here — the stone cellar, the wooden library, the courtyard with the fountain.', duration:12000},
+  {speakerName:'Narrator', emoji:'&#127979;', text:'Every year, the school has a special tradition: the Watson Manor Challenge. The 4th-graders hide a treasure box somewhere in the building. They leave 15 clues. And the 2nd-graders try to find it.', duration:14000},
+  {speakerName:'Narrator', emoji:'&#127979;', text:'In the entrance hall, there is a glass case. Inside it: the Watson Manor Trophy. A small bronze cup with the names of every winner since 1960. Sixty-three years of history.', duration:14000},
+  {speakerName:'Narrator', emoji:'&#128270;', text:'This year, on the first day of school, the headmaster opens the case. But the trophy is gone. The glass is not broken. The lock is not damaged. Someone took it — and left no trace.', duration:14000},
+  {speakerName:'Narrator', emoji:'&#128270;', text:'Well… almost no trace. There is a tiny piece of green fabric caught on the hinge. And two 2nd-graders have already noticed it.', duration:10000},
+  {speakerName:'Narrator', emoji:'&#128270;', text:'Their names are Nora and Elias. And this is their story.', emotion:'excited', duration:8000}
 ];
 
 function checkPrologueWatched() {
@@ -10208,8 +10210,8 @@ function renderPrologueScene() {
   var scene = prologueScenes[campaignState.prologueScene];
   if (!scene) { finishPrologue(); return; }
   var emotionClass = scene.emotion ? ' ' + scene.emotion : '';
-  var speakerEmoji = '&#128214;';
-  var speakerName = 'The Book';
+  var speakerEmoji = scene.emoji || '&#128214;';
+  var speakerName = scene.speakerName || 'The Book';
   // Dots
   var dotsHtml = '<div class="prologue-dots">';
   for (var d = 0; d < prologueScenes.length; d++) {
@@ -14237,8 +14239,8 @@ var campaignLevels = [
 
 ];
 
-// G2 campaign: no prologue sequence
-campaignState.prologueWatched = true;
+// G2 campaign: prologue enabled
+// (prologueWatched is managed by localStorage — first visit shows prologue)
 
 </script>
 </body>
