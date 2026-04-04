@@ -12098,18 +12098,7 @@ var campaignState = {
 var campaignCombo = 0;
 
 // --- PROLOGUE ---
-var prologueScenes = [
-  {speaker:'book', text:'Hello, {NAME}! Welcome to your first year of English!', emotion:'excited', image:'campaign/img/prologue-01.jpg', duration:6000},
-  {speaker:'book', text:'I am your English book. But I am not like other books. I can talk to you! I know your name. I know your class. And I have a whole year of stories inside me.', image:'campaign/img/prologue-02.jpg', duration:14000},
-  {speaker:'book', text:'Inside my pages, there are 15 chapters full of adventures. Animals, pirates, detectives, musicians, even time travel! And every chapter teaches you something new in English.', emotion:'excited', image:'campaign/img/prologue-03.jpg', duration:14000},
-  {speaker:'book', text:'Are you ready? Let me show you my first chapter. It is about your classroom. Let me open to page one and\u2014', image:'campaign/img/prologue-04.jpg', duration:10000},
-  {speaker:'book', text:'\u2014 wait. Something is wrong.', emotion:'scared', image:'campaign/img/prologue-05.jpg', duration:5000},
-  {speaker:'book', text:'My pages. They are... fading. Words are disappearing. Someone is erasing my stories!', emotion:'scared', image:'campaign/img/prologue-06.jpg', duration:10000},
-  {speaker:'book', text:'I can feel it. The animals are losing their names. The pirates are losing their treasure. The music is going silent. Without grammar, my world falls apart.', emotion:'sad', image:'campaign/img/prologue-07.jpg', duration:14000},
-  {speaker:'syntax', text:'I am Professor Syntax. I watch over the grammar in this book. Someone called The Fader is erasing the rules. Without rules, the stories die. You must help us.', image:'campaign/img/prologue-08.jpg', duration:16000},
-  {speaker:'book', text:'Will you help me, {NAME}? Every chapter you fix brings my stories back to life. Tap the right words. Choose the right answers. Read and learn. Together, we can save everything.', image:'campaign/img/prologue-09.jpg', duration:14000},
-  {speaker:'book', text:'Good. Then let us begin, {NAME}. Your adventure starts now!', emotion:'excited', image:'campaign/img/prologue-10.jpg', duration:6000}
-];
+// G1 prologueScenes removed — G2 prologue is defined in the campaign data block above
 
 function checkPrologueWatched() {
   if (localStorage.getItem('campaign-prologue-watched') === 'true') {
