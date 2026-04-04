@@ -5201,6 +5201,19 @@ function showHomeScreen() {
   if (battleBtn) battleBtn.style.display = '';
   checkPendingDuels();
   setTimeout(cleanupStaleBattleData, 5000);
+
+  // Show deferred campaign level-ups (queued during campaign play)
+  if (window._campaignLevelUps && window._campaignLevelUps.length > 0) {
+    var levelsToShow = [];
+    window._campaignLevelUps.forEach(function(lu) {
+      var levelDefs = lu.mode === 'grammar' ? GRAMMAR_LEVELS : LEVELS;
+      if (levelDefs[lu.level - 1]) levelsToShow.push(levelDefs[lu.level - 1]);
+    });
+    window._campaignLevelUps = [];
+    if (levelsToShow.length > 0 && typeof showLevelUpQueue === 'function') {
+      setTimeout(function() { showLevelUpQueue(levelsToShow); }, 500);
+    }
+  }
 }
 
 function toggleSource(btn) {
@@ -10967,6 +10980,9 @@ function saveCampaignProgress(stars) {
   }
   // Campaign XP total
   update.campaignXp = firebase.firestore.FieldValue.increment(campaignState.levelXP);
+  // Capture old levels BEFORE XP increment for deferred level-up detection
+  var oldVocabLevel = getLevel(state.studentData.xp || 0, 'vocab').level;
+  var oldGrammarLevel = getLevel(state.studentData.grammarXp || 0, 'grammar').level;
   // Campaign progress
   var progressUpdate = {};
   progressUpdate['campaignProgress.levels.' + lid] = levelData;
@@ -10977,6 +10993,20 @@ function saveCampaignProgress(stars) {
     state.studentData.xp = (state.studentData.xp || 0) + campaignState.vocabXP;
     state.studentData.grammarXp = (state.studentData.grammarXp || 0) + grammarPool;
     state.studentData.campaignXp = (state.studentData.campaignXp || 0) + campaignState.levelXP;
+    // Detect level-ups after XP increment and store for deferred display
+    var newVocabLevel = getLevel(state.studentData.xp || 0, 'vocab').level;
+    var newGrammarLevel = getLevel(state.studentData.grammarXp || 0, 'grammar').level;
+    if (!window._campaignLevelUps) window._campaignLevelUps = [];
+    if (newVocabLevel > oldVocabLevel) {
+      for (var lv = oldVocabLevel + 1; lv <= newVocabLevel; lv++) {
+        window._campaignLevelUps.push({mode: 'vocab', level: lv});
+      }
+    }
+    if (newGrammarLevel > oldGrammarLevel) {
+      for (var lv = oldGrammarLevel + 1; lv <= newGrammarLevel; lv++) {
+        window._campaignLevelUps.push({mode: 'grammar', level: lv});
+      }
+    }
   }).catch(function(e) {
     console.error('Campaign save error:', e);
   });
