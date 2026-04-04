@@ -12411,18 +12411,20 @@ function renderStoryBeat() {
   var sceneImgSrc = '';
   if (lv && lv.epilogueImages && campaignState.storyPhase === 'completion' && lv.epilogueImages[idx]) {
     sceneImgSrc = lv.epilogueImages[idx];
-  } else if (speaker !== 'book') {
-    // Character speaking — show their full portrait as the scene image
-    var charPortraitMap = {
-      mia: avatarMap.mia.img,
-      syntax: 'campaign/img/char-syntax-speaking.jpg',
-      griffin: avatarMap.griffin.img,
-      emre: avatarMap.griffin.img,
-      fader: 'campaign/img/char-griffin-shadow.jpg'
-    };
-    sceneImgSrc = charPortraitMap[speaker] || '';
   } else if (lv && lv.sceneImages && campaignState.storyPhase) {
+    // Show the level's scene image for the current story phase
     sceneImgSrc = lv.sceneImages[campaignState.storyPhase] || '';
+  }
+  // If no scene image found and a known G1 character is speaking, show their portrait
+  if (!sceneImgSrc && speaker !== 'book') {
+    var charPortraitMap = {
+      mia: avatarMap.mia ? avatarMap.mia.img : '',
+      syntax: avatarMap.syntax ? avatarMap.syntax.img : '',
+      griffin: avatarMap.griffin ? avatarMap.griffin.img : '',
+      emre: avatarMap.emre ? avatarMap.emre.img : '',
+      fader: avatarMap.fader ? avatarMap.fader.img : ''
+    };
+    if (charPortraitMap[speaker]) sceneImgSrc = charPortraitMap[speaker];
   }
   var sceneImgHtml = sceneImgSrc ? '<img class="campaign-scene-img" src="' + sceneImgSrc + '" style="width:100%;border-radius:12px;margin-top:0.8rem;max-height:280px;object-fit:contain;background:var(--card);" onerror="this.style.display=\'none\'">' : '';
   // Wrap text paragraphs in story-paragraph divs for stagger animation
