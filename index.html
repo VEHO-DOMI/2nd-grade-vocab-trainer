@@ -10182,14 +10182,14 @@ var campaignCombo = 0;
 
 // --- PROLOGUE ---
 var prologueScenes = [
-  {speakerName:'Narrator', emoji:'&#127979;', text:'This is Watson Manor School. It looks like any other school — classrooms, a gym, a library, a canteen.', duration:8000},
-  {speakerName:'Narrator', emoji:'&#127979;', text:'But this building is old. Very old. It was built in 1898 as a manor — a big, grand house where a rich family once lived. They called it Watson Manor.', duration:12000},
-  {speakerName:'Narrator', emoji:'&#127979;', text:'In 1952, the manor became a school. But parts of the old house are still here — the stone cellar, the wooden library, the courtyard with the fountain.', duration:12000},
-  {speakerName:'Narrator', emoji:'&#127979;', text:'Every year, the school has a special tradition: the Watson Manor Challenge. The 4th-graders hide a treasure box somewhere in the building. They leave 15 clues. And the 2nd-graders try to find it.', duration:14000},
-  {speakerName:'Narrator', emoji:'&#127979;', text:'In the entrance hall, there is a glass case. Inside it: the Watson Manor Trophy. A small bronze cup with the names of every winner since 1960. Sixty-three years of history.', duration:14000},
-  {speakerName:'Narrator', emoji:'&#128270;', text:'This year, on the first day of school, the headmaster opens the case. But the trophy is gone. The glass is not broken. The lock is not damaged. Someone took it — and left no trace.', duration:14000},
-  {speakerName:'Narrator', emoji:'&#128270;', text:'Well… almost no trace. There is a tiny piece of green fabric caught on the hinge. And two 2nd-graders have already noticed it.', duration:10000},
-  {speakerName:'Narrator', emoji:'&#128270;', text:'Their names are Nora and Elias. And this is their story.', emotion:'excited', duration:8000}
+  {speakerName:'Narrator', emoji:'&#127979;', text:'This is Watson Manor School. It looks like any other school — classrooms, a gym, a library, a canteen.', image:'campaign/img/g2-prologue-01.jpg', duration:8000},
+  {speakerName:'Narrator', emoji:'&#127979;', text:'But this building is old. Very old. It was built in 1898 as a manor — a big, grand house where a rich family once lived. They called it Watson Manor.', image:'campaign/img/g2-prologue-02.jpg', duration:12000},
+  {speakerName:'Narrator', emoji:'&#127979;', text:'In 1952, the manor became a school. But parts of the old house are still here — the stone cellar, the wooden library, the courtyard with the fountain.', image:'campaign/img/g2-prologue-03.jpg', duration:12000},
+  {speakerName:'Narrator', emoji:'&#127979;', text:'Every year, the school has a special tradition: the Watson Manor Challenge. The 4th-graders hide a treasure box somewhere in the building. They leave 15 clues. And the 2nd-graders try to find it.', image:'campaign/img/g2-prologue-04.jpg', duration:14000},
+  {speakerName:'Narrator', emoji:'&#127979;', text:'In the entrance hall, there is a glass case. Inside it: the Watson Manor Trophy. A small bronze cup with the names of every winner since 1960. Sixty-three years of history.', image:'campaign/img/g2-prologue-05.jpg', duration:14000},
+  {speakerName:'Narrator', emoji:'&#128270;', text:'This year, on the first day of school, the headmaster opens the case. But the trophy is gone. The glass is not broken. The lock is not damaged. Someone took it — and left no trace.', image:'campaign/img/g2-prologue-06.jpg', duration:14000},
+  {speakerName:'Narrator', emoji:'&#128270;', text:'Well… almost no trace. There is a tiny piece of green fabric caught on the hinge. And two 2nd-graders have already noticed it.', image:'campaign/img/g2-prologue-07.jpg', duration:10000},
+  {speakerName:'Narrator', emoji:'&#128270;', text:'Their names are Nora and Elias. And this is their story.', emotion:'excited', image:'campaign/img/g2-prologue-08.jpg', duration:8000}
 ];
 
 function checkPrologueWatched() {
@@ -12374,14 +12374,14 @@ function renderStoryBeat() {
     griffin: {img:griffinImg, emoji:'&#128100;', name:'Griffin', cls:'campaign-emre-text'},
     syntax: {img:'campaign/img/char-syntax-appearing.jpg', emoji:'&#129333;', name:'Professor Syntax', cls:'campaign-syntax-text'},
     fader: {img:'campaign/img/char-griffin-shadow.jpg', emoji:'&#128100;', name:'The Fader', cls:'campaign-emre-text'},
-    nora: {img:'', emoji:'&#128269;', name:'Nora', cls:'campaign-book-text'},
-    elias: {img:'', emoji:'&#128172;', name:'Elias', cls:'campaign-mia-text'},
-    kramer: {img:'', emoji:'&#128104;', name:'Mr. Kramer', cls:'campaign-syntax-text'},
-    petrova: {img:'', emoji:'&#128105;', name:'Ms. Petrova', cls:'campaign-syntax-text'},
-    rudi: {img:'', emoji:'&#128295;', name:'Old Rudi', cls:'campaign-emre-text'},
-    felix: {img:'', emoji:'&#128552;', name:'Felix', cls:'campaign-emre-text'},
-    leo: {img:'', emoji:'&#127939;', name:'Leo', cls:'campaign-emre-text'},
-    novak: {img:'', emoji:'&#127978;', name:'Mr. Novak', cls:'campaign-emre-text'}
+    nora: {img:'campaign/img/g2-char-nora-neutral.jpg', emoji:'&#128269;', name:'Nora', cls:'campaign-book-text'},
+    elias: {img:'campaign/img/g2-char-elias-neutral.jpg', emoji:'&#128172;', name:'Elias', cls:'campaign-mia-text'},
+    kramer: {img:'campaign/img/g2-char-kramer-neutral.jpg', emoji:'&#128104;', name:'Mr. Kramer', cls:'campaign-syntax-text'},
+    petrova: {img:'campaign/img/g2-char-petrova-neutral.jpg', emoji:'&#128105;', name:'Ms. Petrova', cls:'campaign-syntax-text'},
+    rudi: {img:'campaign/img/g2-char-rudi-neutral.jpg', emoji:'&#128295;', name:'Old Rudi', cls:'campaign-emre-text'},
+    felix: {img:'campaign/img/g2-char-felix-nervous.jpg', emoji:'&#128552;', name:'Felix', cls:'campaign-emre-text'},
+    leo: {img:'campaign/img/g2-char-leo-defensive.jpg', emoji:'&#127939;', name:'Leo', cls:'campaign-emre-text'},
+    novak: {img:'campaign/img/g2-char-novak-sr-friendly.jpg', emoji:'&#127978;', name:'Mr. Novak', cls:'campaign-emre-text'}
   };
   // Use emotion-specific images when available
   if (speaker === 'book' && emotion === 'scared') avatarMap.book.img = 'campaign/img/char-book-scared.jpg';
@@ -13477,9 +13477,9 @@ var campaignLevels = [
   // ==================== LEVEL 1: The Empty Case ====================
   {levelName:"The Empty Case", topic:"School & First Day", grammar:"Past simple, present simple",
   maxXP:170, starThresholds:{one:85, two:136, three:170},
-  sceneImages:{},
-  readingImage:'',
-  comicPanels:[],
+  sceneImages:{storyA:'campaign/img/g2-ch01-scene-case.jpg', storyB:'campaign/img/g2-ch01-scene-fabric.jpg', completion:'campaign/img/g2-ch01-scene-completion.jpg'},
+  readingImage:'campaign/img/g2-ch01-reading-flip.jpg',
+  comicPanels:['campaign/img/g2-ch01-comic-01.jpg','campaign/img/g2-ch01-comic-02.jpg'],
   storyA:[
     {speaker:"nora", text:"First day back. New teachers, new timetable. Everything is normal — until assembly."},
     {speaker:"nora", text:"Mr. Kramer opens the trophy case for the annual engraving. His face goes white. The case is empty."},
@@ -13536,9 +13536,9 @@ var campaignLevels = [
   // ==================== LEVEL 2: The Library Secret ====================
   {levelName:"The Library Secret", topic:"Library & Archives", grammar:"Past simple questions, irregular verbs",
   maxXP:180, starThresholds:{one:90, two:144, three:180},
-  sceneImages:{},
-  readingImage:'',
-  comicPanels:[],
+  sceneImages:{storyA:'campaign/img/g2-ch02-scene-library.jpg', storyB:'campaign/img/g2-ch02-scene-newspaper.jpg', completion:'campaign/img/g2-ch02-scene-completion.jpg'},
+  readingImage:'campaign/img/g2-ch02-reading-flip.jpg',
+  comicPanels:['campaign/img/g2-ch02-comic-01.jpg'],
   storyA:[
     {speaker:"nora", text:"The library. If anyone kept records over summer, they are here."},
     {speaker:"elias", text:"I asked the librarian. She remembers a teacher coming in during August. But she cannot remember who."},
@@ -13596,9 +13596,9 @@ var campaignLevels = [
   // ==================== LEVEL 3: The Halloween Witness ====================
   {levelName:"The Halloween Witness", topic:"Safety & Advice", grammar:"should / shouldn't",
   maxXP:180, starThresholds:{one:90, two:144, three:180},
-  sceneImages:{},
-  readingImage:'',
-  comicPanels:[],
+  sceneImages:{storyA:'campaign/img/g2-ch03-scene-halloween.jpg', storyB:'campaign/img/g2-ch03-scene-witness.jpg', completion:'campaign/img/g2-ch03-scene-completion.jpg'},
+  readingImage:'campaign/img/g2-ch03-reading-flip.jpg',
+  comicPanels:['campaign/img/g2-ch03-comic-01.jpg'],
   storyA:[
     {speaker:"nora", text:"The school hall is full of pumpkins and costumes. Halloween preparations."},
     {speaker:"elias", text:"A classmate just told me something. The drama teacher saw a STUDENT near the trophy case in August. Around seven in the evening. Wearing a green jacket."},
@@ -13655,7 +13655,7 @@ var campaignLevels = [
   // ==================== LEVEL 4: Narrowing It Down ====================
   {levelName:"Narrowing It Down", topic:"Animals & Comparisons", grammar:"Comparatives, superlatives, as...as",
   maxXP:190, starThresholds:{one:95, two:152, three:190},
-  sceneImages:{},readingImage:'',comicPanels:[],
+  sceneImages:{storyA:'campaign/img/g2-ch04-scene-lab.jpg', storyB:'campaign/img/g2-ch04-scene-comparison.jpg', completion:'campaign/img/g2-ch04-scene-completion.jpg'},readingImage:'campaign/img/g2-ch04-reading-flip.jpg',comicPanels:['campaign/img/g2-ch04-comic-01.jpg'],
   storyA:[
     {speaker:"nora", text:"Leo Winkler. 14 years old, 4th-grader. Football player. He owns a green hoodie. And he was at school over summer for practice."},
     {speaker:"elias", text:"It all fits! He is our guy!"},
@@ -13713,7 +13713,7 @@ var campaignLevels = [
   // ==================== LEVEL 5: The Map and the Alibi ====================
   {levelName:"The Map and the Alibi", topic:"Directions & Locations", grammar:"Prepositions, directions",
   maxXP:180, starThresholds:{one:90, two:144, three:180},
-  sceneImages:{},readingImage:'',comicPanels:[],
+  sceneImages:{storyA:'campaign/img/g2-ch05-scene-map.jpg', storyB:'campaign/img/g2-ch05-scene-shop.jpg', completion:'campaign/img/g2-ch05-scene-completion.jpg'},readingImage:'campaign/img/g2-ch05-reading-flip.jpg',comicPanels:['campaign/img/g2-ch05-comic-01.jpg'],
   storyA:[
     {speaker:"elias", text:"I found Leo's football coach. He confirmed it \u2014 Leo was at training from 5 to 7 PM on August 14th."},
     {speaker:"nora", text:"The football pitch is a twenty-minute walk from school. If he left training at seven, he could not have been at the trophy case at seven. Impossible."},
@@ -13775,7 +13775,7 @@ var campaignLevels = [
   // LEVEL 6: The Field Trip Lead
   {levelName:"The Field Trip Lead", topic:"Adventure & Rules", grammar:"have to / don't have to",
   maxXP:180, starThresholds:{one:90, two:144, three:180},
-  sceneImages:{},readingImage:'',comicPanels:[],
+  sceneImages:{storyA:'campaign/img/g2-ch06-scene-adventure.jpg', storyB:'campaign/img/g2-ch06-scene-felix.jpg', completion:'campaign/img/g2-ch06-scene-completion.jpg'},readingImage:'campaign/img/g2-ch06-reading-flip.jpg',comicPanels:['campaign/img/g2-ch06-comic-01.jpg'],
   storyA:[
     {speaker:"elias", text:"Class field trip today. Adventure park. I am supposed to be having fun, but all I can think about is Felix Novak."},
     {speaker:"nora", text:"Look \u2014 Felix is sitting alone. He is not joining any of the activities. Everyone else is at the climbing wall."},
@@ -13832,7 +13832,7 @@ var campaignLevels = [
   // LEVEL 7: Weekend Plans, Changed Plans
   {levelName:"Weekend Plans, Changed Plans", topic:"Plans & Uncertainty", grammar:"going to (negative), might / might not",
   maxXP:180, starThresholds:{one:90, two:144, three:180},
-  sceneImages:{},readingImage:'',comicPanels:[],
+  sceneImages:{storyA:'campaign/img/g2-ch07-scene-window.jpg', storyB:'campaign/img/g2-ch07-scene-bronze.jpg', completion:'campaign/img/g2-ch07-scene-completion.jpg'},readingImage:'campaign/img/g2-ch07-reading-flip.jpg',comicPanels:['campaign/img/g2-ch07-comic-01.jpg'],
   storyA:[
     {speaker:"elias", text:"Saturday. We planned to visit the antique shop. But it is closed on weekends. Typical."},
     {speaker:"nora", text:"We are not going to get inside today. But we can still look through the window."},
@@ -13891,7 +13891,7 @@ var campaignLevels = [
 
   {levelName:"The Cellar Discovery", topic:"Stories & Time", grammar:"Past simple revision, time markers",
   maxXP:190, starThresholds:{one:95, two:152, three:190},
-  sceneImages:{},readingImage:'',comicPanels:[],
+  sceneImages:{storyA:'campaign/img/g2-ch08-scene-cellar.jpg', storyB:'campaign/img/g2-ch08-scene-logbook.jpg', completion:'campaign/img/g2-ch08-scene-completion.jpg'},readingImage:'campaign/img/g2-ch08-reading-flip.jpg',comicPanels:['campaign/img/g2-ch08-comic-01.jpg'],
   storyA:[{speaker:"nora", text:"Ms. Petrova's history class. She is taking us to the cellar today \u2014 the oldest part of Watson Manor."},{speaker:"elias", text:"Perfect. We can look for the log book without anyone getting suspicious."},{speaker:"nora", text:"There \u2014 on a shelf near the back wall. A thick black notebook. This is it."}],
   storyB:[{speaker:"nora", text:"I found an entry. July 12th. 'One framed photograph, 1952. Collected by Novak and Son Antiques for cleaning.'"},{speaker:"elias", text:"So the Novak shop DID collect something from the school. But the log says a photograph \u2014 not a trophy."},{speaker:"nora", text:"What if someone from the shop \u2014 Felix, maybe \u2014 came to collect the photograph but took the wrong thing?"}],
   completion:[{speaker:"nora", text:"Major discovery. The Novak shop had a legitimate reason to collect an item from school in July. But the log says photograph, not trophy."},{speaker:"elias", text:"First, then, after that \u2014 I can see the whole timeline now."}],
@@ -13934,7 +13934,7 @@ var campaignLevels = [
 
   {levelName:"The Canteen Witness", topic:"Food & Evidence", grammar:"some / any, one / ones",
   maxXP:180, starThresholds:{one:90, two:144, three:180},
-  sceneImages:{},readingImage:'',comicPanels:[],
+  sceneImages:{storyA:'campaign/img/g2-ch09-scene-canteen.jpg', storyB:'campaign/img/g2-ch09-scene-keys.jpg', completion:'campaign/img/g2-ch09-scene-completion.jpg'},readingImage:'campaign/img/g2-ch09-reading-flip.jpg',comicPanels:['campaign/img/g2-ch09-comic-01.jpg'],
   storyA:[{speaker:"elias", text:"Canteen. Lunch break. The best place for information \u2014 everyone talks here."},{speaker:"nora", text:"The canteen cook, Mrs. Brennan, has worked here for twenty years. She knows everything."},{speaker:"elias", text:"And she loves to chat. Leave this to me."}],
   storyB:[{speaker:"elias", text:"Mrs. Brennan told me something interesting. Over the summer, some heating workers came to fix the boiler. One of them borrowed Rudi's keyring for five minutes."},{speaker:"nora", text:"So for a short time, someone outside the school had access to Rudi's keys. All of them. Including the trophy case key."},{speaker:"elias", text:"But the Novak shop collected the photograph in July \u2014 that was during the maintenance chaos. Felix could have walked in without needing a key."}],
   completion:[{speaker:"nora", text:"Rudi's key incident confirmed. The building was open and chaotic in July during maintenance. That is how Felix got in."},{speaker:"elias", text:"Everything points to a mistake. Felix picked up the wrong thing."}],
@@ -13981,7 +13981,7 @@ var campaignLevels = [
 
   {levelName:"Open Evening", topic:"Family & Rules", grammar:"like + -ing, must / mustn't",
   maxXP:190, starThresholds:{one:95, two:152, three:190},
-  sceneImages:{},readingImage:'',comicPanels:[],
+  sceneImages:{storyA:'campaign/img/g2-ch10-scene-evening.jpg', storyB:'campaign/img/g2-ch10-scene-felix-reaction.jpg', completion:'campaign/img/g2-ch10-scene-completion.jpg'},readingImage:'campaign/img/g2-ch10-reading-flip.jpg',comicPanels:['campaign/img/g2-ch10-comic-01.jpg'],
   storyA:[{speaker:"elias", text:"School open evening. Parents everywhere. And look \u2014 the Novak antique shop has a stall."},{speaker:"nora", text:"Mr. Novak is here. This is our chance. I am going to talk to him."},{speaker:"elias", text:"Be careful. We are not accusing anyone. We are just... talking."}],
   storyB:[{speaker:"elias", text:"Mr. Novak is friendly. He told me he likes restoring old furniture."},{speaker:"elias", text:"He said: 'We collected a photograph from Watson Manor over the summer. My son Felix sometimes helps me with pickups.'"},{speaker:"nora", text:"Felix. I watched him during the conversation. When Mr. Novak mentioned the school, Felix went white."}],
   completion:[{speaker:"nora", text:"Mr. Novak confirmed: his shop collected an item from school. Felix helped with pickups. Felix is nervous. The pieces are falling into place."},{speaker:"elias", text:"End of Act II. We know who. We think we know what happened. We just need to prove it."}],
@@ -14024,7 +14024,7 @@ var campaignLevels = [
 
   {levelName:"The Evidence Wall", topic:"Ownership & Proof", grammar:"Possessive pronouns, who / whose",
   maxXP:190, starThresholds:{one:95, two:152, three:190},
-  sceneImages:{},readingImage:'',comicPanels:[],
+  sceneImages:{storyA:'campaign/img/g2-ch11-scene-wall.jpg', storyB:'campaign/img/g2-ch11-scene-jacket.jpg', completion:'campaign/img/g2-ch11-scene-completion.jpg'},readingImage:'campaign/img/g2-ch11-reading-flip.jpg',comicPanels:['campaign/img/g2-ch11-comic-01.jpg'],
   storyA:[{speaker:"nora", text:"I pinned everything to the board. The fabric. The witness statement. The newspaper. The log book entry. The map."},{speaker:"elias", text:"That is a lot of evidence. But we need to be sure before we do anything."},{speaker:"nora", text:"Look at the connections. Whose shop collected an item from school? Novak's. Who signed the pickup? F.N. \u2014 Felix Novak."}],
   storyB:[{speaker:"elias", text:"Does Felix own a green jacket?"},{speaker:"nora", text:"I asked around. His classmate said yes \u2014 Felix has a dark green cotton jacket. He stopped wearing it in September."},{speaker:"elias", text:"Because it is evidence. He knows the fabric got caught on the hinge."}],
   completion:[{speaker:"nora", text:"The evidence wall is complete. Every thread points to Felix Novak."},{speaker:"elias", text:"Tomorrow after school. Novak and Son Antiques. This ends now."}],
