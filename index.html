@@ -12485,6 +12485,75 @@ function showComicPanelsThenResults() {
 }
 
 // --- WATCH ALL COMICS (unlocked after completing all 15 levels) ---
+
+// --- EVIDENCE WALL GALLERY ---
+function showEvidenceGallery() {
+  var cp = getCampaignProgress();
+  var completedLevels = [];
+  if (cp.levels) {
+    for (var k in cp.levels) {
+      if (cp.levels[k].completed) {
+        var num = parseInt(k.replace('L',''));
+        completedLevels.push(num);
+      }
+    }
+  }
+
+  var evidence = [
+    {level:1, img:'campaign/img/g2-evidence-fabric.jpg', title:'Green Fabric', desc:'A piece of dark green cotton caught on the trophy case hinge.'},
+    {level:2, img:'campaign/img/g2-evidence-newspaper.jpg', title:'2005 Newspaper', desc:'School newspaper mentioning P. Kovac as the Watson Manor Challenge winner.'},
+    {level:3, img:'campaign/img/g2-evidence-witness.jpg', title:'Witness Statement', desc:'Ms. Richter saw a student in a green jacket near the case on August 14th.'},
+    {level:4, img:'campaign/img/g2-evidence-microscope.jpg', title:'Fabric Analysis', desc:'The hinge fabric is thick cotton. Leo\'s hoodie is polyester. NOT a match.'},
+    {level:5, img:'campaign/img/g2-evidence-map.jpg', title:'Route Map', desc:'Leo\'s route from the pitch to school passes the Novak antique shop.'},
+    {level:6, img:'campaign/img/g2-evidence-felix-profile.jpg', title:'Suspect: Felix', desc:'Felix Novak, 13, helped his father make deliveries. Nervous when asked about school.'},
+    {level:7, img:'campaign/img/g2-evidence-shop-photo.jpg', title:'Shop Sighting', desc:'A bronze object spotted through the Novak shop window.'},
+    {level:8, img:'campaign/img/g2-evidence-logbook.jpg', title:'Log Book Entry', desc:'July 12: Novak shop collected a photograph. Signed by F.N.'},
+    {level:9, img:'campaign/img/g2-evidence-keys.jpg', title:'Key Diagram', desc:'Rudi\'s keys were borrowed by heating workers. The building was open.'},
+    {level:10, img:'campaign/img/g2-evidence-novak.jpg', title:'Novak Connection', desc:'Mr. Novak confirmed the pickup. Felix helped. Felix went pale.'},
+    {level:15, img:'campaign/img/g2-evidence-solved.jpg', title:'CASE CLOSED', desc:'The Watson Manor Trophy has been found and returned.'}
+  ];
+
+  var overlay = document.getElementById('campaign-comic-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'campaign-comic-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9999;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:1rem;';
+    document.body.appendChild(overlay);
+  }
+
+  var bgImg = 'campaign/img/g2-evidence-corkboard.jpg';
+  var html = '<div style="max-width:500px;margin:0 auto;padding-bottom:3rem;">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">';
+  html += '<div style="color:#FFD54F;font-size:1.1rem;font-weight:700;font-family:Fredoka,sans-serif;">&#128204; Evidence Wall</div>';
+  html += '<button style="background:none;border:none;color:rgba(255,255,255,0.6);font-size:1.2rem;cursor:pointer;" onclick="closeEvidenceGallery()">&#10005;</button>';
+  html += '</div>';
+  html += '<div style="color:rgba(255,255,255,0.5);font-size:0.75rem;margin-bottom:1rem;">' + completedLevels.length + ' of ' + evidence.length + ' clues collected</div>';
+
+  for (var i = 0; i < evidence.length; i++) {
+    var e = evidence[i];
+    var unlocked = completedLevels.indexOf(e.level) >= 0;
+    if (unlocked) {
+      html += '<div style="display:flex;gap:0.8rem;align-items:flex-start;margin-bottom:0.8rem;background:rgba(255,255,255,0.08);border-radius:10px;padding:0.6rem;border:1px solid rgba(255,255,255,0.1);">';
+      html += '<img src="' + e.img + '" style="width:70px;height:70px;border-radius:8px;object-fit:cover;flex-shrink:0;" onerror="this.style.display=\'none\'">';
+      html += '<div><div style="color:#FFD54F;font-weight:700;font-size:0.85rem;">Ch ' + e.level + ': ' + e.title + '</div>';
+      html += '<div style="color:rgba(255,255,255,0.7);font-size:0.75rem;margin-top:2px;">' + e.desc + '</div></div></div>';
+    } else {
+      html += '<div style="display:flex;gap:0.8rem;align-items:center;margin-bottom:0.8rem;background:rgba(255,255,255,0.03);border-radius:10px;padding:0.6rem;border:1px dashed rgba(255,255,255,0.1);opacity:0.4;">';
+      html += '<div style="width:70px;height:70px;border-radius:8px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">&#128274;</div>';
+      html += '<div style="color:rgba(255,255,255,0.4);font-size:0.8rem;">Complete Chapter ' + e.level + ' to unlock</div></div>';
+    }
+  }
+  html += '</div>';
+
+  overlay.innerHTML = html;
+  overlay.style.display = 'block';
+}
+
+function closeEvidenceGallery() {
+  var overlay = document.getElementById('campaign-comic-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
 function showAllComics() {
   if (typeof campaignLevels === 'undefined') return;
   // Build flat list of all comic panels with chapter labels
@@ -12769,7 +12838,8 @@ var campaignLevels = [
   completion:[
     {speaker:"nora", text:"I started a notebook. Page one: The Watson Manor Trophy. Missing since August. One clue: green fabric on the hinge."},
     {speaker:"elias", text:"Sports Week is in June. We have nine months to find it. Let us get to work."}
-  ],
+  ,
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: a piece of green fabric from the trophy case hinge."}],
   tasks:[
     {name:"First Day Back", type:"image-matching", context:"It is the first day of school. Nora checks the timetable before the announcement in the school hall — but which subjects are which?", contextDe:"Es ist der erste Schultag. Nora schaut auf den Stundenplan vor der Versammlung — aber welches Fach ist welches?", xpEach:5,
       items:[
@@ -12828,7 +12898,8 @@ var campaignLevels = [
   completion:[
     {speaker:"nora", text:"Two new leads today. A teacher was in the building in August. And someone called P. Kovac won the Watson Manor Challenge back in 2005. Who is P. Kovac?"},
     {speaker:"elias", text:"And I learned something too: do not stand on library chairs. Ever."}
-  ],
+  ,
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: a 2005 school newspaper mentioning P. Kovac."}],
   tasks:[
     {name:"How Do You Feel?", type:"image-matching", context:"Everyone reacts differently to the missing trophy. Nora observes people’s emotions. Can you name each feeling?", contextDe:"Jeder reagiert anders auf den vermissten Pokal. Nora beobachtet die Gef\u00fchle der Leute. Kannst du jedes Gef\u00fchl benennen?", xpEach:5,
       items:[
@@ -12888,7 +12959,8 @@ var campaignLevels = [
   completion:[
     {speaker:"nora", text:"Evidence update: a student in a dark green cotton jacket was seen near the trophy case on August 14th at 7 PM. This matches our fabric sample."},
     {speaker:"elias", text:"Leo Winkler has a green hoodie and was at school in August. He is our first real suspect."}
-  ],
+  ,
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: witness statement from the drama teacher."}],
   tasks:[
     {name:"Halloween at Watson Manor", type:"image-matching", context:"The school hall is being set up for the Halloween party. Name each spooky item while Nora and Elias search for clues backstage.", contextDe:"Die Aula wird f\u00fcr die Halloweenparty vorbereitet. Benenne jeden unheimlichen Gegenstand, w\u00e4hrend Nora und Elias hinter der B\u00fchne nach Hinweisen suchen.", xpEach:5,
       items:[
@@ -12945,7 +13017,8 @@ var campaignLevels = [
   completion:[
     {speaker:"nora", text:"The fabric does NOT match Leo's hoodie. His jacket is cleared. But Leo himself is not — he was still at school in August."},
     {speaker:"elias", text:"And Old Rudi's work jacket is the same shade of green as the fabric. Another possibility."}
-  ],
+  ,
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: fabric analysis — Leo's hoodie does NOT match."}],
   tasks:[
     {name:"Animal Evidence", type:"image-matching", context:"The science lab has posters of animals on every wall. One poster was recently swapped — name the animals to find which one is new.", contextDe:"Das Labor hat \u00fcberall Tierposter an den W\u00e4nden. Ein Poster wurde k\u00fcrzlich ausgetauscht — benenne die Tiere, um herauszufinden, welches neu ist.", xpEach:5,
       items:[
@@ -13003,7 +13076,8 @@ var campaignLevels = [
   completion:[
     {speaker:"nora", text:"Leo Winkler: CLEARED. His football coach confirmed his alibi. He could not have been at the trophy case at 7 PM."},
     {speaker:"elias", text:"But we found something new. An antique shop on the same street as the school. Novak and Son. And Felix Novak from class 3B — his dad owns it."}
-  ],
+  ,
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: route map showing the Novak antique shop."}],
   tasks:[
     {name:"Around Town", type:"image-matching", context:"Nora traces Leo’s route on a map. She passes many buildings — name each one to mark it on the map.", contextDe:"Nora zeichnet Leos Route auf einer Karte. Sie kommt an vielen Geb\u00e4uden vorbei — benenne jedes, um es auf der Karte zu markieren.", xpEach:5,
       items:[
@@ -13065,7 +13139,8 @@ var campaignLevels = [
   completion:[
     {speaker:"nora", text:"Felix Novak is nervous about something. He helped his father in the shop all summer, making deliveries. He had access to the school area."},
     {speaker:"elias", text:"We need hard evidence. A nervous look is not enough to solve a case."}
-  ],
+  ,
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: suspect profile on Felix Novak."}],
   tasks:[
     {name:"The Landscape", type:"image-matching", context:"The class field trip takes them through the countryside. Name each natural feature Nora sees from the bus window.", contextDe:"Der Klassenausflug f\u00fchrt durch die Landschaft. Benenne jedes Naturmerkmal, das Nora aus dem Busfenster sieht.", xpEach:5,
       items:[
@@ -13122,7 +13197,8 @@ var campaignLevels = [
   completion:[
     {speaker:"nora", text:"We saw something bronze in the back of the Novak shop. Could be the trophy. Could be something else. We need to get inside — legally."},
     {speaker:"elias", text:"Felix is avoiding every school event. He is not going to the Halloween party, not going to the football match. He is hiding."}
-  ],
+  ,
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: photo of the Novak shop window."}],
   tasks:[
     {name:"Weekend Activities", type:"image-matching", context:"It is Saturday. Nora and Elias planned to investigate, but they also need to do normal weekend things. Name each activity.", contextDe:"Es ist Samstag. Nora und Elias wollten ermitteln, aber sie m\u00fcssen auch normale Wochenenddinge tun. Benenne jede Aktivit\u00e4t.", xpEach:5,
       items:[
@@ -13173,7 +13249,8 @@ var campaignLevels = [
   completion:[
     {speaker:"nora", text:"The cellar log book proves the Novak shop collected an item from school in July. But the log says photograph — not trophy. Someone took the wrong thing."},
     {speaker:"elias", text:"And the pickup was signed by F.N. — Felix Novak. The timeline is coming together."}
-  ],
+  ,
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: cellar log book entry signed by F.N."}],
   tasks:[
     {name:"Out of This World", type:"image-matching", context:"The school cellar feels like another world. Old objects, strange machines, forgotten artefacts — like something from a science fiction story.", contextDe:"Der Schulkeller f\u00fchlt sich an wie eine andere Welt. Alte Gegenst\u00e4nde, seltsame Maschinen, vergessene Artefakte — wie aus einer Science-Fiction-Geschichte.", xpEach:5,
       items:[
@@ -13219,7 +13296,8 @@ var campaignLevels = [
   completion:[
     {speaker:"nora", text:"Rudi's keys were borrowed during the heating works in July. The school was wide open. Anyone could have walked in without a key."},
     {speaker:"elias", text:"Felix came during the chaos. Nobody stopped him. Nobody asked who he was. He picked up the wrong item and walked out."}
-  ],
+  ,
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: key diagram — Rudi's keys were copied."}],
   tasks:[
     {name:"Canteen Menu", type:"image-matching", context:"Elias chats with Mrs. Brennan at the serving counter. While he talks, Nora reads today’s menu. Name each food.", contextDe:"Elias plaudert mit Frau Brennan an der Theke. W\u00e4hrend er redet, liest Nora das heutige Men\u00fc. Benenne jedes Essen.", xpEach:5,
       items:[
@@ -13269,7 +13347,8 @@ var campaignLevels = [
   completion:[
     {speaker:"nora", text:"Mr. Novak confirmed his shop collected something from the school. Felix helped with pickups. And when his father mentioned the school, Felix went white."},
     {speaker:"elias", text:"End of Act II. We know WHO took it. We think we know HOW. Now we need proof. Tomorrow we go to the shop."}
-  ],
+  ,
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: the Novak family connection confirmed."}],
   tasks:[
     {name:"Family Evening", type:"image-matching", context:"Parents visit the school. Nora watches families arrive. She listens to how people describe their relatives.", contextDe:"Eltern besuchen die Schule. Nora beobachtet die ankommenden Familien. Sie h\u00f6rt zu, wie Leute ihre Verwandten beschreiben.", xpEach:5,
       items:[
