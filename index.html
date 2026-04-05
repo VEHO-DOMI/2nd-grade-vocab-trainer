@@ -1425,9 +1425,9 @@ body.playing .header-container { display: none; }
   padding: 1rem 0.5rem 2rem;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  max-height: calc(100dvh - 60px);
   background: linear-gradient(180deg, #FFFDE7 0%, #FFF8E1 50%, #FFECB3 100%);
-  min-height: 100vh;
+  min-height: 0;
+  padding-bottom: 4rem;
 }
 [data-theme="dark"] .campaign-map {
   background: linear-gradient(180deg, #2c2218 0%, #3e2f22 50%, #2c2218 100%);
@@ -2296,9 +2296,11 @@ body.playing .header-container { display: none; }
 #campaign-results-screen,
 #campaign-map-screen,
 #campaign-prologue-screen {
-  overflow-y: auto;
+  overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: auto;
+  max-height: 100dvh;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 @keyframes campaignScreenIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
 
@@ -2423,7 +2425,12 @@ body.playing .header-container { display: none; }
 
 <!-- CAMPAIGN STORY SCREEN -->
 <div id="campaign-story-screen" class="screen">
-  <div class="campaign-story-card" style="margin:0.5rem;">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:0 0.5rem;margin-bottom:0.3rem;">
+    <button style="background:var(--card);border:1.5px solid var(--card-border);color:var(--text-secondary);font-size:0.78rem;font-weight:600;padding:0.35rem 0.7rem;border-radius:8px;cursor:pointer;font-family:inherit;" onclick="quitCampaignToMap()">&#8592; Map</button>
+    <span style="font-size:0.72rem;color:var(--muted);font-weight:600;" id="campaign-story-chapter-label"></span>
+    <button style="background:var(--card);border:1.5px solid var(--card-border);color:var(--text-secondary);font-size:0.78rem;font-weight:600;padding:0.35rem 0.7rem;border-radius:8px;cursor:pointer;font-family:inherit;" onclick="confirmQuitLevel()">&#10005; Quit</button>
+  </div>
+  <div class="campaign-story-card" style="margin:0 0.5rem;">
     <div class="campaign-story-speaker" id="campaign-story-speaker"></div>
     <div id="campaign-story-content"></div>
   </div>
@@ -2628,7 +2635,7 @@ body.playing .header-container { display: none; }
 <!-- CAMPAIGN TASK SCREEN -->
 <div id="campaign-task-screen" class="screen">
   <div style="display:flex;justify-content:space-between;align-items:center;padding:0 0.5rem;margin-bottom:0.2rem;">
-    <button style="background:var(--card);border:1.5px solid var(--card-border);color:var(--text-secondary);font-size:0.78rem;font-weight:600;padding:0.35rem 0.7rem;border-radius:8px;cursor:pointer;font-family:inherit;" onclick="confirmQuitLevel()">← Quit Level</button>
+    <button style="background:var(--card);border:1.5px solid var(--card-border);color:var(--text-secondary);font-size:0.78rem;font-weight:600;padding:0.35rem 0.7rem;border-radius:8px;cursor:pointer;font-family:inherit;" onclick="quitCampaignToMap()">← Map</button> <button style="background:var(--card);border:1.5px solid var(--card-border);color:var(--text-secondary);font-size:0.78rem;font-weight:600;padding:0.35rem 0.7rem;border-radius:8px;cursor:pointer;font-family:inherit;" onclick="confirmQuitLevel()">× Quit</button>
     <span style="font-size:0.68rem;color:var(--muted);" id="campaign-task-chapter-label"></span>
   </div>
   <div class="campaign-task-progress" id="campaign-task-progress">
@@ -11692,14 +11699,46 @@ function renderCampaignTask(taskIndex) {
   var task = lv.tasks[taskIndex];
   if (!task) return;
   updateCampaignTaskProgress();
+
+  // Show task intro briefing screen first (context + image + "Let's start")
+  if (!campaignState._taskBriefingShown) {
+    campaignState._taskBriefingShown = true;
+    var taskNum = taskIndex + 1;
+    var totalTasks = lv.tasks.length;
+    var header = document.getElementById('campaign-task-header');
+    header.innerHTML = '';
+
+    var sceneImg = '';
+    if (lv.sceneImages && lv.sceneImages.storyA) {
+      sceneImg = '<img src="' + lv.sceneImages.storyA + '" style="width:100%;border-radius:12px;margin-bottom:0.8rem;max-height:200px;object-fit:cover;" onerror="this.style.display=\'none\'">';
+    }
+
+    var deText = task.contextDe ? '<div style="margin-top:0.5rem;font-size:0.78rem;color:var(--muted);font-style:italic;">\uD83C\uDDE9\uD83C\uDDEA ' + task.contextDe + '</div>' : '';
+
+    var area = document.getElementById('campaign-exercise-area');
+    var feedback = document.getElementById('campaign-feedback-area');
+    if (feedback) feedback.innerHTML = '';
+    area.innerHTML =
+      '<div style="text-align:center;padding:0.5rem 0;">' +
+        sceneImg +
+        '<div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">Task ' + taskNum + ' of ' + totalTasks + '</div>' +
+        '<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.6rem;">' + (task.name || 'Task') + '</div>' +
+        '<div style="font-size:0.85rem;line-height:1.6;color:var(--text-secondary);max-width:400px;margin:0 auto;padding:0 0.5rem;">' + (task.context || '') + '</div>' +
+        deText +
+        '<button class="btn btn-primary" onclick="startCampaignTaskItems()" style="margin-top:1.2rem;padding:0.7rem 2rem;font-size:0.95rem;font-weight:700;">Let\u2019s start</button>' +
+      '</div>';
+    showScreen('campaign-task-screen');
+    return;
+  }
+
+  // Reset briefing flag for next task
+  campaignState._taskBriefingShown = false;
+
   var header = document.getElementById('campaign-task-header');
   var taskNum = taskIndex + 1;
-  var deToggle = task.contextDe ? '<button class="campaign-de-toggle" onclick="toggleTaskContextDE(this, ' + taskIndex + ')">\uD83C\uDDE9\uD83C\uDDEA Auf Deutsch</button>' : '';
   header.innerHTML = '<div class="campaign-task-header-card">' +
     '<div class="campaign-task-badge">' + taskNum + '</div>' +
     '<div><div style="font-weight:700;font-size:0.95rem;">' + (task.name || 'Task') + '</div>' +
-    (task.context ? '<div class="campaign-task-context">' + task.context + '</div>' : '') +
-    deToggle +
     '</div></div>';
   showScreen('campaign-task-screen');
   var type = task.type || 'mc';
@@ -11709,7 +11748,11 @@ function renderCampaignTask(taskIndex) {
   else if (type === 'gap-fill-typed') renderCampaignGapFillTyped(task);
   else if (type === 'tf') renderCampaignTF(task);
   else if (type === 'reading') renderCampaignReading(task);
-  else renderCampaignMC(task); // fallback
+  else renderCampaignMC(task);
+}
+
+function startCampaignTaskItems() {
+  renderCampaignTask(campaignState.currentTaskIndex);
 }
 
 // --- IMAGE MATCHING (tap word bank) ---
