@@ -11710,13 +11710,13 @@ function renderCampaignTask(taskIndex) {
   if (!task) return;
   updateCampaignTaskProgress();
 
-  // Update chapter label on task screen
+  // Update chapter label
   var chLabel2 = document.getElementById('campaign-task-chapter-label2');
   if (chLabel2 && lv.levelName) {
     chLabel2.textContent = 'Ch ' + (campaignState.currentLevel + 1) + ': ' + lv.levelName;
   }
 
-  // Show task intro briefing screen first (context + image + "Let's start")
+  // Show task intro briefing screen first
   if (!campaignState._taskBriefingShown) {
     campaignState._taskBriefingShown = true;
     var taskNum = taskIndex + 1;
@@ -11744,16 +11744,19 @@ function renderCampaignTask(taskIndex) {
     return;
   }
 
-  // Reset briefing flag for next task
   campaignState._taskBriefingShown = false;
+
+  // Store current task DE text for the toggle button
+  window._currentTaskDe = task.contextDe || '';
 
   var header = document.getElementById('campaign-task-header');
   var taskNum = taskIndex + 1;
+  var deBtn = task.contextDe ? '<div style="margin-top:0.3rem;"><button id="campaign-de-toggle" style="background:none;border:1px dashed var(--muted);color:var(--muted);font-size:0.72rem;padding:2px 8px;border-radius:6px;cursor:pointer;font-family:inherit;" onclick="showCampaignDe()">\uD83C\uDDE9\uD83C\uDDEA Auf Deutsch</button></div>' : '';
   header.innerHTML = '<div class="campaign-task-header-card">' +
     '<div class="campaign-task-badge">' + taskNum + '</div>' +
     '<div><div style="font-weight:700;font-size:0.95rem;">' + (task.name || 'Task') + '</div>' +
     (task.context ? '<div class="campaign-task-context">' + task.context + '</div>' : '') +
-    (task.contextDe ? '<div style="margin-top:0.3rem;"><button style="background:none;border:1px dashed var(--muted);color:var(--muted);font-size:0.72rem;padding:2px 8px;border-radius:6px;cursor:pointer;font-family:inherit;" onclick="this.innerHTML=\'\uD83C\uDDE9\uD83C\uDDEA ' + task.contextDe.replace(/'/g, "\\'") + '\'">\uD83C\uDDE9\uD83C\uDDEA Auf Deutsch</button></div>' : '') +
+    deBtn +
     '</div></div>';
   showScreen('campaign-task-screen');
   var type = task.type || 'mc';
@@ -11764,6 +11767,17 @@ function renderCampaignTask(taskIndex) {
   else if (type === 'tf') renderCampaignTF(task);
   else if (type === 'reading') renderCampaignReading(task);
   else renderCampaignMC(task);
+}
+
+function showCampaignDe() {
+  var btn = document.getElementById('campaign-de-toggle');
+  if (btn && window._currentTaskDe) {
+    btn.innerHTML = '\uD83C\uDDE9\uD83C\uDDEA ' + window._currentTaskDe;
+    btn.style.border = 'none';
+    btn.style.color = 'var(--text-secondary)';
+    btn.style.fontStyle = 'italic';
+    btn.onclick = null;
+  }
 }
 
 function startCampaignTaskItems() {
