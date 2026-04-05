@@ -2439,6 +2439,11 @@ body.playing .header-container { display: none; }
 
 <!-- CAMPAIGN TASK SCREEN -->
 <div id="campaign-task-screen" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:0 0.5rem;margin-bottom:0.2rem;">
+    <button style="background:var(--card);border:1.5px solid var(--card-border);color:var(--text-secondary);font-size:0.78rem;font-weight:600;padding:0.35rem 0.7rem;border-radius:8px;cursor:pointer;font-family:inherit;" onclick="quitCampaignToMap()">&#8592; Map</button>
+    <span style="font-size:0.68rem;color:var(--muted);font-weight:600;" id="campaign-task-chapter-label2"></span>
+    <button style="background:var(--card);border:1.5px solid var(--card-border);color:var(--text-secondary);font-size:0.78rem;font-weight:600;padding:0.35rem 0.7rem;border-radius:8px;cursor:pointer;font-family:inherit;" onclick="confirmQuitLevel()">&#10005; Quit</button>
+  </div>
   <div class="campaign-task-progress" id="campaign-task-progress">
     <span id="campaign-task-label">Task 1/3</span>
     <div class="campaign-task-progress-bar"><div class="campaign-task-progress-fill" id="campaign-task-progress-fill" style="width:0%"></div></div>
@@ -2451,8 +2456,12 @@ body.playing .header-container { display: none; }
 
 <!-- CAMPAIGN READING SCREEN -->
 <div id="campaign-reading-screen" class="screen">
-  <div class="progress-nav">
-    <span class="nav-title">&#128214; Reading</span>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:0 0.5rem;margin-bottom:0.2rem;">
+    <button style="background:var(--card);border:1.5px solid var(--card-border);color:var(--text-secondary);font-size:0.78rem;font-weight:600;padding:0.35rem 0.7rem;border-radius:8px;cursor:pointer;font-family:inherit;" onclick="quitCampaignToMap()">&#8592; Map</button>
+    <span style="font-size:0.82rem;font-weight:600;">&#128214; Reading</span>
+    <button style="background:var(--card);border:1.5px solid var(--card-border);color:var(--text-secondary);font-size:0.78rem;font-weight:600;padding:0.35rem 0.7rem;border-radius:8px;cursor:pointer;font-family:inherit;" onclick="confirmQuitLevel()">&#10005; Quit</button>
+  </div>
+  <div class="progress-nav" style="padding-top:0;">
     <span id="campaign-reading-xp" style="font-weight:700;color:#795548;font-size:0.82rem;">0 XP</span>
   </div>
   <div class="campaign-reading-card" id="campaign-passage"></div>
@@ -2463,7 +2472,7 @@ body.playing .header-container { display: none; }
 <!-- CAMPAIGN RESULTS SCREEN -->
 <div id="campaign-results-screen" class="screen">
   <div class="login-card" style="max-width:400px;text-align:center;">
-    <div id="campaign-results-banner" class="campaign-results-banner">LEVEL COMPLETE</div>
+    <div id="campaign-results-banner" class="campaign-results-banner" id="campaign-results-banner">LEVEL COMPLETE</div>
     <div class="campaign-stars-display" id="campaign-results-stars"></div>
     <div class="campaign-xp-breakdown" id="campaign-xp-breakdown"></div>
     <div id="campaign-completion-message" style="font-size:0.85rem;color:var(--text-secondary);margin:0.5rem 0;font-style:italic;"></div>
@@ -2663,7 +2672,7 @@ body.playing .header-container { display: none; }
 <!-- CAMPAIGN RESULTS SCREEN -->
 <div id="campaign-results-screen" class="screen">
   <div class="login-card" style="max-width:400px;text-align:center;">
-    <div id="campaign-results-banner" class="campaign-results-banner">LEVEL COMPLETE</div>
+    <div id="campaign-results-banner" class="campaign-results-banner" id="campaign-results-banner">LEVEL COMPLETE</div>
     <div class="campaign-stars-display" id="campaign-results-stars"></div>
     <div class="campaign-xp-breakdown" id="campaign-xp-breakdown"></div>
     <div id="campaign-completion-message" style="font-size:0.85rem;color:var(--text-secondary);margin:0.5rem 0;font-style:italic;"></div>
@@ -10949,7 +10958,8 @@ function showCampaignResults() {
   var stars = campaignState.earnedStars || 0;
   // Banner
   var banner = document.getElementById('campaign-results-banner');
-  if (banner) { banner.style.animation = 'none'; banner.offsetHeight; banner.style.animation = ''; }
+  if (banner) { banner.style.animation = 'none'; banner.offsetHeight; banner.style.animation = '';
+  if (lv && lv.levelName) banner.textContent = 'Ch ' + (campaignState.currentLevel + 1) + ': ' + lv.levelName + ' \u2014 Complete!'; }
   // Stars
   var starsHtml = '';
   for (var i = 0; i < 3; i++) {
@@ -11700,6 +11710,12 @@ function renderCampaignTask(taskIndex) {
   if (!task) return;
   updateCampaignTaskProgress();
 
+  // Update chapter label on task screen
+  var chLabel2 = document.getElementById('campaign-task-chapter-label2');
+  if (chLabel2 && lv.levelName) {
+    chLabel2.textContent = 'Ch ' + (campaignState.currentLevel + 1) + ': ' + lv.levelName;
+  }
+
   // Show task intro briefing screen first (context + image + "Let's start")
   if (!campaignState._taskBriefingShown) {
     campaignState._taskBriefingShown = true;
@@ -11713,8 +11729,6 @@ function renderCampaignTask(taskIndex) {
       sceneImg = '<img src="' + lv.sceneImages.storyA + '" style="width:100%;border-radius:12px;margin-bottom:0.8rem;max-height:200px;object-fit:cover;" onerror="this.style.display=\'none\'">';
     }
 
-    var deText = task.contextDe ? '<div style="margin-top:0.5rem;font-size:0.78rem;color:var(--muted);font-style:italic;">\uD83C\uDDE9\uD83C\uDDEA ' + task.contextDe + '</div>' : '';
-
     var area = document.getElementById('campaign-exercise-area');
     var feedback = document.getElementById('campaign-feedback-area');
     if (feedback) feedback.innerHTML = '';
@@ -11724,7 +11738,6 @@ function renderCampaignTask(taskIndex) {
         '<div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">Task ' + taskNum + ' of ' + totalTasks + '</div>' +
         '<div style="font-size:1.1rem;font-weight:700;margin-bottom:0.6rem;">' + (task.name || 'Task') + '</div>' +
         '<div style="font-size:0.85rem;line-height:1.6;color:var(--text-secondary);max-width:400px;margin:0 auto;padding:0 0.5rem;">' + (task.context || '') + '</div>' +
-        deText +
         '<button class="btn btn-primary" onclick="startCampaignTaskItems()" style="margin-top:1.2rem;padding:0.7rem 2rem;font-size:0.95rem;font-weight:700;">Let\u2019s start</button>' +
       '</div>';
     showScreen('campaign-task-screen');
@@ -11739,6 +11752,8 @@ function renderCampaignTask(taskIndex) {
   header.innerHTML = '<div class="campaign-task-header-card">' +
     '<div class="campaign-task-badge">' + taskNum + '</div>' +
     '<div><div style="font-weight:700;font-size:0.95rem;">' + (task.name || 'Task') + '</div>' +
+    (task.context ? '<div class="campaign-task-context">' + task.context + '</div>' : '') +
+    (task.contextDe ? '<div style="margin-top:0.3rem;"><button style="background:none;border:1px dashed var(--muted);color:var(--muted);font-size:0.72rem;padding:2px 8px;border-radius:6px;cursor:pointer;font-family:inherit;" onclick="this.innerHTML=\'\uD83C\uDDE9\uD83C\uDDEA ' + task.contextDe.replace(/'/g, "\\'") + '\'">\uD83C\uDDE9\uD83C\uDDEA Auf Deutsch</button></div>' : '') +
     '</div></div>';
   showScreen('campaign-task-screen');
   var type = task.type || 'mc';
