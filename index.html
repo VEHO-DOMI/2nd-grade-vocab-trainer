@@ -2123,6 +2123,69 @@ body.playing .header-container { display: none; }
   margin-bottom: 0.8rem;
 }
 [data-theme="dark"] .campaign-results-banner { color: #FFE0B2; }
+
+/* Evidence card on results screen */
+.campaign-evidence-card {
+  background: linear-gradient(135deg, #FFF8E1, #FFF3E0);
+  border: 2px solid #E65100;
+  border-radius: 12px;
+  padding: 0.8rem;
+  margin: 0.8rem 0;
+  text-align: center;
+  animation: evidencePin 0.6s ease both;
+  animation-delay: 0.5s;
+  opacity: 0;
+  position: relative;
+  overflow: hidden;
+}
+.campaign-evidence-card::before {
+  content: '\uD83D\uDCCC';
+  position: absolute;
+  top: -2px;
+  right: 8px;
+  font-size: 1.4rem;
+  transform: rotate(15deg);
+}
+.campaign-evidence-card .evidence-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #E65100;
+  margin-bottom: 0.4rem;
+}
+.campaign-evidence-card img {
+  width: 100%;
+  max-width: 180px;
+  border-radius: 8px;
+  border: 2px solid rgba(0,0,0,0.1);
+  margin: 0.3rem auto;
+  display: block;
+}
+.campaign-evidence-card .evidence-title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #3E2723;
+  margin: 0.3rem 0 0.15rem;
+}
+.campaign-evidence-card .evidence-desc {
+  font-size: 0.75rem;
+  color: #5D4037;
+  line-height: 1.4;
+}
+[data-theme="dark"] .campaign-evidence-card {
+  background: linear-gradient(135deg, rgba(230,81,0,0.15), rgba(255,111,0,0.1));
+  border-color: #FF6F00;
+}
+[data-theme="dark"] .campaign-evidence-card .evidence-title { color: #FFE0B2; }
+[data-theme="dark"] .campaign-evidence-card .evidence-desc { color: #FFCC80; }
+[data-theme="dark"] .campaign-evidence-card .evidence-label { color: #FF9800; }
+@keyframes evidencePin {
+  0% { opacity: 0; transform: scale(0.7) rotate(-5deg); }
+  60% { opacity: 1; transform: scale(1.05) rotate(1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
 .campaign-stars-display {
   display: flex;
   justify-content: center;
@@ -2481,6 +2544,7 @@ body.playing .header-container { display: none; }
   <div class="login-card" style="max-width:400px;text-align:center;">
     <div id="campaign-results-banner" class="campaign-results-banner" id="campaign-results-banner">LEVEL COMPLETE</div>
     <div class="campaign-stars-display" id="campaign-results-stars"></div>
+    <div id="campaign-evidence-slot"></div>
     <div class="campaign-xp-breakdown" id="campaign-xp-breakdown"></div>
     <div id="campaign-completion-message" style="font-size:0.85rem;color:var(--text-secondary);margin:0.5rem 0;font-style:italic;"></div>
     <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:1rem;">
@@ -2682,6 +2746,7 @@ body.playing .header-container { display: none; }
     <div id="campaign-results-banner" class="campaign-results-banner" id="campaign-results-banner">LEVEL COMPLETE</div>
     <div class="campaign-stars-display" id="campaign-results-stars"></div>
     <div class="campaign-xp-breakdown" id="campaign-xp-breakdown"></div>
+    <div id="campaign-evidence-slot"></div>
     <div id="campaign-completion-message" style="font-size:0.85rem;color:var(--text-secondary);margin:0.5rem 0;font-style:italic;"></div>
     <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:1rem;">
       <button class="btn campaign-next-btn" id="campaign-next-btn" onclick="showNextLevelOrMap()">Next Level</button>
@@ -10974,6 +11039,25 @@ function showCampaignResults() {
     else starsHtml += '<div class="campaign-star">&#9734;</div>';
   }
   document.getElementById('campaign-results-stars').innerHTML = starsHtml;
+  // Evidence card
+  var evidenceSlot = document.getElementById('campaign-evidence-slot');
+  if (evidenceSlot && typeof campaignEvidence !== 'undefined') {
+    var chNum = campaignState.currentLevel + 1;
+    var ev = null;
+    for (var e = 0; e < campaignEvidence.length; e++) {
+      if (campaignEvidence[e].level === chNum) { ev = campaignEvidence[e]; break; }
+    }
+    if (ev) {
+      evidenceSlot.innerHTML = '<div class="campaign-evidence-card">' +
+        '<div class="evidence-label">\uD83D\uDCCC New Evidence Collected</div>' +
+        '<img src="' + ev.img + '" onerror="this.style.display=\'none\'">' +
+        '<div class="evidence-title">' + ev.title + '</div>' +
+        '<div class="evidence-desc">' + ev.desc + '</div>' +
+      '</div>';
+    } else {
+      evidenceSlot.innerHTML = '';
+    }
+  }
   // XP breakdown
   var breakdown = '';
   if (campaignState.vocabXP > 0) breakdown += '<div class="campaign-xp-row"><span>&#128218; Vocab Tasks</span><span>+' + campaignState.vocabXP + ' XP</span></div>';
@@ -12371,6 +12455,25 @@ function showCampaignResults() {
     else starsHtml += '<div class="campaign-star">&#9734;</div>';
   }
   document.getElementById('campaign-results-stars').innerHTML = starsHtml;
+  // Evidence card
+  var evidenceSlot = document.getElementById('campaign-evidence-slot');
+  if (evidenceSlot && typeof campaignEvidence !== 'undefined') {
+    var chNum = campaignState.currentLevel + 1;
+    var ev = null;
+    for (var e = 0; e < campaignEvidence.length; e++) {
+      if (campaignEvidence[e].level === chNum) { ev = campaignEvidence[e]; break; }
+    }
+    if (ev) {
+      evidenceSlot.innerHTML = '<div class="campaign-evidence-card">' +
+        '<div class="evidence-label">\uD83D\uDCCC New Evidence Collected</div>' +
+        '<img src="' + ev.img + '" onerror="this.style.display=\'none\'">' +
+        '<div class="evidence-title">' + ev.title + '</div>' +
+        '<div class="evidence-desc">' + ev.desc + '</div>' +
+      '</div>';
+    } else {
+      evidenceSlot.innerHTML = '';
+    }
+  }
   // XP breakdown
   var breakdown = '';
   if (campaignState.vocabXP > 0) breakdown += '<div class="campaign-xp-row"><span>&#128218; Vocab Tasks</span><span>+' + campaignState.vocabXP + ' XP</span></div>';
@@ -12499,19 +12602,7 @@ function showEvidenceGallery() {
     }
   }
 
-  var evidence = [
-    {level:1, img:'campaign/img/g2-evidence-fabric.jpg', title:'Green Fabric', desc:'A piece of dark green cotton caught on the trophy case hinge.'},
-    {level:2, img:'campaign/img/g2-evidence-newspaper.jpg', title:'Maintenance Schedule', desc:'Summer maintenance log showing Novak and Son Antiques hired to clean the trophy case on July 12.'},
-    {level:3, img:'campaign/img/g2-evidence-witness.jpg', title:'Witness Statement', desc:'Ms. Richter saw a student in a green jacket near the case on August 14th.'},
-    {level:4, img:'campaign/img/g2-evidence-microscope.jpg', title:'Fabric Analysis', desc:'The hinge fabric is thick cotton. Leo\'s hoodie is polyester. NOT a match.'},
-    {level:5, img:'campaign/img/g2-evidence-map.jpg', title:'Route Map', desc:'Leo\'s route from the pitch to school passes the Novak antique shop.'},
-    {level:6, img:'campaign/img/g2-evidence-felix-profile.jpg', title:'Suspect: Felix', desc:'Felix Novak, 13, helped his father make deliveries. Nervous when asked about school.'},
-    {level:7, img:'campaign/img/g2-evidence-shop-photo.jpg', title:'Shop Sighting', desc:'A bronze object spotted through the Novak shop window.'},
-    {level:8, img:'campaign/img/g2-evidence-logbook.jpg', title:'Log Book Entry', desc:'July 12: Novak shop collected the Watson Manor Trophy for polishing. Signed by F.N.'},
-    {level:9, img:'campaign/img/g2-evidence-keys.jpg', title:'Key Diagram', desc:'Rudi\'s keys were borrowed by heating workers. The building was open.'},
-    {level:10, img:'campaign/img/g2-evidence-novak.jpg', title:'Novak Connection', desc:'Mr. Novak confirmed the pickup. Felix helped. Felix went pale.'},
-    {level:15, img:'campaign/img/g2-evidence-solved.jpg', title:'CASE CLOSED', desc:'The Watson Manor Trophy has been found and returned.'}
-  ];
+  var evidence = campaignEvidence;
 
   var overlay = document.getElementById('campaign-comic-overlay');
   if (!overlay) {
@@ -12817,6 +12908,23 @@ grammarItems = [{"id":"m1-u1-plurals-gf-001","sid":"m1-u1-plurals","u":1,"t":"ga
 
 
 // === CAMPAIGN DATA BLOCK - "The Watson Manor Files" ===
+var campaignEvidence = [
+  {level:1, img:'campaign/img/g2-evidence-fabric.jpg', title:'Green Fabric', desc:'A piece of dark green cotton caught on the trophy case hinge.'},
+  {level:2, img:'campaign/img/g2-evidence-newspaper.jpg', title:'Maintenance Schedule', desc:'Summer maintenance log showing Novak and Son Antiques hired to clean the trophy case on July 12.'},
+  {level:3, img:'campaign/img/g2-evidence-witness.jpg', title:'Witness Statement', desc:'Ms. Richter saw a student in a green jacket near the case on August 14th.'},
+  {level:4, img:'campaign/img/g2-evidence-microscope.jpg', title:'Fabric Analysis', desc:'The hinge fabric is thick cotton. Leo\'s hoodie is polyester. NOT a match.'},
+  {level:5, img:'campaign/img/g2-evidence-map.jpg', title:'Route Map', desc:'Leo\'s route from the pitch to school passes the Novak antique shop.'},
+  {level:6, img:'campaign/img/g2-evidence-felix-profile.jpg', title:'Suspect: Felix', desc:'Felix Novak, 13, helped his father make deliveries. Nervous when asked about school.'},
+  {level:7, img:'campaign/img/g2-evidence-shop-photo.jpg', title:'Shop Sighting', desc:'A bronze object spotted through the Novak shop window.'},
+  {level:8, img:'campaign/img/g2-evidence-logbook.jpg', title:'Log Book Entry', desc:'July 12: Novak shop collected the Watson Manor Trophy for polishing. Signed by F.N.'},
+  {level:9, img:'campaign/img/g2-evidence-keys.jpg', title:'Key Diagram', desc:'Rudi\'s keys were borrowed by heating workers. The building was open.'},
+  {level:10, img:'campaign/img/g2-evidence-novak.jpg', title:'Novak Connection', desc:'Mr. Novak confirmed the pickup. Felix helped. Felix went pale.'},
+  {level:11, img:'campaign/img/g2-evidence-fabric.jpg', title:'Two Patterns', desc:'Real trail: maintenance records, log book, Novak shop. Fake trail: planted fabric, Leo rumours, Rudi key leak. Both lead to Felix.'},
+  {level:12, img:'campaign/img/g2-evidence-shop-photo.jpg', title:'Trophy Located', desc:'The Watson Manor Trophy found on a shelf in the Novak antique shop, among items awaiting restoration.'},
+  {level:13, img:'campaign/img/g2-evidence-logbook.jpg', title:'Felix\'s Confession', desc:'Felix confessed: he picked up the trophy for cleaning. His dad forgot to return it. Felix planted evidence and spread false leads out of fear.'},
+  {level:15, img:'campaign/img/g2-evidence-solved.jpg', title:'CASE CLOSED', desc:'The Watson Manor Trophy has been found and returned.'}
+];
+
 var campaignLevels = [
   // ==================== LEVEL 1: The Empty Case ====================
   {levelName:"The Empty Case", topic:"School & First Day", grammar:"Past simple, present simple",
