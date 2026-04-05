@@ -12825,21 +12825,21 @@ var campaignLevels = [
   readingImage:'campaign/img/g2-ch01-reading-flip.jpg',
   comicPanels:['campaign/img/g2-ch01-comic-01.jpg','campaign/img/g2-ch01-comic-02.jpg'],
   storyA:[
-    {speaker:"nora", text:"First day back. Everyone is excited about one thing: Sports Week. It is the biggest event of the year — a whole week of competitions in June."},
-    {speaker:"nora", text:"The winner gets the Watson Manor Trophy. It has been in the school since 1960. Every student dreams of seeing their name on it."},
-    {speaker:"elias", text:"But today, something is wrong. Mr. Kramer called everyone to the school hall. He looks pale. He opens the trophy case — and it is empty."}
+    {speaker:"nora", text:"September. First day of 2. Klasse. New classroom, new timetable. The corridors smell like fresh paint."},
+    {speaker:"elias", text:"Everyone is already talking about Sports Week in June. It is the biggest event of the year \u2014 running, swimming, cycling, climbing. And the winner gets the Watson Manor Trophy."},
+    {speaker:"nora", text:"But this morning, Mr. Kramer called everyone to the school hall. He looked pale. He opened the trophy case. It was empty."}
   ],
   storyB:[
-    {speaker:"nora", text:"The police came. They looked around for ten minutes and said: 'It is just a school trophy. Not very valuable.' They left a phone number and drove away."},
-    {speaker:"nora", text:"Just a trophy? This trophy means EVERYTHING. Without it, Sports Week feels... empty. Everyone is upset."},
-    {speaker:"elias", text:"But I noticed something the police missed. A tiny piece of green fabric. Caught on the hinge of the glass door. Someone left a trace."},
-    {speaker:"nora", text:"If the police will not take this seriously, we will. Let us start a case file."}
+    {speaker:"nora", text:"The police came. Two officers looked around the case for ten minutes. One said: 'No sign of forced entry. It is just a school trophy \u2014 not high value.' They took some notes and left."},
+    {speaker:"elias", text:"Just a trophy? This is the Watson Manor Trophy. Sixty-three years of winners. Without it, Sports Week means nothing."},
+    {speaker:"nora", text:"But I noticed something the police missed. A tiny piece of green fabric. Caught on the brass hinge of the glass door. Someone left a trace."},
+    {speaker:"elias", text:"If the police will not take this seriously, WE will. I have a notebook. You have sharp eyes. Let us start a case file."}
   ],
   completion:[
-    {speaker:"nora", text:"I started a notebook. Page one: The Watson Manor Trophy. Missing since August. One clue: green fabric on the hinge."},
-    {speaker:"elias", text:"Sports Week is in June. We have nine months to find it. Let us get to work."}
-  ,
-    {speaker:"nora", text:"\ud83d\udccc Evidence collected: a piece of green fabric from the trophy case hinge."}],
+    {speaker:"nora", text:"Page one. The Watson Manor Trophy. Missing since summer. One clue: green fabric on the hinge. The police think it is nothing. We think it is everything."},
+    {speaker:"elias", text:"Sports Week is in June. We have nine months. Let us find that trophy."},
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: green fabric from the trophy case hinge."}
+  ],
   tasks:[
     {name:"First Day Back", type:"image-matching", context:"It is the first day of school. Nora checks the timetable before the announcement in the school hall — but which subjects are which?", contextDe:"Es ist der erste Schultag. Nora schaut auf den Stundenplan vor der Versammlung — aber welches Fach ist welches?", xpEach:5,
       items:[
@@ -12847,7 +12847,7 @@ var campaignLevels = [
         {prompt:"Learning about countries, rivers, and mountains", answer:"geography", options:["geography","history","science","art"], icon:'<span style="font-size:2.5rem;">&#127758;</span>', hint:"Maps and continents.", hintDe:"Geografie"},
         {prompt:"Running, jumping, and playing team sports", answer:"PE", options:["PE","art","music","IT"], icon:'<span style="font-size:2.5rem;">&#9917;</span>', hint:"Physical education.", hintDe:"Sport"},
         {prompt:"Painting, drawing, and creating things with your hands", answer:"art", options:["art","music","PE","IT"], icon:'<span style="font-size:2.5rem;">&#127912;</span>', hint:"Creative and visual.", hintDe:"Kunst"},
-        {prompt:"Learning about the past — kings, queens, and wars", answer:"history", options:["history","geography","science","maths"], icon:'<span style="font-size:2.5rem;">&#127970;</span>', hint:"Events from long ago.", hintDe:"Geschichte"},
+        {prompt:"Learning about the past — kings, queens, and wars", answer:"history", options:["history","geography","science","maths"], icon:'<span style="font-size:2.5rem;">&#127963;</span>', hint:"Events from long ago.", hintDe:"Geschichte"},
         {prompt:"Doing experiments and understanding how nature works", answer:"science", options:["science","maths","geography","history"], icon:'<span style="font-size:2.5rem;">&#128300;</span>', hint:"Test tubes and experiments.", hintDe:"Naturwissenschaften"}
       ]},
     {name:"What Happened?", type:"mc", context:"Nora starts the case file. Help her write down exactly what happened — every detail matters.", contextDe:"Nora beginnt die Fallakte. Hilf ihr aufzuschreiben, was genau passiert ist — jedes Detail z\u00e4hlt.", xpEach:10,
@@ -12886,27 +12886,28 @@ var campaignLevels = [
   readingImage:'campaign/img/g2-ch02-reading-flip.jpg',
   comicPanels:['campaign/img/g2-ch02-comic-01.jpg'],
   storyA:[
-    {speaker:"nora", text:"The library. If anyone kept records over summer, they are here."},
-    {speaker:"elias", text:"I asked the librarian. She remembers a teacher coming in during August. But she cannot remember who."},
-    {speaker:"nora", text:"Look — the school keeps old newspapers in the archive. There might be something about the trophy."}
+    {speaker:"nora", text:"If someone opened that case, they needed a key. I want to know who had access over summer."},
+    {speaker:"elias", text:"The school office keeps maintenance records. Every repair, every cleaning job \u2014 all written down."},
+    {speaker:"nora", text:"Here. The summer schedule. July 12: Trophy case \u2014 annual brass polish. Contractor: Novak and Son Antiques. They were HIRED to clean the trophy."}
   ],
   storyB:[
-    {speaker:"elias", text:"I found something! A school newspaper from 2005. It mentions the Watson Manor Challenge. And a winner: P. Kovac."},
-    {speaker:"nora", text:"P. Kovac. Write that down. We do not know who that is yet — but the name appeared twice in the archive."},
-    {speaker:"elias", text:"Also... I knocked over a stack of books. Very embarrassing. The librarian was not happy."}
+    {speaker:"elias", text:"So the case was opened legitimately in July. By a professional cleaning company."},
+    {speaker:"nora", text:"But wait. If the case was opened for cleaning, why is there fabric caught on the hinge? You would not snag your jacket on a hinge if you open a case normally, with permission."},
+    {speaker:"elias", text:"Unless... someone PUT the fabric there? To make it look like a break-in?"},
+    {speaker:"nora", text:"That is a very interesting thought. Write it down."}
   ],
   completion:[
-    {speaker:"nora", text:"Two new leads today. A teacher was in the building in August. And someone called P. Kovac won the Watson Manor Challenge back in 2005. Who is P. Kovac?"},
-    {speaker:"elias", text:"And I learned something too: do not stand on library chairs. Ever."}
-  ,
-    {speaker:"nora", text:"\ud83d\udccc Evidence collected: a 2005 school newspaper mentioning P. Kovac."}],
+    {speaker:"nora", text:"Two discoveries. First: Novak and Son Antiques had the trophy case open in July \u2014 officially, for cleaning. Second: the fabric on the hinge might be a false clue. Planted."},
+    {speaker:"elias", text:"If someone planted that fabric, they are trying to make us look in the wrong direction."},
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: school maintenance schedule showing the Novak cleaning appointment."}
+  ],
   tasks:[
     {name:"How Do You Feel?", type:"image-matching", context:"Everyone reacts differently to the missing trophy. Nora observes people’s emotions. Can you name each feeling?", contextDe:"Jeder reagiert anders auf den vermissten Pokal. Nora beobachtet die Gef\u00fchle der Leute. Kannst du jedes Gef\u00fchl benennen?", xpEach:5,
       items:[
         {prompt:"Your cheeks go red and you want to disappear", answer:"embarrassed", options:["embarrassed","excited","boring","upset"], icon:'<span style="font-size:2.5rem;">&#128563;</span>', hint:"You wish nobody saw that.", hintDe:"Peinlich ber\u00fchrt"},
         {prompt:"A film or book that makes you want to sleep", answer:"boring", options:["boring","exciting","funny","awesome"], icon:'<span style="font-size:2.5rem;">&#128564;</span>', hint:"Not interesting at all.", hintDe:"Langweilig"},
-        {prompt:"A roller coaster ride that makes your heart beat fast", answer:"exciting", options:["exciting","boring","confusing","difficult"], icon:'<span style="font-size:2.5rem;">&#129321;</span>', hint:"Thrilling and full of energy.", hintDe:"Aufregend"},
-        {prompt:"A puzzle that makes no sense — you do not understand it", answer:"confusing", options:["confusing","exciting","funny","boring"], icon:'<span style="font-size:2.5rem;">&#128533;</span>', hint:"Too complicated to follow.", hintDe:"Verwirrend"},
+        {prompt:"A roller coaster ride that makes your heart beat fast", answer:"exciting", options:["exciting","boring","confusing","difficult"], icon:'<span style="font-size:2.5rem;">&#128525;</span>', hint:"Thrilling and full of energy.", hintDe:"Aufregend"},
+        {prompt:"A puzzle that makes no sense — you do not understand it", answer:"confusing", options:["confusing","exciting","funny","boring"], icon:'<span style="font-size:2.5rem;">&#129300;</span>', hint:"Too complicated to follow.", hintDe:"Verwirrend"},
         {prompt:"Something that makes you angry or sad", answer:"upset", options:["upset","funny","awesome","embarrassed"], icon:'<span style="font-size:2.5rem;">&#128544;</span>', hint:"Not happy about what happened.", hintDe:"Ver\u00e4rgert"},
         {prompt:"Something that impresses you — really, really good", answer:"awesome", options:["awesome","boring","difficult","confusing"], icon:'<span style="font-size:2.5rem;">&#129321;</span>', hint:"Amazing!", hintDe:"Gro\u00dfartig"}
       ]},
@@ -12920,13 +12921,13 @@ var campaignLevels = [
         {prompt:"___ anyone else borrow old newspapers?", answer:"Did", options:["Did","Does","Was","Is"], hint:"Asking about a past action.", hintDe:"Frage nach einer vergangenen Handlung."}
       ]},
     {name:"The Old Newspaper", type:"reading", context:"Elias found this article in the 2005 school newspaper. Read it carefully — the name at the end could be important.", contextDe:"Elias hat diesen Artikel in der Schulzeitung von 2005 gefunden. Lies ihn aufmerksam — der Name am Ende k\u00f6nnte wichtig sein.", xpEach:10,
-      passage:"<h4>Watson Manor Challenge 2005 — Winner Announced!</h4><p>This year's Watson Manor Challenge was the hardest ever. The 15 clues took three weeks to solve. Many teams gave up after clue number nine.</p><p>The winning team had only two members: P. Kovac and R. Mandl from class 2B. They found the Legacy Box behind a loose stone in the old courtyard fountain.</p><p>P. Kovac said: 'We never gave up. That is the secret. You just keep looking.'</p>",
+      passage:"<h4>Watson Manor School \u2014 Summer Maintenance Schedule</h4><p>This document lists all maintenance work completed during the summer holidays.</p><p>June 28: Heating system check \u2014 Contractor: City Heating Services. Duration: 2 weeks. Access needed: cellar, corridors, entrance hall.</p><p>July 12: Trophy case \u2014 annual brass polish. Contractor: Novak and Son Antiques (Park Street). Item collected by: F.N. Case left unlocked for drying. Lock to be re-engaged July 13.</p><p>July 20: Classroom painting \u2014 Contractor: Berger Painters. Rooms 4, 7, 12.</p><p>August 5: Fire alarm test \u2014 Contractor: SafeGuard Systems.</p>",
       questions:[
-        {question:"How many clues were in the 2005 challenge?", answer:"15", options:["15","10","20","12"]},
-        {question:"How long did it take the winners to solve the trail?", answer:"Three weeks", options:["Three weeks","Three days","One month","Two weeks"]},
-        {question:"How many people were in the winning team?", answer:"Two", options:["Two","Three","Five","Four"]},
-        {question:"Where did they find the Legacy Box?", answer:"Behind a stone in the courtyard fountain", options:["Behind a stone in the courtyard fountain","Under the library floor","In the headmaster's office","Inside a locker"]},
-        {question:"What did P. Kovac say was 'the secret'?", answer:"Never giving up", options:["Never giving up","Being very fast","Having a big team","Asking the teachers"]}
+        {question:"Who was hired to clean the trophy?", answer:"Novak and Son Antiques", options:["Novak and Son Antiques","City Heating Services","Berger Painters","SafeGuard Systems"]},
+        {question:"When was the trophy case opened?", answer:"July 12", options:["July 12","June 28","July 20","August 5"]},
+        {question:"Who collected the trophy?", answer:"Someone with initials F.N.", options:["Someone with initials F.N.","Mr. Kramer","Old Rudi","A police officer"]},
+        {question:"What happened to the case lock?", answer:"It was left unlocked for drying", options:["It was left unlocked for drying","It was broken","It was replaced","It was never locked"]},
+        {question:"How long were the heating workers at the school?", answer:"Two weeks", options:["Two weeks","One day","One month","Three days"]}
       ]},
     {name:"What We Don't Know", type:"mc", context:"A good detective knows what they DON'T know. Help Nora write the gaps in the case — things they have not confirmed yet.", contextDe:"Ein guter Detektiv wei\u00df, was er NICHT wei\u00df. Hilf Nora die L\u00fccken im Fall aufzuschreiben — Dinge, die noch nicht best\u00e4tigt sind.", xpEach:10,
       items:[
@@ -12947,20 +12948,22 @@ var campaignLevels = [
   readingImage:'campaign/img/g2-ch03-reading-flip.jpg',
   comicPanels:['campaign/img/g2-ch03-comic-01.jpg'],
   storyA:[
-    {speaker:"nora", text:"The school hall is full of pumpkins and costumes. Halloween preparations."},
-    {speaker:"elias", text:"A classmate just told me something. The drama teacher saw a STUDENT near the trophy case in August. Around seven in the evening. Wearing a green jacket."},
-    {speaker:"nora", text:"Green jacket. Green fabric on the hinge. That is our first real match."}
+    {speaker:"nora", text:"A classmate told me something in the hall. A rumour: someone saw Leo Winkler near the trophy case in August. At night."},
+    {speaker:"elias", text:"Leo? The football player? He was at school all summer for training."},
+    {speaker:"nora", text:"And there is more. Apparently Leo was furious about losing Sports Week last year. He told people he was cheated. Some kids think he stole the trophy out of revenge."}
   ],
   storyB:[
-    {speaker:"nora", text:"I talked to the drama teacher myself. She said the person was young \u2014 definitely a student, not a teacher. And the jacket was dark green, thick cotton."},
-    {speaker:"elias", text:"So now we have a witness description: student-sized, green cotton jacket, 7 PM on August 14th. Should we tell Mr. Kramer?"},
-    {speaker:"nora", text:"Not yet. We should get more evidence first. If we accuse the wrong person, that would be worse than not saying anything."}
+    {speaker:"nora", text:"I checked with the drama teacher, Ms. Richter. She WAS at school on August 14th. She saw a figure near the entrance hall. Green jacket, heavy bag, around 7 PM."},
+    {speaker:"elias", text:"That matches the fabric! Leo has a green hoodie!"},
+    {speaker:"nora", text:"Maybe. But the rumour about Leo \u2014 who started it? Ms. Richter only told me because I asked. Someone ELSE has been telling people that Leo is suspicious."},
+    {speaker:"elias", text:"Who would spread rumours about Leo?"},
+    {speaker:"nora", text:"Someone who wants us to look at Leo instead of them."}
   ],
   completion:[
-    {speaker:"nora", text:"Evidence update: a student in a dark green cotton jacket was seen near the trophy case on August 14th at 7 PM. This matches our fabric sample."},
-    {speaker:"elias", text:"Leo Winkler has a green hoodie and was at school in August. He is our first real suspect."}
-  ,
-    {speaker:"nora", text:"\ud83d\udccc Evidence collected: witness statement from the drama teacher."}],
+    {speaker:"nora", text:"Witness confirmed: figure in green jacket near the case on August 14th. But the RUMOUR about Leo was started by someone unknown. Two trails: the evidence, and whoever is spreading stories."},
+    {speaker:"elias", text:"Leo is a suspect: green hoodie, motive, timing. But someone might be framing him."},
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: witness statement from the drama teacher."}
+  ],
   tasks:[
     {name:"Halloween at Watson Manor", type:"image-matching", context:"The school hall is being set up for the Halloween party. Name each spooky item while Nora and Elias search for clues backstage.", contextDe:"Die Aula wird f\u00fcr die Halloweenparty vorbereitet. Benenne jeden unheimlichen Gegenstand, w\u00e4hrend Nora und Elias hinter der B\u00fchne nach Hinweisen suchen.", xpEach:5,
       items:[
@@ -13005,25 +13008,26 @@ var campaignLevels = [
   maxXP:190, starThresholds:{one:95, two:152, three:190},
   sceneImages:{storyA:'campaign/img/g2-ch04-scene-lab.jpg', storyB:'campaign/img/g2-ch04-scene-comparison.jpg', completion:'campaign/img/g2-ch04-scene-completion.jpg'},readingImage:'campaign/img/g2-ch04-reading-flip.jpg',comicPanels:['campaign/img/g2-ch04-comic-01.jpg'],
   storyA:[
-    {speaker:"nora", text:"Leo Winkler. 14 years old, 4th-grader. Football player. He owns a green hoodie. And he was at school over summer for practice."},
-    {speaker:"elias", text:"It all fits! He is our guy!"},
-    {speaker:"nora", text:"Maybe. But a good detective checks the evidence, not the first guess. The witness said cotton jacket \u2014 not hoodie. I want to compare the fabrics."}
+    {speaker:"nora", text:"Before we test Leo's hoodie, I want to check one more thing. The caretaker, Old Rudi. He has keys to every room \u2014 including the trophy case."},
+    {speaker:"elias", text:"We found him at the garden shed. He was friendly. He said he checked the case after the cleaning company finished. It was locked. Everything was fine."},
+    {speaker:"nora", text:"But look at his jacket. On the hook behind him. Dark green. Cotton. The same type as the fabric on the hinge."}
   ],
   storyB:[
-    {speaker:"nora", text:"The science lab has a microscope. I compared the fabric from the hinge with Leo's hoodie material. They are completely different."},
-    {speaker:"nora", text:"The hinge fabric is thick cotton \u2014 a proper jacket. Leo's hoodie is thin polyester. Not a match."},
-    {speaker:"elias", text:"So Leo's hoodie is NOT the green fabric. But he was still at school in August..."}
+    {speaker:"nora", text:"Fabric test. Under the microscope. The hinge fabric is thick cotton, dark green. Leo's hoodie is thin polyester, bright green. NOT a match."},
+    {speaker:"elias", text:"So the fabric did not come from Leo. But it IS the same type as Rudi's jacket."},
+    {speaker:"nora", text:"Rudi is a possibility. But here is what I keep thinking: if the fabric was PLANTED \u2014 someone tore a piece from their own jacket and put it on the hinge. The question is not whose jacket matches. The question is who would do that."},
+    {speaker:"elias", text:"And I heard something strange in the canteen. Mrs. Brennan said that Felix Novak told her about the heating workers borrowing Rudi's keys over summer. Why would Felix know about that? And why tell Mrs. Brennan \u2014 the biggest gossip in school?"}
   ],
   completion:[
-    {speaker:"nora", text:"The fabric does NOT match Leo's hoodie. His jacket is cleared. But Leo himself is not — he was still at school in August."},
-    {speaker:"elias", text:"And Old Rudi's work jacket is the same shade of green as the fabric. Another possibility."}
-  ,
-    {speaker:"nora", text:"\ud83d\udccc Evidence collected: fabric analysis — Leo's hoodie does NOT match."}],
+    {speaker:"nora", text:"Leo's hoodie: cleared by fabric test. But the REAL question is growing: was the fabric planted? And if so, by who?"},
+    {speaker:"elias", text:"Felix Novak is spreading information that makes other people look suspicious. First the Leo rumours. Now telling Mrs. Brennan about Rudi's keys. Why?"},
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: fabric analysis \u2014 Leo's hoodie does NOT match."}
+  ],
   tasks:[
     {name:"Animal Evidence", type:"image-matching", context:"The science lab has posters of animals on every wall. One poster was recently swapped — name the animals to find which one is new.", contextDe:"Das Labor hat \u00fcberall Tierposter an den W\u00e4nden. Ein Poster wurde k\u00fcrzlich ausgetauscht — benenne die Tiere, um herauszufinden, welches neu ist.", xpEach:5,
       items:[
         {prompt:"The fastest land animal — it can reach 110 km per hour", answer:"cheetah", options:["cheetah","leopard","lion","antelope"], icon:'<span style="font-size:2.5rem;">&#128006;</span>', hint:"Famous for incredible speed.", hintDe:"Gepard"},
-        {prompt:"An enormous grey animal with a horn on its nose", answer:"rhino", options:["rhino","hippo","elephant","buffalo"], icon:'<span style="font-size:2.5rem;">&#129428;</span>', hint:"Very heavy and endangered.", hintDe:"Nashorn"},
+        {prompt:"An enormous grey animal with a horn on its nose", answer:"rhino", options:["rhino","hippo","elephant","buffalo"], icon:'<span style="font-size:2.5rem;">&#129430;</span>', hint:"Very heavy and endangered.", hintDe:"Nashorn"},
         {prompt:"The largest animal on Earth — it lives in the ocean", answer:"whale", options:["whale","dolphin","shark","crocodile"], icon:'<span style="font-size:2.5rem;">&#128011;</span>', hint:"Can weigh over 100 tons.", hintDe:"Wal"},
         {prompt:"A clever animal that swings through trees", answer:"chimpanzee", options:["chimpanzee","parrot","bat","pigeon"], icon:'<span style="font-size:2.5rem;">&#128018;</span>', hint:"Our closest relative in the animal kingdom.", hintDe:"Schimpanse"},
         {prompt:"A friendly sea creature known for jumping out of the water", answer:"dolphin", options:["dolphin","whale","shark","crocodile"], icon:'<span style="font-size:2.5rem;">&#128044;</span>', hint:"Very intelligent and playful.", hintDe:"Delfin"},
@@ -13064,20 +13068,22 @@ var campaignLevels = [
   maxXP:180, starThresholds:{one:90, two:144, three:180},
   sceneImages:{storyA:'campaign/img/g2-ch05-scene-map.jpg', storyB:'campaign/img/g2-ch05-scene-shop.jpg', completion:'campaign/img/g2-ch05-scene-completion.jpg'},readingImage:'campaign/img/g2-ch05-reading-flip.jpg',comicPanels:['campaign/img/g2-ch05-comic-01.jpg'],
   storyA:[
-    {speaker:"elias", text:"I found Leo's football coach. He confirmed it \u2014 Leo was at training from 5 to 7 PM on August 14th."},
-    {speaker:"nora", text:"The football pitch is a twenty-minute walk from school. If he left training at seven, he could not have been at the trophy case at seven. Impossible."},
-    {speaker:"elias", text:"So Leo is out. Cleared."}
+    {speaker:"nora", text:"Leo says he was at football training on August 14th. Let us check his route and timing."},
+    {speaker:"elias", text:"The coach confirmed it. Leo trained from 5 to 7 PM. The pitch is twenty minutes from school. He could not have been at the trophy case at 7 PM."},
+    {speaker:"nora", text:"Leo is cleared. Now \u2014 the maintenance schedule from chapter 2 said Novak and Son had the case open in July. Felix Novak's dad owns that shop. Felix helps with jobs."}
   ],
   storyB:[
-    {speaker:"nora", text:"I drew Leo's route on a map \u2014 from the pitch past the park, along the main street, to the school. And I noticed something."},
-    {speaker:"nora", text:"There is an antique shop on that street. Novak and Son. It is right opposite the park, two minutes from the school gate."},
-    {speaker:"elias", text:"Novak... wait. Felix Novak is in 3B. That quiet kid who never talks to anyone."}
+    {speaker:"nora", text:"I have been thinking about the pattern. Every time a suspect appears, there is a trail that leads to them \u2014 rumours, gossip, coincidences. Too convenient."},
+    {speaker:"elias", text:"What do you mean?"},
+    {speaker:"nora", text:"Leo became a suspect because classmates suddenly remembered he was at school in summer. Rudi became suspicious because someone told Mrs. Brennan about his keys. Both trails appeared at the same time."},
+    {speaker:"elias", text:"You think someone is creating suspects? To hide the real answer?"},
+    {speaker:"nora", text:"I think someone who knows the truth is very scared. And they are making us look everywhere except at them."}
   ],
   completion:[
-    {speaker:"nora", text:"Leo Winkler: CLEARED. His football coach confirmed his alibi. He could not have been at the trophy case at 7 PM."},
-    {speaker:"elias", text:"But we found something new. An antique shop on the same street as the school. Novak and Son. And Felix Novak from class 3B — his dad owns it."}
-  ,
-    {speaker:"nora", text:"\ud83d\udccc Evidence collected: route map showing the Novak antique shop."}],
+    {speaker:"nora", text:"Leo Winkler: CLEARED. The investigation now has two tracks. Track one: the Novak cleaning connection. Track two: who is planting false trails \u2014 and why?"},
+    {speaker:"elias", text:"Felix Novak helped his dad's shop. Felix hates Sports Week. Felix is the one spreading suspicion about other people. Coincidence?"},
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: route map, Leo's alibi, and the pattern of planted rumours."}
+  ],
   tasks:[
     {name:"Around Town", type:"image-matching", context:"Nora traces Leo’s route on a map. She passes many buildings — name each one to mark it on the map.", contextDe:"Nora zeichnet Leos Route auf einer Karte. Sie kommt an vielen Geb\u00e4uden vorbei — benenne jedes, um es auf der Karte zu markieren.", xpEach:5,
       items:[
@@ -13127,20 +13133,22 @@ var campaignLevels = [
   maxXP:180, starThresholds:{one:90, two:144, three:180},
   sceneImages:{storyA:'campaign/img/g2-ch06-scene-adventure.jpg', storyB:'campaign/img/g2-ch06-scene-felix.jpg', completion:'campaign/img/g2-ch06-scene-completion.jpg'},readingImage:'campaign/img/g2-ch06-reading-flip.jpg',comicPanels:['campaign/img/g2-ch06-comic-01.jpg'],
   storyA:[
-    {speaker:"elias", text:"Class field trip today. Adventure park. I am supposed to be having fun, but all I can think about is Felix Novak."},
-    {speaker:"nora", text:"Look \u2014 Felix is sitting alone. He is not joining any of the activities. Everyone else is at the climbing wall."},
-    {speaker:"elias", text:"A classmate told me Felix has been acting strange since September. Like he has a secret."}
+    {speaker:"nora", text:"Adventure park field trip. Felix is here. Sitting alone. Not joining anything."},
+    {speaker:"elias", text:"I asked around. Felix is well known for hating Sports Week. Last year he wrote a letter to the school asking to cancel it \u2014 or add categories like science and maths so it is not only about sports."},
+    {speaker:"nora", text:"So Felix had a reason to want the trophy gone. His dad's shop had the case open. And HE is the one spreading suspicion about other people."}
   ],
   storyB:[
-    {speaker:"nora", text:"I talked to Felix at lunch. Carefully. I asked about his summer."},
-    {speaker:"nora", text:"He said he helped his father in the shop. Picking things up, delivering things. Normal stuff."},
-    {speaker:"nora", text:"But when I mentioned the school building, he looked at the ground and changed the subject."}
+    {speaker:"nora", text:"I talked to Felix at lunch. I asked about his summer. He said he helped his dad. Normal stuff."},
+    {speaker:"nora", text:"But when I asked: 'Did your dad do any work for the school this summer?' \u2014 his face changed. He looked at the ground. 'I do not know,' he said. And changed the subject."},
+    {speaker:"elias", text:"Then something happened. After lunch, Leo Winkler came up to us. He said: 'Why are you investigating ME? If you want someone suspicious, look at Felix. He is the one who told everyone I was at school at night. I was NOT there at night.'"},
+    {speaker:"nora", text:"Leo just confirmed it. FELIX is the one who spread the rumour about Leo. Felix created the Leo suspect trail. He is not just hiding something \u2014 he is actively diverting the investigation."}
   ],
   completion:[
-    {speaker:"nora", text:"Felix Novak is nervous about something. He helped his father in the shop all summer, making deliveries. He had access to the school area."},
-    {speaker:"elias", text:"We need hard evidence. A nervous look is not enough to solve a case."}
-  ,
-    {speaker:"nora", text:"\ud83d\udccc Evidence collected: suspect profile on Felix Novak."}],
+    {speaker:"nora", text:"Felix Novak: anti-Sports Week, father's shop cleaned the trophy case, avoids questions, AND is confirmed to be spreading false rumours about other suspects."},
+    {speaker:"elias", text:"But why? If he is innocent, why would he do all that?"},
+    {speaker:"nora", text:"Because he is NOT innocent. He knows where the trophy is. And he is terrified of being caught."},
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: suspect profile \u2014 Felix Novak, with evidence of deliberate misdirection."}
+  ],
   tasks:[
     {name:"The Landscape", type:"image-matching", context:"The class field trip takes them through the countryside. Name each natural feature Nora sees from the bus window.", contextDe:"Der Klassenausflug f\u00fchrt durch die Landschaft. Benenne jedes Naturmerkmal, das Nora aus dem Busfenster sieht.", xpEach:5,
       items:[
@@ -13195,10 +13203,10 @@ var campaignLevels = [
     {speaker:"nora", text:"I have an idea. The school cellar has a log book. It records every item that leaves or enters the building. If the antique shop collected anything from school, it will be in that book."}
   ],
   completion:[
-    {speaker:"nora", text:"We saw something bronze in the back of the Novak shop. Could be the trophy. Could be something else. We need to get inside — legally."},
-    {speaker:"elias", text:"Felix is avoiding every school event. He is not going to the Halloween party, not going to the football match. He is hiding."}
-  ,
-    {speaker:"nora", text:"\ud83d\udccc Evidence collected: photo of the Novak shop window."}],
+    {speaker:"nora", text:"Bronze object spotted in the Novak shop. Cannot confirm it is the trophy yet. But the pattern is clear: Felix has motive, opportunity, and he is actively covering his tracks."},
+    {speaker:"elias", text:"Felix is avoiding every school event. He is not coming to the Halloween party, not going to the football match. He is hiding."},
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: photo of the Novak shop window."}
+  ],
   tasks:[
     {name:"Weekend Activities", type:"image-matching", context:"It is Saturday. Nora and Elias planned to investigate, but they also need to do normal weekend things. Name each activity.", contextDe:"Es ist Samstag. Nora und Elias wollten ermitteln, aber sie m\u00fcssen auch normale Wochenenddinge tun. Benenne jede Aktivit\u00e4t.", xpEach:5,
       items:[
@@ -13244,13 +13252,22 @@ var campaignLevels = [
   {levelName:"The Cellar Discovery", topic:"Stories & Time", grammar:"Past simple revision, time markers",
   maxXP:190, starThresholds:{one:95, two:152, three:190},
   sceneImages:{storyA:'campaign/img/g2-ch08-scene-cellar.jpg', storyB:'campaign/img/g2-ch08-scene-logbook.jpg', completion:'campaign/img/g2-ch08-scene-completion.jpg'},readingImage:'campaign/img/g2-ch08-reading-flip.jpg',comicPanels:['campaign/img/g2-ch08-comic-01.jpg'],
-  storyA:[{speaker:"nora", text:"Ms. Petrova's history class. She is taking us to the cellar today \u2014 the oldest part of Watson Manor."},{speaker:"elias", text:"Perfect. We can look for the log book without anyone getting suspicious."},{speaker:"nora", text:"There \u2014 on a shelf near the back wall. A thick black notebook. This is it."}],
-  storyB:[{speaker:"nora", text:"I found an entry. July 12th. 'One framed photograph, 1952. Collected by Novak and Son Antiques for cleaning.'"},{speaker:"elias", text:"So the Novak shop DID collect something from the school. But the log says a photograph \u2014 not a trophy."},{speaker:"nora", text:"What if someone from the shop \u2014 Felix, maybe \u2014 came to collect the photograph but took the wrong thing?"}],
+  storyA:[
+    {speaker:"nora", text:"Ms. Petrova's history class visits the cellar. The oldest part of Watson Manor. And the school keeps official logs down here."},
+    {speaker:"elias", text:"There \u2014 a thick black notebook. Items \u2014 Incoming and Outgoing."},
+    {speaker:"nora", text:"July 12th. Watson Manor Trophy \u2014 removed from display case for annual brass polish. Contractor: Novak and Son Antiques. Collected by: F.N. Case left unlocked for drying."}
+  ],
+  storyB:[
+    {speaker:"elias", text:"F.N. Felix Novak. He personally collected the trophy."},
+    {speaker:"nora", text:"And look \u2014 there is a second entry. July 13: Trophy case lock re-engaged. Trophy return: pending. It was NEVER signed as returned."},
+    {speaker:"elias", text:"So the school's own records show the trophy went to the Novak shop in July and was never brought back."},
+    {speaker:"nora", text:"Felix planted the fabric. He spread the Leo rumours. He leaked the Rudi key story. All to stop anyone from checking these records."}
+  ],
   completion:[
-    {speaker:"nora", text:"The cellar log book proves the Novak shop collected an item from school in July. But the log says photograph — not trophy. Someone took the wrong thing."},
-    {speaker:"elias", text:"And the pickup was signed by F.N. — Felix Novak. The timeline is coming together."}
-  ,
-    {speaker:"nora", text:"\ud83d\udccc Evidence collected: cellar log book entry signed by F.N."}],
+    {speaker:"nora", text:"The cellar log book confirms it. The trophy was collected by F.N. on July 12th and never returned. The case is almost solved."},
+    {speaker:"elias", text:"But we need to see the trophy with our own eyes. And we need to understand why Felix did all this."},
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: cellar log book entry \u2014 trophy collected by F.N., return pending."}
+  ],
   tasks:[
     {name:"Out of This World", type:"image-matching", context:"The school cellar feels like another world. Old objects, strange machines, forgotten artefacts — like something from a science fiction story.", contextDe:"Der Schulkeller f\u00fchlt sich an wie eine andere Welt. Alte Gegenst\u00e4nde, seltsame Maschinen, vergessene Artefakte — wie aus einer Science-Fiction-Geschichte.", xpEach:5,
       items:[
@@ -13270,13 +13287,13 @@ var campaignLevels = [
       {prompt:"The drama teacher heard a noise ___. She looked and saw the figure.", answer:"suddenly", options:["suddenly","slowly","finally","firstly"], hint:"An unexpected moment.", hintDe:"Ein unerwarteter Moment."}
     ]},
     {name:"The Log Book Entry", type:"reading", context:"Nora copied the log book entry word for word. Read it \u2014 this is the key piece of evidence.", contextDe:"Nora hat den Logbuch-Eintrag Wort f\u00fcr Wort abgeschrieben. Lies ihn \u2014 das ist das entscheidende Beweisst\u00fcck.", xpEach:10,
-      passage:"<h4>Watson Manor School \u2014 Items Log Book</h4><p><b>Entry #47 \u2014 Outgoing</b></p><p>Date: July 12th. Item: One framed photograph, black and white, dated 1952. Shows the original Watson Manor building before it became a school.</p><p>Collected by: Novak and Son Antiques (Park Street). Purpose: Professional cleaning and frame restoration. Expected return: September.</p><p>Authorised by: Mr. Kramer (headmaster).</p><p><i>Note added later (different handwriting):</i> Item collected by a young person, not Mr. Novak himself. Signed 'F.N.' at the door.</p>",
+      passage:"<h4>Watson Manor School \u2014 Items Log Book</h4><p><b>Entry #47 \u2014 Outgoing</b></p><p>Date: July 12th. Item: Watson Manor Trophy \u2014 bronze cup, engraved, display case in entrance hall.</p><p>Purpose: Annual brass polish and restoration. Contractor: Novak and Son Antiques (Park Street).</p><p>Collected by: F.N. (signed at door). Case left unlocked for drying.</p><p>Authorised by: Mr. Kramer (headmaster).</p><p><b>Entry #48</b></p><p>Date: July 13th. Trophy case lock re-engaged by caretaker (R. Eckhart). Trophy return from Novak and Son: PENDING.</p><p><i>Note: No return receipt filed as of September 1st.</i></p>",
       questions:[
-        {question:"What item was supposed to be collected?", answer:"A framed photograph", options:["A framed photograph","The Watson Manor Trophy","An old painting","A ceramic vase"]},
-        {question:"Why was it being sent to the shop?", answer:"For cleaning and frame restoration", options:["For cleaning and frame restoration","To be sold","To be displayed","For Mr. Novak's collection"]},
-        {question:"Who authorised the pickup?", answer:"Mr. Kramer", options:["Mr. Kramer","Ms. Petrova","Old Rudi","The police"]},
-        {question:"Who actually collected the item?", answer:"A young person \u2014 signed 'F.N.'", options:["A young person \u2014 signed 'F.N.'","Mr. Novak himself","A delivery company","Old Rudi"]},
-        {question:"What do the initials F.N. most likely stand for?", answer:"Felix Novak", options:["Felix Novak","Friedrich Neuhaus","Frank Neumann","Florian Nadler"]}
+        {question:"What item was collected on July 12th?", answer:"The Watson Manor Trophy", options:["The Watson Manor Trophy","A framed photograph","A clock","A painting"]},
+        {question:"Who collected the trophy?", answer:"Someone with initials F.N.", options:["Someone with initials F.N.","Mr. Kramer","The caretaker","A police officer"]},
+        {question:"Why was the case left unlocked?", answer:"For drying after cleaning", options:["For drying after cleaning","Because the key was lost","For visitors","Because it was broken"]},
+        {question:"Was the trophy returned before September?", answer:"No \u2014 no return receipt was filed", options:["No \u2014 no return receipt was filed","Yes, on July 13","Yes, in August","The log does not say"]},
+        {question:"Who locked the case on July 13th?", answer:"The caretaker", options:["The caretaker","Felix","Mr. Kramer","Ms. Petrova"]}
       ]},
     {name:"Reporting Back", type:"mc", context:"Elias tells a friend what happened in the cellar. Help him get the past tenses right.", contextDe:"Elias erz\u00e4hlt einem Freund, was im Keller passiert ist. Hilf ihm, die Vergangenheitsformen richtig zu verwenden.", xpEach:10, items:[
       {prompt:"We ___ down the old stone staircase into the cellar.", answer:"went", options:["went","go","goed","gone"], hint:"Past of 'go'.", hintDe:"Vergangenheit von 'go'."},
@@ -13292,12 +13309,17 @@ var campaignLevels = [
   maxXP:180, starThresholds:{one:90, two:144, three:180},
   sceneImages:{storyA:'campaign/img/g2-ch09-scene-canteen.jpg', storyB:'campaign/img/g2-ch09-scene-keys.jpg', completion:'campaign/img/g2-ch09-scene-completion.jpg'},readingImage:'campaign/img/g2-ch09-reading-flip.jpg',comicPanels:['campaign/img/g2-ch09-comic-01.jpg'],
   storyA:[{speaker:"elias", text:"Canteen. Lunch break. The best place for information \u2014 everyone talks here."},{speaker:"nora", text:"The canteen cook, Mrs. Brennan, has worked here for twenty years. She knows everything."},{speaker:"elias", text:"And she loves to chat. Leave this to me."}],
-  storyB:[{speaker:"elias", text:"Mrs. Brennan told me something interesting. Over the summer, some heating workers came to fix the boiler. One of them borrowed Rudi's keyring for five minutes."},{speaker:"nora", text:"So for a short time, someone outside the school had access to Rudi's keys. All of them. Including the trophy case key."},{speaker:"elias", text:"But the Novak shop collected the photograph in July \u2014 that was during the maintenance chaos. Felix could have walked in without needing a key."}],
+  storyB:[
+    {speaker:"elias", text:"Mrs. Brennan told me something interesting. Over the summer, heating workers borrowed Rudi's keyring for five minutes. Rudi was furious."},
+    {speaker:"nora", text:"But here is the important part: Mrs. Brennan said FELIX told her about the key incident. She said: 'He came to the canteen and just started talking about it. At the time I thought he was just chatting. But now I wonder why he told me.'"},
+    {speaker:"elias", text:"Felix was deliberately making Rudi look suspicious. First the Leo rumours. Now this. He has been running a disinformation campaign."},
+    {speaker:"nora", text:"Every false trail leads back to Felix. He is the puppet master behind every suspect."}
+  ],
   completion:[
-    {speaker:"nora", text:"Rudi's keys were borrowed during the heating works in July. The school was wide open. Anyone could have walked in without a key."},
-    {speaker:"elias", text:"Felix came during the chaos. Nobody stopped him. Nobody asked who he was. He picked up the wrong item and walked out."}
-  ,
-    {speaker:"nora", text:"\ud83d\udccc Evidence collected: key diagram — Rudi's keys were copied."}],
+    {speaker:"nora", text:"Mrs. Brennan confirmed: Felix is the source of the Rudi key story. He has been feeding false leads to the school gossip network."},
+    {speaker:"elias", text:"The planted fabric, the Leo rumours, the Rudi key leak \u2014 all Felix. He built a web of distractions around himself."},
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: key diagram \u2014 and confirmation that Felix planted the Rudi lead."}
+  ],
   tasks:[
     {name:"Canteen Menu", type:"image-matching", context:"Elias chats with Mrs. Brennan at the serving counter. While he talks, Nora reads today’s menu. Name each food.", contextDe:"Elias plaudert mit Frau Brennan an der Theke. W\u00e4hrend er redet, liest Nora das heutige Men\u00fc. Benenne jedes Essen.", xpEach:5,
       items:[
@@ -13343,12 +13365,17 @@ var campaignLevels = [
   maxXP:190, starThresholds:{one:95, two:152, three:190},
   sceneImages:{storyA:'campaign/img/g2-ch10-scene-evening.jpg', storyB:'campaign/img/g2-ch10-scene-felix-reaction.jpg', completion:'campaign/img/g2-ch10-scene-completion.jpg'},readingImage:'campaign/img/g2-ch10-reading-flip.jpg',comicPanels:['campaign/img/g2-ch10-comic-01.jpg'],
   storyA:[{speaker:"elias", text:"School open evening. Parents everywhere. And look \u2014 the Novak antique shop has a stall."},{speaker:"nora", text:"Mr. Novak is here. This is our chance. I am going to talk to him."},{speaker:"elias", text:"Be careful. We are not accusing anyone. We are just... talking."}],
-  storyB:[{speaker:"elias", text:"Mr. Novak is friendly. He told me he likes restoring old furniture."},{speaker:"elias", text:"He said: 'We collected a photograph from Watson Manor over the summer. My son Felix sometimes helps me with pickups.'"},{speaker:"nora", text:"Felix. I watched him during the conversation. When Mr. Novak mentioned the school, Felix went white."}],
+  storyB:[
+    {speaker:"elias", text:"Mr. Novak is friendly. He says his shop has polished the Watson Manor Trophy every summer for ten years. It is just a routine cleaning job."},
+    {speaker:"elias", text:"He said: 'Felix picked it up in July, like always. I was supposed to polish it that week, but I got a huge museum commission \u2014 fifty pieces. I completely forgot about the school trophy.'"},
+    {speaker:"nora", text:"Felix. I watched him during the conversation. When his father said 'forgot,' Felix went completely white."},
+    {speaker:"nora", text:"The trophy is still at the shop. His dad forgot to return it. And Felix has spent three months covering it up because he was terrified everyone would think he stole it."}
+  ],
   completion:[
-    {speaker:"nora", text:"Mr. Novak confirmed his shop collected something from the school. Felix helped with pickups. And when his father mentioned the school, Felix went white."},
-    {speaker:"elias", text:"End of Act II. We know WHO took it. We think we know HOW. Now we need proof. Tomorrow we go to the shop."}
-  ,
-    {speaker:"nora", text:"\ud83d\udccc Evidence collected: the Novak family connection confirmed."}],
+    {speaker:"nora", text:"Mr. Novak confirmed: the trophy is at his shop. He forgot to return it. Felix knew \u2014 and instead of telling the truth, he planted evidence and framed innocent people."},
+    {speaker:"elias", text:"End of Act II. We know everything. Tomorrow we go to the shop. Then Mr. Kramer."},
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: the Novak family connection \u2014 the trophy was a routine cleaning job that went wrong."}
+  ],
   tasks:[
     {name:"Family Evening", type:"image-matching", context:"Parents visit the school. Nora watches families arrive. She listens to how people describe their relatives.", contextDe:"Eltern besuchen die Schule. Nora beobachtet die ankommenden Familien. Sie h\u00f6rt zu, wie Leute ihre Verwandten beschreiben.", xpEach:5,
       items:[
@@ -13389,11 +13416,21 @@ var campaignLevels = [
   {levelName:"The Evidence Wall", topic:"Ownership & Proof", grammar:"Possessive pronouns, who / whose",
   maxXP:190, starThresholds:{one:95, two:152, three:190},
   sceneImages:{storyA:'campaign/img/g2-ch11-scene-wall.jpg', storyB:'campaign/img/g2-ch11-scene-jacket.jpg', completion:'campaign/img/g2-ch11-scene-completion.jpg'},readingImage:'campaign/img/g2-ch11-reading-flip.jpg',comicPanels:['campaign/img/g2-ch11-comic-01.jpg'],
-  storyA:[{speaker:"nora", text:"I pinned everything to the board. The fabric. The witness statement. The newspaper. The log book entry. The map."},{speaker:"elias", text:"That is a lot of evidence. But we need to be sure before we do anything."},{speaker:"nora", text:"Look at the connections. Whose shop collected an item from school? Novak's. Who signed the pickup? F.N. \u2014 Felix Novak."}],
-  storyB:[{speaker:"elias", text:"Does Felix own a green jacket?"},{speaker:"nora", text:"I asked around. His classmate said yes \u2014 Felix has a dark green cotton jacket. He stopped wearing it in September."},{speaker:"elias", text:"Because it is evidence. He knows the fabric got caught on the hinge."}],
+  storyA:[
+    {speaker:"nora", text:"I pinned everything to the board. Every clue, every witness, every connection. And now I see TWO patterns."},
+    {speaker:"elias", text:"Two patterns?"},
+    {speaker:"nora", text:"Pattern one: the REAL trail. Maintenance records, cellar log book, Novak connection, Mr. Novak's confession. This tells us the trophy is at the shop. Pattern two: the FAKE trail. Planted fabric, Leo rumours, Rudi key leak. This tells us someone was covering their tracks."}
+  ],
+  storyB:[
+    {speaker:"elias", text:"Both patterns point to the same person."},
+    {speaker:"nora", text:"Felix Novak. He took the trophy for a legitimate cleaning job. His dad forgot to return it. Felix panicked and built a web of false evidence to protect himself."},
+    {speaker:"elias", text:"He is not a thief. But he IS a liar. He tried to frame Leo and Rudi."},
+    {speaker:"nora", text:"Tomorrow after school. Novak and Son Antiques. We see the trophy. Then we go to Mr. Kramer."}
+  ],
   completion:[
-    {speaker:"nora", text:"The evidence wall is complete. Green fabric, witness statement, log book, shop sighting, Felix's behaviour — every thread points to Felix Novak."},
-    {speaker:"elias", text:"Tomorrow after school. Novak and Son Antiques. If the trophy is there, we go straight to Mr. Kramer."}
+    {speaker:"nora", text:"The evidence wall shows everything. The real trail AND the fake one. Felix is at the centre of both."},
+    {speaker:"elias", text:"Tomorrow ends this. One way or another."},
+    {speaker:"nora", text:"\ud83d\udccc Evidence collected: complete evidence wall \u2014 real trail and fake trail mapped."}
   ],
   tasks:[
     {name:"Inside the Rooms", type:"image-matching", context:"Nora searches Felix’s old classroom for clues. She needs to name every piece of furniture to write an accurate report.", contextDe:"Nora durchsucht Felix' altes Klassenzimmer nach Hinweisen. Sie muss jedes M\u00f6belst\u00fcck benennen, um einen genauen Bericht zu schreiben.", xpEach:5,
@@ -13482,10 +13519,18 @@ var campaignLevels = [
   maxXP:200, starThresholds:{one:100, two:160, three:200},
   sceneImages:{storyA:'campaign/img/g2-ch13-scene-office.jpg', storyB:'campaign/img/g2-ch13-scene-confession.jpg', completion:'campaign/img/g2-ch13-scene-completion.jpg'},readingImage:'campaign/img/g2-ch13-reading-flip.jpg',comicPanels:['campaign/img/g2-ch13-comic-01.jpg'],
   storyA:[{speaker:"nora", text:"Wednesday morning. We go straight to Mr. Kramer's office."},{speaker:"nora", text:"We tell him everything. Calmly. Clearly. From the beginning."},{speaker:"elias", text:"He listens. He does not interrupt. When we finish, he picks up the phone."}],
-  storyB:[{speaker:"nora", text:"Felix talks. Slowly. Quietly. He went to the school in July to collect the photograph for his dad. The main door was open. He found two glass cases."},{speaker:"nora", text:"He opened the wrong one. He took the trophy, thinking it was the photograph."},{speaker:"elias", text:"When school started and the trophy was announced missing, Felix realised. But he was terrified. So he said nothing. For three months."}],
+  storyB:[
+    {speaker:"nora", text:"Felix talks. Slowly. Quietly."},
+    {speaker:"felix", text:"My dad's shop polishes the Watson Manor Trophy every summer. It is just a cleaning job. I picked it up in July, like always. But Dad got the museum commission \u2014 fifty pieces. He forgot about the school trophy. It just sat on the shelf."},
+    {speaker:"felix", text:"When school started and Mr. Kramer said it was stolen, I was terrified. Everyone knows I hate Sports Week. I wrote that letter asking to cancel it. If anyone found out the trophy was at our shop, they would think I stole it."},
+    {speaker:"felix", text:"So I did something stupid. I tore a piece of my jacket and put it on the trophy case hinge. To make it look like someone broke in. I told people I saw Leo at school at night. I told Mrs. Brennan about Rudi's keys. I wanted everyone to look at other people, not at me."},
+    {speaker:"felix", text:"Every day I watched Nora and Elias follow the trails I had made. And every day I felt worse. Because they were doing real detective work \u2014 honest, careful, patient. And I was lying to everyone."},
+    {speaker:"felix", text:"I am sorry. Not just for forgetting the trophy. For all of it. For trying to make Leo and Rudi look guilty. For the lies."}
+  ],
   completion:[
-    {speaker:"nora", text:"Felix made a mistake. He took the wrong item from the wrong case. Then fear kept him silent for three months. It is over now."},
-    {speaker:"elias", text:"Mr. Kramer will not expel him. But Felix has to help organise Sports Week. That seems fair. The trophy goes back tomorrow."}
+    {speaker:"nora", text:"Felix did not steal the trophy. But he planted evidence, spread rumours, and tried to frame two innocent people. That is worse than forgetting."},
+    {speaker:"elias", text:"Mr. Kramer will not expel him. But Felix has to apologise to Leo and Rudi personally. And he has to help organise Sports Week. That seems fair."},
+    {speaker:"nora", text:"The trophy goes back tomorrow. And the truth is finally out."}
   ],
   tasks:[
     {name:"Weather Report", type:"image-matching", context:"The day of the confession. Nora looks out of Mr. Kramer’s office window and describes the weather while they wait for Felix.", contextDe:"Der Tag des Gest\u00e4ndnisses. Nora schaut aus Herrn Kramers B\u00fcrofenster und beschreibt das Wetter, w\u00e4hrend sie auf Felix warten.", xpEach:5,
@@ -13506,13 +13551,13 @@ var campaignLevels = [
       {prompt:"This case ___ not be forgotten.", answer:"will", options:["will","would","is","was"], hint:"Permanence.", hintDe:"Es wird immer erinnert."}
     ]},
     {name:"Felix's Statement", type:"reading", context:"Felix finally told the truth. Read his full statement.", contextDe:"Felix hat endlich die Wahrheit gesagt. Lies seine vollst\u00e4ndige Aussage.", xpEach:12,
-      passage:"<h4>Statement by Felix Novak</h4><p>My dad asked me to pick up a framed photograph from the school in July. When I arrived, the main door was open. Workers were carrying pipes.</p><p>I found two glass cases in the entrance hall. I opened the one closest to the door. Inside was a small bronze cup with names engraved on it. I thought it was the photograph \u2014 my dad said it was in a frame, and the cup had a frame shape at the base. I did not look carefully.</p><p>When school started and the headmaster said the trophy was missing, I knew immediately. I had taken the wrong thing. But I was so scared that I did not tell anyone. Every day I wanted to say something, but I could not.</p>",
+      passage:"<h4>Statement by Felix Novak \u2014 Mr. Kramer's Office</h4><p>My dad's shop has polished the Watson Manor Trophy every summer for ten years. I picked it up in July, like always. But my dad got a huge museum order and forgot to polish and return the school trophy.</p><p>When school started and Mr. Kramer said the trophy was missing, I panicked. Everyone knows I hate Sports Week. I wrote a letter last year asking to cancel it. I was sure everyone would blame me.</p><p>So I planted false evidence. I tore a piece of my green jacket and placed it on the trophy case hinge to make it look like a break-in. I spread rumours about Leo being at school at night. I told Mrs. Brennan about the caretaker's keys to make Rudi look suspicious.</p><p>I watched Nora and Elias follow my false trails for weeks. I felt terrible every day. I am sorry for all of it \u2014 for the lies, for trying to blame Leo and Rudi, and for not telling the truth sooner.</p>",
       questions:[
-        {question:"What was Felix supposed to collect?", answer:"A framed photograph", options:["A framed photograph","The Watson Manor Trophy","An old clock","A certificate"]},
-        {question:"Why didn't anyone stop Felix?", answer:"Workers were everywhere and the door was open", options:["Workers were everywhere and the door was open","He had a key","He came at night","He wore a uniform"]},
-        {question:"Why did Felix think the trophy was the photograph?", answer:"The base looked like a frame shape", options:["The base looked like a frame shape","It had a picture on it","His dad described it","The label said photograph"]},
-        {question:"When did Felix realise his mistake?", answer:"When the headmaster announced the trophy was missing", options:["When the headmaster announced the trophy was missing","When he opened his bag at home","When his dad saw it","When Nora asked him"]},
-        {question:"Why didn't Felix tell anyone for three months?", answer:"He was scared of getting in trouble", options:["He was scared of getting in trouble","He wanted to keep it","He forgot","He thought it was not important"]}
+        {question:"Why was the trophy at the Novak shop?", answer:"It was there for annual cleaning", options:["It was there for annual cleaning","Felix stole it","Mr. Novak bought it","The school gave it away"]},
+        {question:"Why did Mr. Novak forget to return it?", answer:"He got a big museum commission", options:["He got a big museum commission","He was on holiday","He did not know about it","He wanted to keep it"]},
+        {question:"What did Felix do to the trophy case hinge?", answer:"He planted a piece of green fabric", options:["He planted a piece of green fabric","He broke the lock","He left it open","He put glue on it"]},
+        {question:"Who did Felix try to blame?", answer:"Leo and Rudi", options:["Leo and Rudi","Mr. Kramer and Ms. Petrova","The police","His father"]},
+        {question:"How did Felix feel about what he did?", answer:"Terrible \u2014 he felt worse every day", options:["Terrible \u2014 he felt worse every day","Proud of himself","He did not care","He thought it was funny"]}
       ]},
     {name:"How It Happened", type:"mc", context:"Nora describes the confession scene. Choose the correct adverb.", contextDe:"Nora beschreibt die Szene. W\u00e4hle das richtige Adverb.", xpEach:12, items:[
       {prompt:"Felix spoke ___. His voice was barely a whisper.", answer:"quietly", options:["quietly","quiet","quick","quickly"], hint:"quiet \u2192 quietly.", hintDe:"leise."},
@@ -13533,11 +13578,11 @@ var campaignLevels = [
     {speaker:"nora", text:"The Watson Manor Trophy. He puts it back in the case. Clicks the lock shut. Sixty-three years of names gleam under the lights. The hall erupts."}
   ],
   storyB:[
-    {speaker:"elias", text:"Sports Week is ON. Everyone is outside. The field is set up for cycling, swimming heats, a climbing wall, even skateboard tricks."},
-    {speaker:"nora", text:"Leo Winkler jogs past us. He stops. 'I have never seen anyone actually solve a mystery like that. Not bad for 2nd-graders.'"},
-    {speaker:"elias", text:"Felix is standing at the edge of the field. He is watching, not competing. He sees us and walks over."},
-    {speaker:"elias", text:"'Have you ever made a mistake you were too scared to fix?' he asks. I say: 'Everyone has.'"},
-    {speaker:"nora", text:"He nods. Then he walks to the sign-up sheet for the relay race. And writes his name."}
+    {speaker:"elias", text:"Sports Week is ON. The field is set up for cycling, swimming, climbing, skateboard tricks."},
+    {speaker:"nora", text:"Leo Winkler jogs past. He stops. 'No hard feelings about the investigation,' he says. 'You were just doing your job. Felix is the one who lied about me.'"},
+    {speaker:"elias", text:"Felix is standing at the edge of the field. He already apologised to Leo and Rudi yesterday. It was not easy. But he did it."},
+    {speaker:"elias", text:"He walks to the sign-up sheet for the relay race. Writes his name. Looks back at us. A small nod."},
+    {speaker:"nora", text:"The kid who wanted to cancel Sports Week just signed up for a race. People can change."}
   ],
   completion:[
     {speaker:"nora", text:"The trophy is back. Sports Week is happening. Felix signed up for a race. And the whole school feels alive again."},
@@ -13585,20 +13630,23 @@ var campaignLevels = [
   sceneImages:{storyA:'campaign/img/g2-ch15-scene-courtyard.jpg', storyB:'campaign/img/g2-ch15-scene-club.jpg', completion:'campaign/img/g2-ch15-scene-completion.jpg'},readingImage:'campaign/img/g2-ch15-reading-flip.jpg',comicPanels:['campaign/img/g2-ch15-comic-01.jpg','campaign/img/g2-ch15-comic-02.jpg'],
   epilogueImages:['campaign/img/g2-epilogue-01.jpg','campaign/img/g2-epilogue-02.jpg','campaign/img/g2-epilogue-03.jpg','campaign/img/g2-epilogue-04.jpg'],
   storyA:[
-    {speaker:"nora", text:"Sports Week is over. The trophy went to a 3rd-grader named Hannah — she won three events. But today is not about sports."},
-    {speaker:"elias", text:"It is Community Day. The last day of the school year. Every class does something for the town. And our class voted to help at the Seaview Animal Shelter."},
-    {speaker:"nora", text:"The Investigation Club is going together. Even Felix is coming. He said he wants to do something good for a change."}
+    {speaker:"nora", text:"Community Day. Last day of school. Our class voted to help at the Seaview Animal Shelter."},
+    {speaker:"elias", text:"But when we arrive, the shelter manager looks worried. She says three animals disappeared overnight \u2014 a cat, a rabbit, and a tortoise. The enclosures were open, but the front gate was locked."},
+    {speaker:"nora", text:"Elias looks at me. I look at Felix. Felix looks at both of us. We all think the same thing."},
+    {speaker:"elias", text:"Investigation Club \u2014 this is our first real case. Together."}
   ],
   storyB:[
-    {speaker:"elias", text:"The shelter is full of animals that need homes. Dogs, cats, rabbits, even a tortoise. The manager shows us what to do."},
-    {speaker:"nora", text:"We feed the animals, clean the cages, brush the dogs. Felix is quiet but he works hard. He spends an hour with a shy cat that nobody else can get close to."},
-    {speaker:"elias", text:"I sit next to Nora on a bench outside. 'I like this,' I say. She smiles. 'So do I.'"},
-    {speaker:"nora", text:"Felix walks over with the cat in his arms. 'I am going to ask my dad if I can adopt her,' he says. 'I have never had a pet before.' Elias grins: 'Neither have I. But I want one now.'"}
+    {speaker:"nora", text:"We split up. I check the enclosures. Felix talks to the night volunteer. Elias searches the garden."},
+    {speaker:"elias", text:"The night volunteer says she locked up at 10 PM. Everything was fine. But this morning, three cages were open."},
+    {speaker:"felix", text:"I found something. The garden fence has a gap at the bottom. Small enough for a cat and a rabbit. And there are tortoise tracks in the mud leading outside."},
+    {speaker:"nora", text:"They did not disappear. They ESCAPED. Through the fence gap. The cat, the rabbit, and the tortoise are somewhere in the neighbourhood."},
+    {speaker:"elias", text:"Then let us find them. All three of us. Like a real team."}
   ],
   completion:[
-    {speaker:"nora", text:"Community Day is over. The school year is over. The Watson Manor Trophy gleams in its case with a new name: Hannah, class 3B."},
-    {speaker:"nora", text:"I close my notebook. Last page. Case number 001: The Watson Manor Files. Status: Closed."},
-    {speaker:"elias", text:"Case closed. But the Investigation Club meets again in September. And Felix is bringing his new cat. What is her name? Watson. Obviously."}
+    {speaker:"nora", text:"We found them. The cat was under a parked car two streets away. The rabbit was in a garden eating lettuce. The tortoise \u2014 Herbert \u2014 had only made it to the pavement outside. He is very slow."},
+    {speaker:"elias", text:"The shelter manager fixed the fence. She said: 'You three are natural detectives. Come back anytime.'"},
+    {speaker:"nora", text:"I close my notebook. Last page. Case number 001: The Watson Manor Files \u2014 CLOSED. Case number 002: The Shelter Escape \u2014 SOLVED."},
+    {speaker:"felix", text:"Whatever comes next \u2014 we solve it together."}
   ],
   tasks:[
     {name:"Caring for Pets", type:"image-matching", context:"The Investigation Club’s first casual meeting. Members share photos of their pets and talk about how they look after them.", contextDe:"Das erste lockere Treffen des Ermittlungsclubs. Mitglieder zeigen Fotos ihrer Haustiere und erz\u00e4hlen, wie sie sich um sie k\u00fcmmern.", xpEach:5,
@@ -13619,13 +13667,13 @@ var campaignLevels = [
       {prompt:"'I enjoy working in a team.' \u2014 '___!'", answer:"So do I", options:["So do I","Neither do I","So have I","Neither have I"], hint:"Positive + present simple \u2192 'So do I'.", hintDe:"Positiv + Present Simple."}
     ]},
     {name:"Nora's Final Entry", type:"reading", context:"The last page of Nora's notebook. Read her closing case file entry.", contextDe:"Die letzte Seite von Noras Notizbuch.", xpEach:12,
-      passage:"<h4>Community Day — Seaview Animal Shelter</h4><p>Today was Community Day at Watson Manor School. Every class spent the morning helping somewhere in the town. Class 2B went to the Seaview Animal Shelter.</p><p>The shelter has 14 dogs, 9 cats, 6 rabbits, and one very old tortoise called Herbert. The students helped feed the animals, clean out the cages, brush the dogs, and walk them in the garden.</p><p>'I love working with animals,' said Elias. 'So do I,' said Nora. 'I don't usually like getting up early,' laughed Felix, 'but today I didn't mind. Neither did the cat.'</p><p>Felix spent most of the morning with a shy grey cat called Mist. She does not usually let strangers touch her, but she sat on Felix's lap for an hour. 'I have never had a pet,' he said. 'But I think that is going to change.'</p><p>The shelter manager said: 'We don't often get student volunteers. Thank you for caring.'</p>",
+      passage:"<h4>Seaview Animal Shelter \u2014 Incident Report</h4><p>Date: Community Day. Three animals were reported missing this morning: Mist (grey cat), Hoppy (brown rabbit), and Herbert (tortoise, very old).</p><p>The night volunteer locked all enclosures at 10 PM. The front gate was still locked this morning. No signs of a break-in.</p><p>Three student volunteers from Watson Manor School investigated. They discovered a gap in the garden fence, approximately 15 cm wide. Cat and rabbit tracks led through the gap. Tortoise tracks led along the inside of the fence to the gap and then onto the pavement outside.</p><p>The students found Mist under a car on Park Street, Hoppy in a garden on Elm Road eating lettuce, and Herbert on the pavement just outside the shelter gate. All three animals were returned safely.</p><p>The fence gap has been repaired. The shelter thanks the Investigation Club for their quick work.</p>",
       questions:[
-        {question:"How many cats does the shelter have?", answer:"Nine", options:["Nine","Fourteen","Six","One"]},
-        {question:"What is the tortoise's name?", answer:"Herbert", options:["Herbert","Watson","Mist","Felix"]},
-        {question:"What did Felix do at the shelter?", answer:"He spent time with a shy cat called Mist", options:["He spent time with a shy cat called Mist","He walked all the dogs","He cleaned the rabbit cages","He fed the tortoise"]},
-        {question:"Has Felix ever had a pet before?", answer:"No, never", options:["No, never","Yes, a dog","Yes, a cat","Yes, a rabbit"]},
-        {question:"What did the shelter manager say about student volunteers?", answer:"They don't often get them", options:["They don't often get them","They get them every week","They prefer adult volunteers","They do not need help"]}
+        {question:"How many animals escaped?", answer:"Three", options:["Three","Two","Four","Five"]},
+        {question:"How did the animals escape?", answer:"Through a gap in the garden fence", options:["Through a gap in the garden fence","Through the front gate","Through a window","Someone let them out"]},
+        {question:"Where was the cat found?", answer:"Under a car on Park Street", options:["Under a car on Park Street","In a garden on Elm Road","On the pavement outside","In the shelter kitchen"]},
+        {question:"Why did Herbert not get far?", answer:"He is a tortoise and very slow", options:["He is a tortoise and very slow","He was injured","He was too heavy","He went back inside"]},
+        {question:"Who solved the case?", answer:"The Investigation Club", options:["The Investigation Club","The shelter manager","The police","The night volunteer"]}
       ]},
     {name:"Looking Back", type:"mc", context:"Nora and Elias reflect on the case.", contextDe:"Nora und Elias blicken auf den Fall zur\u00fcck.", xpEach:12, items:[
       {prompt:"'I liked working on this case.' \u2014 '___.'", answer:"So did I", options:["So did I","Neither did I","So do I","Neither do I"], hint:"Positive + past simple \u2192 'So did I'.", hintDe:"Positiv + Vergangenheit."},
