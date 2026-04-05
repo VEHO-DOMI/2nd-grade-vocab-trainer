@@ -11570,6 +11570,7 @@ function showCampaignMap() {
     '<div class="map-stats"><span>&#11088; ' + totalStars + ' Stars</span><span>&#10024; ' + totalXP + ' XP</span></div>' +
     '<div style="margin-top:0.3rem;"><button style="background:none;border:none;color:var(--muted);font-size:0.7rem;cursor:pointer;font-family:inherit;text-decoration:underline;" onclick="campaignState.prologueWatched=false;localStorage.removeItem(\'campaign-prologue-watched\');showPrologue();">&#128214; Watch Intro Again</button>' +
     (completedCount >= levels.length ? ' <button style="background:none;border:none;color:var(--muted);font-size:0.7rem;cursor:pointer;font-family:inherit;text-decoration:underline;margin-left:0.6rem;" onclick="showAllComics()">&#127910; Watch All Comics</button>' : '') +
+    (completedCount > 0 ? ' <button style="background:none;border:none;color:var(--muted);font-size:0.7rem;cursor:pointer;font-family:inherit;text-decoration:underline;margin-left:0.6rem;" onclick="showEvidenceGallery()">&#128204; Evidence Wall</button>' : '') +
     '</div>' +
   '</div>';
   // Nodes
@@ -11723,7 +11724,11 @@ function renderStoryBeat() {
   // - During epilogue: show epilogue images matched to beat index
   var lv = campaignLevels[campaignState.currentLevel];
   var sceneImgSrc = '';
-  if (lv && lv.epilogueImages && campaignState.storyPhase === 'completion' && lv.epilogueImages[idx]) {
+  // Per-beat image takes priority (like prologue scenes)
+  var currentBeat = campaignState.storyQueue && campaignState.storyQueue[idx];
+  if (currentBeat && currentBeat.image) {
+    sceneImgSrc = currentBeat.image;
+  } else if (lv && lv.epilogueImages && campaignState.storyPhase === 'completion' && lv.epilogueImages[idx]) {
     sceneImgSrc = lv.epilogueImages[idx];
   } else if (lv && lv.sceneImages && campaignState.storyPhase) {
     // Show the level's scene image for the current story phase
@@ -12929,7 +12934,7 @@ var campaignLevels = [
   // ==================== LEVEL 1: The Empty Case ====================
   {levelName:"The Empty Case", topic:"School & First Day", grammar:"Past simple, present simple",
   maxXP:170, starThresholds:{one:85, two:136, three:170},
-  sceneImages:{storyA:'campaign/img/g2-ch01-scene-case.jpg', storyB:'campaign/img/g2-ch01-scene-police.jpg', completion:'campaign/img/g2-ch01-scene-completion.jpg'},
+  sceneImages:{storyA:'campaign/img/g2-ch01-scene-case.jpg', storyB:'campaign/img/g2-ch01-scene-fabric.jpg', completion:'campaign/img/g2-ch01-scene-completion.jpg'},
   readingImage:'campaign/img/g2-ch01-reading-flip.jpg',
   comicPanels:['campaign/img/g2-ch01-comic-01.jpg','campaign/img/g2-ch01-comic-02.jpg'],
   storyA:[
@@ -12938,8 +12943,8 @@ var campaignLevels = [
     {speaker:"nora", text:"But this morning, Mr. Kramer called everyone to the school hall. He looked pale. He opened the trophy case. It was empty."}
   ],
   storyB:[
-    {speaker:"nora", text:"The police came. Two officers looked around the case for ten minutes. One said: 'No sign of forced entry. It is just a school trophy \u2014 not high value.' They took some notes and left."},
-    {speaker:"elias", text:"Just a trophy? This is the Watson Manor Trophy. Sixty-three years of winners. Without it, Sports Week means nothing."},
+    {speaker:"nora", text:"The police came. Two officers looked around the case for ten minutes. One said: 'No sign of forced entry. It is just a school trophy \u2014 not high value.' They took some notes and left.", image:"campaign/img/g2-ch01-scene-police.jpg"},
+    {speaker:"elias", text:"Just a trophy? This is the Watson Manor Trophy. Sixty-three years of winners. Without it, Sports Week means nothing.", image:"campaign/img/g2-ch01-scene-police.jpg"},
     {speaker:"nora", text:"But I noticed something the police missed. A tiny piece of green fabric. Caught on the brass hinge of the glass door. Someone left a trace."},
     {speaker:"elias", text:"If the police will not take this seriously, WE will. I have a notebook. You have sharp eyes. Let us start a case file."}
   ],
