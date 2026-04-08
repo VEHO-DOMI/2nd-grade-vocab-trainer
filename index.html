@@ -2375,6 +2375,7 @@ body.playing .header-container { display: none; }
   margin-bottom: 1rem;
 }
 </style>
+<script src="data/m2-campaign.js"></script>
 <!-- Watson Manor Case critical-path image preload (v2.2) -->
 <link rel="preload" as="image" href="campaign/img/g2-prologue-01.jpg">
 <link rel="preload" as="image" href="campaign/img/g2-prologue-02.jpg">
@@ -10416,16 +10417,7 @@ var campaignCombo = 0;
 
 // --- PROLOGUE ---
 // --- PROLOGUE ---
-var prologueScenes = [
-  {speakerName:'Narrator', emoji:'&#127979;', text:'This is Watson Manor School. It looks like any other school — classrooms, a gym, a library, a canteen.', image:'campaign/img/g2-prologue-01.jpg', duration:8000},
-  {speakerName:'Narrator', emoji:'&#127979;', text:'But this building is old. Very old. It was built in 1898 as a manor — a big, grand house where a rich family once lived. They called it Watson Manor.', image:'campaign/img/g2-prologue-02.jpg', duration:12000},
-  {speakerName:'Narrator', emoji:'&#127979;', text:'In 1952, the manor became a school. But parts of the old house are still here — the stone cellar, the wooden library, the courtyard with the fountain.', image:'campaign/img/g2-prologue-03.jpg', duration:12000},
-  {speakerName:'Narrator', emoji:'&#127979;', text:'The highlight of every school year is Sports Week in June — a whole week of competitions. Running, swimming, cycling, climbing. The winner gets the Watson Manor Trophy — and their name is engraved on it forever.', image:'campaign/img/g2-prologue-04.jpg', duration:14000},
-  {speakerName:'Narrator', emoji:'&#127979;', text:'In the entrance hall, there is a glass case. Inside it: the Watson Manor Trophy. A small bronze cup with the names of every Sports Week winner since 1960. Sixty-three years of champions.', image:'campaign/img/g2-prologue-05.jpg', duration:14000},
-  {speakerName:'Narrator', emoji:'&#128270;', text:'This year, on the first day of school, the headmaster opens the case. But the trophy is gone. The glass is not broken. The lock is not damaged. Someone took it — and left no trace.', image:'campaign/img/g2-prologue-06.jpg', duration:14000},
-  {speakerName:'Narrator', emoji:'&#128270;', text:'Well… almost no trace. There is a tiny piece of green fabric caught on the hinge. And two 2nd-graders have already noticed it.', image:'campaign/img/g2-prologue-07.jpg', duration:10000},
-  {speakerName:'Narrator', emoji:'&#128270;', text:'Their names are Nora and Elias. And this is their story.', emotion:'excited', image:'campaign/img/g2-prologue-08.jpg', duration:8000}
-];
+// prologueScenes — defined in data/m2-campaign.js (loaded via <script src> before this script)
 
 
 function checkPrologueWatched() {
@@ -10680,8 +10672,8 @@ function renderStoryBeat() {
   // Speaker avatar & name — use full character portraits for story screens (v2.2 cast)
   var avatarMap = {
     narrator: {img:'campaign/img/g2-prologue-01.jpg', emoji:'&#127979;', name:'Narrator', cls:'campaign-book-text'},
-    nora: {img:'campaign/img/g2-char-nora-avatar.jpg', emoji:'&#128269;', name:'Nora', cls:'campaign-book-text'},
-    elias: {img:'campaign/img/g2-char-elias-avatar.jpg', emoji:'&#128172;', name:'Elias', cls:'campaign-mia-text'},
+    nora: {img:'campaign/img/g2-char-nora-neutral.jpg', emoji:'&#128269;', name:'Nora', cls:'campaign-book-text'},
+    elias: {img:'campaign/img/g2-char-elias-neutral.jpg', emoji:'&#128172;', name:'Elias', cls:'campaign-mia-text'},
     felix: {img:'campaign/img/g2-char-felix-avatar.jpg', emoji:'&#128552;', name:'Felix', cls:'campaign-emre-text'},
     lukas: {img:'campaign/img/g2-char-lukas-avatar.jpg', emoji:'&#127939;', name:'Lukas', cls:'campaign-emre-text'},
     martinez: {img:'campaign/img/g2-char-martinez-avatar.jpg', emoji:'&#127939;', name:'Coach Martinez', cls:'campaign-syntax-text'},
@@ -10694,14 +10686,29 @@ function renderStoryBeat() {
     leo: {img:'campaign/img/g2-char-leo-avatar.jpg', emoji:'&#127939;', name:'Leo', cls:'campaign-emre-text'}
   };
   // v2.2 emotion-specific pose switching
-  if (speaker === 'felix' && (campaignState.currentLevel !== null && campaignState.currentLevel >= 11)) {
-    avatarMap.felix.img = 'campaign/img/g2-char-felix-confession.jpg';
+  // Felix: anxious pose Ch1-11, confession pose Ch12-14, default avatar Ch15
+  if (speaker === 'felix') {
+    if (campaignState.currentLevel !== null && campaignState.currentLevel >= 11 && campaignState.currentLevel < 14) {
+      avatarMap.felix.img = 'campaign/img/g2-char-felix-confession.jpg';
+    } else if (campaignState.currentLevel !== null && campaignState.currentLevel < 11) {
+      avatarMap.felix.img = 'campaign/img/g2-char-felix-anxious.jpg';
+    }
   }
-  if (speaker === 'martinez' && (campaignState.currentLevel !== null && campaignState.currentLevel >= 13)) {
-    avatarMap.martinez.img = 'campaign/img/g2-char-martinez-garage.jpg';
+  // Coach Martinez: club pose Ch6 (junior sports club), garage pose Ch14+, default avatar otherwise
+  if (speaker === 'martinez') {
+    if (campaignState.currentLevel === 5) {
+      avatarMap.martinez.img = 'campaign/img/g2-char-martinez-club.jpg';
+    } else if (campaignState.currentLevel !== null && campaignState.currentLevel >= 13) {
+      avatarMap.martinez.img = 'campaign/img/g2-char-martinez-garage.jpg';
+    }
   }
-  if (speaker === 'kramer' && (campaignState.currentLevel !== null && campaignState.currentLevel >= 13)) {
-    avatarMap.kramer.img = 'campaign/img/g2-char-kramer-pale.jpg';
+  // Mr. Kramer: public composed pose Ch1-2, pale pose Ch13-14, default avatar otherwise
+  if (speaker === 'kramer') {
+    if (campaignState.currentLevel !== null && campaignState.currentLevel < 2) {
+      avatarMap.kramer.img = 'campaign/img/g2-char-kramer-public.jpg';
+    } else if (campaignState.currentLevel !== null && campaignState.currentLevel >= 13) {
+      avatarMap.kramer.img = 'campaign/img/g2-char-kramer-pale.jpg';
+    }
   }
   if (speaker === 'lukas' && campaignState.currentLevel === 14) {
     avatarMap.lukas.img = 'campaign/img/g2-char-lukas-shelter.jpg';
@@ -10857,6 +10864,9 @@ function renderCampaignTask(taskIndex) {
   else if (type === 'gap-fill-mc') renderCampaignGapFillMC(task);
   else if (type === 'gap-fill-typed') renderCampaignGapFillTyped(task);
   else if (type === 'tf') renderCampaignTF(task);
+  else if (type === 'translation') renderCampaignTranslation(task);
+  else if (type === 'tense-id') renderCampaignTenseId(task);
+  else if (type === 'question-formation') renderCampaignQuestionFormation(task);
   else if (type === 'reading') renderCampaignReading(task);
   else renderCampaignMC(task);
 }
@@ -11107,6 +11117,145 @@ function submitTFAnswer(btn, answer) {
   campaignState.taskResults.push({ correct: result.isCorrect, xp: xp });
 }
 
+// --- TRANSLATION (DE -> EN typed input) ---
+function renderCampaignTranslation(task) {
+  window.scrollTo(0, 0);
+  var items = task.items || [];
+  var itemIdx = campaignState.currentItemIndex;
+  if (itemIdx >= items.length) { campaignState.currentTaskIndex++; advanceCampaignTask(); return; }
+  var item = items[itemIdx];
+  var area = document.getElementById('campaign-exercise-area');
+  var feedback = document.getElementById('campaign-feedback-area');
+  feedback.innerHTML = '';
+  var germanSentence = item.de || item.german || item.prompt || '';
+  var html = '<div style="text-align:center;padding:0.5rem;">' +
+    '<div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">&#127465;&#127466; Translate to English</div>' +
+    '<div class="campaign-gap-sentence" style="font-style:italic;color:var(--text);">' + escapeHtml(germanSentence) + '</div>' +
+  '</div>';
+  html += '<div style="display:flex;gap:0.4rem;margin-top:0.5rem;padding:0 0.5rem;">' +
+    '<input type="text" id="campaign-typed-input" class="input-field" placeholder="Type the English translation..." style="flex:1;" autocomplete="off" autocapitalize="off">' +
+    '<button class="btn" onclick="submitTranslationAnswer()">Check</button>' +
+  '</div>';
+  html += buildHintButton(itemIdx);
+  area.innerHTML = html;
+  var input = document.getElementById('campaign-typed-input');
+  if (input) {
+    input.focus();
+    input.addEventListener('keydown', function(e) { if (e.key === 'Enter') submitTranslationAnswer(); });
+  }
+  updateCampaignTaskProgress();
+}
+
+function submitTranslationAnswer() {
+  var input = document.getElementById('campaign-typed-input');
+  if (!input || !input.value.trim()) return;
+  var lv = campaignLevels[campaignState.currentLevel];
+  var task = lv.tasks[campaignState.currentTaskIndex];
+  var item = task.items[campaignState.currentItemIndex];
+  var userAnswer = input.value.trim();
+  var result = checkCampaignAnswer(userAnswer, item.answer, item.alts, 'translation');
+  var xp = applyCampaignComboXP(task.xpEach || 12, result.isCorrect);
+  campaignState.grammarXP += xp;
+  campaignState.levelXP += xp;
+  input.disabled = true;
+  input.style.borderColor = result.isCorrect ? '#43A047' : '#E53935';
+  showCampaignFeedback(result, item.answer, xp);
+  campaignState.taskResults.push({ correct: result.isCorrect, xp: xp });
+}
+
+// --- TENSE IDENTIFICATION (MC: which tense is this?) ---
+function renderCampaignTenseId(task) {
+  window.scrollTo(0, 0);
+  var items = task.items || [];
+  var itemIdx = campaignState.currentItemIndex;
+  if (itemIdx >= items.length) { campaignState.currentTaskIndex++; advanceCampaignTask(); return; }
+  var item = items[itemIdx];
+  var area = document.getElementById('campaign-exercise-area');
+  var feedback = document.getElementById('campaign-feedback-area');
+  feedback.innerHTML = '';
+  var html = '<div style="text-align:center;padding:0.5rem 0;">' +
+    '<div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">&#128270; Which tense is this sentence?</div>' +
+    '<div class="campaign-gap-sentence" style="font-size:1rem;">' + escapeHtml(item.sentence || item.prompt || '') + '</div>' +
+  '</div>';
+  html += '<div class="campaign-mc-options">';
+  (item.options || []).forEach(function(opt) {
+    html += '<button class="campaign-mc-btn" onclick="submitTenseIdAnswer(this, \'' + opt.replace(/'/g, "\\'") + '\')">' + escapeHtml(opt) + '</button>';
+  });
+  html += '</div>';
+  html += buildHintButton(itemIdx);
+  area.innerHTML = html;
+  updateCampaignTaskProgress();
+}
+
+function submitTenseIdAnswer(btn, answer) {
+  var lv = campaignLevels[campaignState.currentLevel];
+  var task = lv.tasks[campaignState.currentTaskIndex];
+  var item = task.items[campaignState.currentItemIndex];
+  var result = checkCampaignAnswer(answer, item.answer, item.alts, 'tense-id');
+  var xp = applyCampaignComboXP(task.xpEach || 10, result.isCorrect);
+  campaignState.grammarXP += xp;
+  campaignState.levelXP += xp;
+  var btns = document.querySelectorAll('.campaign-mc-btn');
+  btns.forEach(function(b) {
+    b.disabled = true;
+    b.style.pointerEvents = 'none';
+    if (normCampaign(b.textContent) === normCampaign(item.answer)) b.classList.add('correct');
+  });
+  if (!result.isCorrect) btn.classList.add('wrong');
+  showCampaignFeedback(result, item.answer, xp);
+  campaignState.taskResults.push({ correct: result.isCorrect, xp: xp });
+}
+
+// --- QUESTION FORMATION (typed input: form a question) ---
+function renderCampaignQuestionFormation(task) {
+  window.scrollTo(0, 0);
+  var items = task.items || [];
+  var itemIdx = campaignState.currentItemIndex;
+  if (itemIdx >= items.length) { campaignState.currentTaskIndex++; advanceCampaignTask(); return; }
+  var item = items[itemIdx];
+  var area = document.getElementById('campaign-exercise-area');
+  var feedback = document.getElementById('campaign-feedback-area');
+  feedback.innerHTML = '';
+  var html = '<div style="padding:0.5rem;">' +
+    '<div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem;">&#128269; Form the question</div>' +
+    '<div class="campaign-gap-sentence" style="font-size:0.9rem;font-style:italic;color:var(--text-secondary);">Statement: ' + escapeHtml(item.statement || '') + '</div>' +
+    '<div style="font-size:0.85rem;margin-top:0.4rem;color:var(--text);"><strong>Ask about:</strong> ' + escapeHtml(item.askAbout || '') + '</div>' +
+  '</div>';
+  html += '<div style="display:flex;gap:0.4rem;margin-top:0.5rem;padding:0 0.5rem;">' +
+    '<input type="text" id="campaign-typed-input" class="input-field" placeholder="Type your question..." style="flex:1;" autocomplete="off" autocapitalize="off">' +
+    '<button class="btn" onclick="submitQuestionFormationAnswer()">Check</button>' +
+  '</div>';
+  html += buildHintButton(itemIdx);
+  area.innerHTML = html;
+  var input = document.getElementById('campaign-typed-input');
+  if (input) {
+    input.focus();
+    input.addEventListener('keydown', function(e) { if (e.key === 'Enter') submitQuestionFormationAnswer(); });
+  }
+  updateCampaignTaskProgress();
+}
+
+function submitQuestionFormationAnswer() {
+  var input = document.getElementById('campaign-typed-input');
+  if (!input || !input.value.trim()) return;
+  var lv = campaignLevels[campaignState.currentLevel];
+  var task = lv.tasks[campaignState.currentTaskIndex];
+  var item = task.items[campaignState.currentItemIndex];
+  // Normalise punctuation: strip trailing ? and . and whitespace for comparison
+  var normUser = input.value.trim().replace(/[?.]+$/, '').toLowerCase();
+  var normAns = (item.answer || '').replace(/[?.]+$/, '').toLowerCase();
+  var alts = (item.alts || []).map(function(a) { return a.replace(/[?.]+$/, '').toLowerCase(); });
+  var isCorrect = normUser === normAns || alts.indexOf(normUser) !== -1;
+  var result = { isCorrect: isCorrect, isClose: false };
+  var xp = applyCampaignComboXP(task.xpEach || 15, result.isCorrect);
+  campaignState.grammarXP += xp;
+  campaignState.levelXP += xp;
+  input.disabled = true;
+  input.style.borderColor = result.isCorrect ? '#43A047' : '#E53935';
+  showCampaignFeedback(result, item.answer, xp);
+  campaignState.taskResults.push({ correct: result.isCorrect, xp: xp });
+}
+
 // --- READING COMPREHENSION (now a task type) ---
 function renderCampaignReading(task) {
   window.scrollTo(0, 0);
@@ -11117,19 +11266,95 @@ function renderCampaignReading(task) {
   var lv = campaignLevels[campaignState.currentLevel];
   var readingImg = lv && lv.readingImage ? lv.readingImage : '';
 
-  // Flat layout: passage text in the card, illustration always visible below it
-  var illustrationHtml = '';
-  if (readingImg) {
-    illustrationHtml = '<div style="margin-top:0.8rem;text-align:center;">' +
-      '<img src="' + readingImg + '" style="width:100%;border-radius:12px;max-height:280px;object-fit:cover;" onerror="this.parentElement.style.display=\'none\'">' +
-    '</div>';
+  var mode = task.readingMode || 'passage-pick';
+  var passageHtml;
+  if (mode === 'case-file-thread' && task.threadMessages) {
+    passageHtml = buildCaseFileThread(task.threadMessages);
+  } else if (mode === 'interview-transcript' && task.transcript) {
+    passageHtml = buildInterviewTranscript(task.transcript, task.transcriptHeading);
+  } else if (mode === 'evidence-dossier' && task.dossierItems) {
+    passageHtml = buildEvidenceDossier(task.dossierItems, task.dossierHeading);
+  } else {
+    // Default: passage-pick (HTML passage + illustration)
+    var illustrationHtml = '';
+    if (readingImg) {
+      illustrationHtml = '<div style="margin-top:0.8rem;text-align:center;">' +
+        '<img src="' + readingImg + '" style="width:100%;border-radius:12px;max-height:280px;object-fit:cover;" onerror="this.parentElement.style.display=\'none\'">' +
+      '</div>';
+    }
+    passageHtml = (task.passage || '') + illustrationHtml;
   }
-  passage.innerHTML = (task.passage || '') + illustrationHtml;
+  passage.innerHTML = passageHtml;
   document.getElementById('campaign-reading-xp').textContent = campaignState.levelXP + ' XP';
   feedback.innerHTML = '';
   campaignState.readingQuestionIndex = 0;
   renderReadingQuestion(task);
   showScreen('campaign-reading-screen');
+}
+
+// --- Reading variant builders ---
+
+function buildCaseFileThread(messages) {
+  // Chat-thread layout: alternating left/right bubbles for Nora and Elias
+  var html = '<div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.6rem;text-align:center;">&#128221; CASE FILE &mdash; SHARED NOTEBOOK</div>';
+  html += '<div style="display:flex;flex-direction:column;gap:0.6rem;">';
+  messages.forEach(function(m) {
+    var isRight = (m.speaker || '').toLowerCase() === 'elias';
+    var align = isRight ? 'flex-end' : 'flex-start';
+    var bg = isRight ? 'rgba(110,140,80,0.15)' : 'rgba(180,140,60,0.15)';
+    var border = isRight ? 'rgba(110,140,80,0.35)' : 'rgba(180,140,60,0.35)';
+    var name = m.speaker || 'Nora';
+    var time = m.time || '';
+    html += '<div style="align-self:' + align + ';max-width:78%;">' +
+      '<div style="font-size:0.64rem;color:var(--muted);margin-bottom:2px;' + (isRight ? 'text-align:right;' : '') + '"><strong>' + escapeHtml(name) + '</strong>' + (time ? ' &middot; ' + escapeHtml(time) : '') + '</div>' +
+      '<div style="background:' + bg + ';border:1px solid ' + border + ';border-radius:14px;padding:0.6rem 0.85rem;font-size:0.82rem;line-height:1.45;color:var(--text);">' + escapeHtml(m.text || '') + '</div>' +
+    '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function buildInterviewTranscript(lines, heading) {
+  // Q/A transcript with bold speaker labels
+  var html = '<div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.6rem;text-align:center;">&#127897; INTERVIEW TRANSCRIPT</div>';
+  if (heading) {
+    html += '<div style="font-weight:700;font-size:0.88rem;margin-bottom:0.6rem;text-align:center;color:var(--text);">' + escapeHtml(heading) + '</div>';
+  }
+  html += '<div style="font-family: Georgia, serif; font-size:0.86rem; line-height:1.55; color:var(--text);">';
+  lines.forEach(function(l) {
+    var sp = (l.speaker || '').toUpperCase();
+    var isStage = !!l.stage;
+    if (isStage) {
+      html += '<div style="font-style:italic;color:var(--muted);margin:0.3rem 0 0.3rem 1rem;">(' + escapeHtml(l.text || '') + ')</div>';
+    } else {
+      html += '<div style="margin:0.35rem 0;"><strong>' + escapeHtml(sp) + ':</strong> ' + escapeHtml(l.text || '') + '</div>';
+    }
+  });
+  html += '</div>';
+  return html;
+}
+
+function buildEvidenceDossier(items, heading) {
+  // Numbered evidence list with optional thumbnails
+  var html = '<div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.6rem;text-align:center;">&#128204; EVIDENCE DOSSIER</div>';
+  if (heading) {
+    html += '<div style="font-weight:700;font-size:0.92rem;margin-bottom:0.8rem;text-align:center;color:var(--text);">' + escapeHtml(heading) + '</div>';
+  }
+  html += '<div style="display:flex;flex-direction:column;gap:0.6rem;">';
+  items.forEach(function(it, idx) {
+    var num = it.num || (idx + 1);
+    var img = it.image ? '<img src="' + it.image + '" style="width:72px;height:72px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid rgba(0,0,0,0.1);" onerror="this.style.display=\'none\'">' : '';
+    html += '<div style="display:flex;gap:0.6rem;align-items:flex-start;padding:0.6rem;background:rgba(180,140,60,0.08);border-left:3px solid #b48c3c;border-radius:6px;">' +
+      '<div style="font-weight:900;font-size:1.1rem;color:#b48c3c;flex-shrink:0;min-width:22px;">#' + num + '</div>' +
+      img +
+      '<div style="flex:1;min-width:0;">' +
+        (it.title ? '<div style="font-weight:700;font-size:0.82rem;color:var(--text);margin-bottom:2px;">' + escapeHtml(it.title) + '</div>' : '') +
+        '<div style="font-size:0.76rem;color:var(--text-secondary);line-height:1.4;">' + escapeHtml(it.desc || '') + '</div>' +
+      '</div>' +
+    '</div>';
+  });
+  html += '</div>';
+  return html;
 }
 
 function toggleReadingIllustration() {
@@ -11909,904 +12134,9 @@ grammarItems = [{"id":"m1-u1-plurals-gf-001","sid":"m1-u1-plurals","u":1,"t":"ga
 
 
 // === CAMPAIGN DATA BLOCK - "The Watson Manor Case" ===
-var campaignEvidence = [
-  {level:1, img:'campaign/img/g2-evidence-ch01-fabric.jpg', title:'Green Fabric (Sample A)', desc:'Tiny piece of dark green cotton on the hinge. The first clue. Could be from a jacket or cardigan.'},
-  {level:2, img:'campaign/img/g2-evidence-ch02-interview.jpg', title:'Mr. Kramer Interview (4 PM, Sept 2)', desc:'He named Coach Martinez. Looked at the floor. Embarrassed about \"differences in June\".'},
-  {level:3, img:'campaign/img/g2-evidence-ch03-cabinet.jpg', title:'The Empty Hooks', desc:'Staff trophy cabinet. Two hooks empty where Coach Martinez\'s engraving tools used to hang.'},
-  {level:4, img:'campaign/img/g2-evidence-ch04-chronicle.jpg', title:'Sports Week 2025 — Two Pages', desc:'Qualifying heats: Lukas Brunner 27.4s. Final result: Tobias Kramer 30.9s. Two handwritings. One lie.'},
-  {level:5, img:'campaign/img/g2-evidence-ch05-keylog.jpg', title:'2010 HR Footnote', desc:'Master key issued to T. Martinez, 2010-04-12. Returned: blank. He has had a key for sixteen years.'},
-  {level:6, img:'campaign/img/g2-evidence-ch06-clubvisit.jpg', title:'Coach Martinez at the Junior Club', desc:'Joined the club in July. Knows the trophy is missing. Asked us how Lukas Brunner is. Stopped smiling.'},
-  {level:7, img:'campaign/img/g2-evidence-ch07-letter.jpg', title:'Felix\'s Letter (May 12) + the Lukas Connection', desc:'Felix wrote a letter. Coach Martinez was the only adult who replied. Met three times. Felix\'s brother Lukas is the boy from the 2025 chronicle.'},
-  {level:8, img:'campaign/img/g2-evidence-ch08-logbook.jpg', title:'Cellar Log Entry — 30 June 17:42', desc:'Coach Martinez signed out a long box on his last working day. The trophy fits inside a long box.'},
-  {level:9, img:'campaign/img/g2-evidence-ch09-leavingdo.jpg', title:'Mrs. Brennan\'s Leaving-Do Photo', desc:'Coach Martinez stood by the trophy case for ten minutes. Lukas Brunner stood silent next to him. Mr. Kramer didn\'t come.'},
-  {level:10, img:'campaign/img/g2-evidence-ch10-openeveningvideo.jpg', title:'Mrs. Schmidt\'s Open-Evening Video', desc:'Last clear sighting of the trophy: 20 June 2025 at 19:43. After that, no confirmation all summer.'},
-  {level:11, img:'campaign/img/g2-evidence-ch11-wall.jpg', title:'The Evidence Wall', desc:'Two trails above (Coach Martinez took it; Felix covered for him). One root underneath (Mr. Kramer fixed the 2025 200m and stole Lukas Brunner\'s win).'},
-  {level:12, img:'campaign/img/g2-evidence-ch12-confession.jpg', title:'Felix Brunner\'s Confession (Sept 8, 17:30)', desc:'Felix is Lukas\'s brother. Coach Martinez told him about the 2025 fix in May. Felix planted everything to give the coach time to engrave Lukas\'s name on the trophy.'},
-  {level:13, img:'campaign/img/g2-evidence-ch13-phonecall.jpg', title:'Mr. Kramer\'s Phone Call (Sept 9, 4:30 PM)', desc:'Mr. Kramer could not meet Felix\'s eyes when he heard Lukas\'s name. Then he called Coach Martinez.'},
-  {level:14, img:'campaign/img/g2-evidence-ch14-engraved.jpg', title:'The Trophy on Linden Street', desc:'Polished. Engraved \"LUKAS BRUNNER — 2025 — 27.4s\" in Coach Martinez\'s handwriting. Mr. Kramer read it and went pale. School assembly tomorrow.'},
-  {level:15, img:'campaign/img/g2-evidence-ch15-newspaper.jpg', title:'The Watson Weekly — Sports Week Special', desc:'2025 result corrected. Mr. Kramer apologises. Lukas Brunner\'s name engraved on the trophy. Three young detectives at the assembly.'}
-];
+// campaignEvidence — defined in data/m2-campaign.js
 
-var campaignLevels = [
-  // ==================== LEVEL 1: The Empty Case ====================
-  {levelName:"The Empty Case", topic:"School & First Day", grammar:"Past simple, present simple",
-  maxXP:170, starThresholds:{one:85, two:136, three:170},
-  sceneImages:{storyA:'campaign/img/g2-ch01-storyA-01.jpg', storyB:'campaign/img/g2-ch01-storyB-01.jpg', completion:'campaign/img/g2-ch01-completion.jpg'},
-  readingImage:'campaign/img/g2-ch01-reading.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"First day. The corridors smell of fresh paint and pencils."},
-    {speaker:"elias", text:"Everyone is talking about Sports Week. It starts in two weeks.", image:"campaign/img/g2-ch01-storyA-02.jpg"},
-    {speaker:"nora", text:"Mr. Kramer just called an assembly. The trophy case is empty.", image:"campaign/img/g2-ch01-pivot.jpg"}
-  ],
-  storyB:[
-    {speaker:"elias", text:"The police came. They looked for ten minutes. They didn\'t care."},
-    {speaker:"nora", text:"Look at the staff board. Coach Martinez\'s leaving-do poster. Last June."},
-    {speaker:"elias", text:"And there\'s Felix Brunner. He\'s in 2B. He looks worried."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page one of the file is finished. We have nine days."}
-  ],
-  tasks:[
-    {name:"First Day Back", type:"image-matching", context:"It is the first day of school. Nora checks the timetable before the announcement in the school hall — but which subjects are which?", contextDe:"Es ist der erste Schultag. Nora schaut auf den Stundenplan vor der Versammlung — aber welches Fach ist welches?", xpEach:5,
-      items:[
-        {prompt:"Numbers, equations, and problem solving", answer:"maths", options:["maths","science","art","IT"], icon:'<span style="font-size:2.5rem;">&#128290;</span>', hint:"Calculations and formulas.", hintDe:"Mathematik"},
-        {prompt:"Learning about countries, rivers, and mountains", answer:"geography", options:["geography","history","science","art"], icon:'<span style="font-size:2.5rem;">&#127758;</span>', hint:"Maps and continents.", hintDe:"Geografie"},
-        {prompt:"Running, jumping, and playing team sports", answer:"PE", options:["PE","art","music","IT"], icon:'<span style="font-size:2.5rem;">&#9917;</span>', hint:"Physical education.", hintDe:"Sport"},
-        {prompt:"Painting, drawing, and creating things with your hands", answer:"art", options:["art","music","PE","IT"], icon:'<span style="font-size:2.5rem;">&#127912;</span>', hint:"Creative and visual.", hintDe:"Kunst"},
-        {prompt:"Learning about the past — kings, queens, and wars", answer:"history", options:["history","geography","science","maths"], icon:'<span style="font-size:2.5rem;">&#127963;</span>', hint:"Events from long ago.", hintDe:"Geschichte"},
-        {prompt:"Doing experiments and understanding how nature works", answer:"science", options:["science","maths","geography","history"], icon:'<span style="font-size:2.5rem;">&#128300;</span>', hint:"Test tubes and experiments.", hintDe:"Naturwissenschaften"}
-      ]},
-    {name:"What Happened?", type:"mc", context:"Nora starts the case file. Help her write down exactly what happened — every detail matters.", contextDe:"Nora beginnt die Fallakte. Hilf ihr aufzuschreiben, was genau passiert ist — jedes Detail z\u00e4hlt.", xpEach:10,
-      items:[
-        {prompt:"Mr. Kramer ___ the trophy case in the school hall.", answer:"opened", options:["opened","opens","opening","open"], hint:"It already happened — yesterday.", hintDe:"Er hat es gestern gemacht."},
-        {prompt:"The trophy ___ in the case since 1960.", answer:"was", options:["was","were","is","are"], hint:"One trophy = singular past.", hintDe:"Ein Pokal = war."},
-        {prompt:"Nobody ___ the trophy over summer.", answer:"saw", options:["saw","see","seen","sees"], hint:"Past of 'see'.", hintDe:"Vergangenheit von 'sehen'."},
-        {prompt:"The police ___ to the school yesterday.", answer:"came", options:["came","come","comed","comes"], hint:"Past of 'come'.", hintDe:"Vergangenheit von 'kommen'."},
-        {prompt:"Nora ___ a piece of fabric on the hinge.", answer:"found", options:["found","finded","finds","founded"], hint:"Past of 'find'.", hintDe:"Vergangenheit von 'finden'."},
-        {prompt:"Elias ___ Nora at the trophy case.", answer:"met", options:["met","meet","meeted","meets"], hint:"Past of 'meet'.", hintDe:"Vergangenheit von 'treffen'."}
-      ]},
-    {name:"School Newsletter", type:"reading", context:"Read the school newsletter about the missing trophy. Every fact could be a clue.", contextDe:"Lies den Schulnewsletter \u00fcber den vermissten Pokal. Jede Tatsache k\u00f6nnte ein Hinweis sein.", xpEach:10,
-      passage:"<h4>Watson Manor School Newsletter — SPECIAL REPORT</h4><p>The Watson Manor Trophy is missing. The headmaster, Mr. Kramer, discovered the empty case on Monday morning at the start-of-year announcement in the school hall. The trophy was last seen in June, at the end of last school year.</p><p>The glass case was not broken. The lock was not damaged. Two police officers visited but said the trophy has low financial value. They are not actively investigating. The school community is upset.</p>",
-      questions:[
-        {question:"When did Mr. Kramer find the empty case?", answer:"On Monday morning", options:["On Monday morning","On Friday afternoon","On Sunday evening","Last week"]},
-        {question:"When was the trophy last seen?", answer:"In June", options:["In June","In July","In August","In September"]},
-        {question:"Was the glass broken?", answer:"No, it was not", options:["No, it was not","Yes, it was broken","The article does not say","Only a little"]},
-        {question:"How long has the trophy been awarded?", answer:"Since 1960", options:["Since 1960","Since 2005","Since 1898","Since last year"]},
-        {question:"Why is the school upset?", answer:"The trophy is the Sports Week prize", options:["The trophy is the Sports Week prize","The school is closing","The police were rude","The case is broken"]}
-      ]},
-    {name:"The Tradition", type:"mc", context:"Nora writes about the Watson Manor tradition in her case file. Choose the correct word for each sentence.", contextDe:"Nora schreibt \u00fcber die Watson-Manor-Tradition in ihrer Fallakte. W\u00e4hle das richtige Wort f\u00fcr jeden Satz.", xpEach:10,
-      items:[
-        {prompt:"The trophy ___ in the entrance hall every year.", answer:"sits", options:["sits","sit","sitting","sitted"], hint:"It happens regularly — present simple.", hintDe:"Es passiert regelm\u00e4\u00dfig."},
-        {prompt:"Every September, Mr. Kramer ___ the case for the engraving.", answer:"opens", options:["opens","open","opened","opening"], hint:"He does it every year.", hintDe:"Er macht es jedes Jahr."},
-        {prompt:"The names of winners ___ back to 1960.", answer:"go", options:["go","goes","going","went"], hint:"Plural subject: names.", hintDe:"Mehrzahl: die Namen."},
-        {prompt:"The school ___ the tradition very seriously.", answer:"takes", options:["takes","take","took","taking"], hint:"The school = singular.", hintDe:"Die Schule = Einzahl."},
-        {prompt:"Students always ___ forward to the challenge.", answer:"look", options:["look","looks","looked","looking"], hint:"Students = plural.", hintDe:"Sch\u00fcler = Mehrzahl."},
-        {prompt:"The Watson Manor building ___ from 1898.", answer:"dates", options:["dates","date","dated","dating"], hint:"The building = singular.", hintDe:"Das Geb\u00e4ude = Einzahl."}
-      ]}
-  ]},
-
-  // ==================== LEVEL 2: The Library Secret ====================
-  {levelName:"Headmaster's Office", topic:"How Embarrassing! (interview + reading body language)", grammar:"Past simple questions, irregular verbs",
-  maxXP:180, starThresholds:{one:90, two:144, three:180},
-  sceneImages:{storyA:'campaign/img/g2-ch02-storyA-01.jpg', storyB:'campaign/img/g2-ch02-storyB-01.jpg', completion:'campaign/img/g2-ch02-completion.jpg'},
-  readingImage:'campaign/img/g2-ch02-pivot.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"We need to talk to Mr. Kramer. He has answers."},
-    {speaker:"elias", text:"Be careful. He looks tired. He didn't sleep.", image:"campaign/img/g2-ch02-storyA-02.jpg"},
-    {speaker:"nora", text:"Hello, Mr. Kramer. We have a few questions. He looks embarrassed already."}
-  ],
-  storyB:[
-    {speaker:"kramer", text:"Coach Martinez left at the end of June. We had differences."},
-    {speaker:"nora", text:"He didn't say what kind of differences. He looked at the floor. Embarrassed. Or ashamed. Or both."},
-    {speaker:"elias", text:"We have a name now. Coach Martinez. Let's find out about him."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page two: a name. Coach Martinez. Differences with Mr. Kramer."},
-    {speaker:"elias", text:"And Mr. Kramer was embarrassed when we said the name. That tells us something."}
-  ],
-  tasks:[
-    {name:"How Do You Feel?", type:"image-matching", context:"Everyone reacts differently to the missing trophy. Nora observes people’s emotions. Can you name each feeling?", contextDe:"Jeder reagiert anders auf den vermissten Pokal. Nora beobachtet die Gef\u00fchle der Leute. Kannst du jedes Gef\u00fchl benennen?", xpEach:5,
-      items:[
-        {prompt:"Your cheeks go red and you want to disappear", answer:"embarrassed", options:["embarrassed","excited","boring","upset"], icon:'<span style="font-size:2.5rem;">&#128563;</span>', hint:"You wish nobody saw that.", hintDe:"Peinlich ber\u00fchrt"},
-        {prompt:"A film or book that makes you want to sleep", answer:"boring", options:["boring","exciting","funny","awesome"], icon:'<span style="font-size:2.5rem;">&#128564;</span>', hint:"Not interesting at all.", hintDe:"Langweilig"},
-        {prompt:"A roller coaster ride that makes your heart beat fast", answer:"exciting", options:["exciting","boring","confusing","difficult"], icon:'<span style="font-size:2.5rem;">&#128525;</span>', hint:"Thrilling and full of energy.", hintDe:"Aufregend"},
-        {prompt:"A puzzle that makes no sense — you do not understand it", answer:"confusing", options:["confusing","exciting","funny","boring"], icon:'<span style="font-size:2.5rem;">&#129300;</span>', hint:"Too complicated to follow.", hintDe:"Verwirrend"},
-        {prompt:"Something that makes you angry or sad", answer:"upset", options:["upset","funny","awesome","embarrassed"], icon:'<span style="font-size:2.5rem;">&#128544;</span>', hint:"Not happy about what happened.", hintDe:"Ver\u00e4rgert"},
-        {prompt:"Something that impresses you — really, really good", answer:"awesome", options:["awesome","boring","difficult","confusing"], icon:'<span style="font-size:2.5rem;">&#129321;</span>', hint:"Amazing!", hintDe:"Gro\u00dfartig"}
-      ]},
-    {name:"Interview Questions", type:"mc", context:"Nora prepares questions for the librarian. Help her form each question correctly — a detective needs precise language.", contextDe:"Nora bereitet Fragen f\u00fcr die Bibliothekarin vor. Hilf ihr, jede Frage richtig zu formulieren — ein Detektiv braucht genaue Sprache.", xpEach:10,
-      items:[
-        {prompt:"___ you see anyone in the library over summer?", answer:"Did", options:["Did","Do","Was","Were"], hint:"Asking about a past action.", hintDe:"Frage nach einer vergangenen Handlung."},
-        {prompt:"___ the teacher alone when she came in?", answer:"Was", options:["Was","Were","Did","Does"], hint:"She = singular past of 'be'.", hintDe:"Sie = Einzahl Vergangenheit von 'sein'."},
-        {prompt:"What ___ the teacher take from the shelf?", answer:"did", options:["did","do","was","does"], hint:"Past question: did + base form.", hintDe:"Frage in der Vergangenheit."},
-        {prompt:"___ there any other visitors that day?", answer:"Were", options:["Were","Was","Did","Are"], hint:"Visitors = plural past of 'be'.", hintDe:"Besucher = Mehrzahl."},
-        {prompt:"When ___ the teacher leave the library?", answer:"did", options:["did","does","was","is"], hint:"Past question about time.", hintDe:"Zeitfrage in der Vergangenheit."},
-        {prompt:"___ anyone else check the maintenance records?", answer:"Did", options:["Did","Does","Was","Is"], hint:"Asking about a past action.", hintDe:"Frage nach einer vergangenen Handlung."}
-      ]},
-    {name:"The Maintenance Schedule", type:"reading", context:"Nora found the summer maintenance schedule. Read it carefully — one entry is very important.", contextDe:"Nora hat den Wartungsplan f\u00fcr den Sommer gefunden. Lies ihn aufmerksam — ein Eintrag ist sehr wichtig.", xpEach:10,
-      passage:"<h4>Watson Manor School \u2014 Summer Maintenance Schedule</h4><p>This document lists all maintenance work completed during the summer holidays.</p><p>June 28: Heating system check \u2014 Contractor: City Heating Services. Duration: 2 weeks. Access needed: cellar, corridors, entrance hall.</p><p>July 12: Trophy case \u2014 annual brass polish. Contractor: Novak and Son Antiques (Park Street). Item collected by: F.N. Case left unlocked for drying. Lock to be re-engaged July 13.</p><p>July 20: Classroom painting \u2014 Contractor: Berger Painters. Rooms 4, 7, 12.</p><p>August 5: Fire alarm test \u2014 Contractor: SafeGuard Systems.</p>",
-      questions:[
-        {question:"Who was hired to clean the trophy?", answer:"Novak and Son Antiques", options:["Novak and Son Antiques","City Heating Services","Berger Painters","SafeGuard Systems"]},
-        {question:"When was the trophy case opened?", answer:"July 12", options:["July 12","June 28","July 20","August 5"]},
-        {question:"Who collected the trophy?", answer:"Someone with initials F.N.", options:["Someone with initials F.N.","Mr. Kramer","Old Rudi","A police officer"]},
-        {question:"What happened to the case lock?", answer:"It was left unlocked for drying", options:["It was left unlocked for drying","It was broken","It was replaced","It was never locked"]},
-        {question:"How long were the heating workers at the school?", answer:"Two weeks", options:["Two weeks","One day","One month","Three days"]}
-      ]},
-    {name:"What We Don't Know", type:"mc", context:"A good detective knows what they DON'T know. Help Nora write the gaps in the case — things they have not confirmed yet.", contextDe:"Ein guter Detektiv wei\u00df, was er NICHT wei\u00df. Hilf Nora die L\u00fccken im Fall aufzuschreiben — Dinge, die noch nicht best\u00e4tigt sind.", xpEach:10,
-      items:[
-        {prompt:"The librarian ___ remember the teacher's name.", answer:"didn't", options:["didn't","don't","wasn't","weren't"], hint:"She = singular, past, negation of 'did'.", hintDe:"Vergangenheit, Verneinung."},
-        {prompt:"Nora and Elias ___ sure who collected the trophy in July.", answer:"weren't", options:["weren't","wasn't","didn't","isn't"], hint:"They = plural past of 'be'.", hintDe:"Sie (Mehrzahl) = Vergangenheit."},
-        {prompt:"The schedule ___ say who returned the trophy.", answer:"didn't", options:["didn't","doesn't","wasn't","weren't"], hint:"The schedule = past, negation of 'did'.", hintDe:"Der Plan = Vergangenheit."},
-        {prompt:"There ___ any fingerprints on the trophy case.", answer:"weren't", options:["weren't","wasn't","didn't","don't"], hint:"Fingerprints = plural.", hintDe:"Fingerabdr\u00fccke = Mehrzahl."},
-        {prompt:"Elias ___ break anything when he knocked over the books.", answer:"didn't", options:["didn't","wasn't","don't","weren't"], hint:"He = singular, past action, negation.", hintDe:"Vergangenheit, Verneinung einer Handlung."},
-        {prompt:"The police ___ find any useful evidence at the school.", answer:"didn't", options:["didn't","don't","wasn't","weren't"], hint:"Past action — they searched but found nothing.", hintDe:"Vergangene Handlung."}
-      ]}
-  ]}
-,
-
-  // ==================== LEVEL 3: The Halloween Witness ====================
-  {levelName:"The Music Room Errand", topic:"Halloween (the school play) + safety advice", grammar:"should / shouldn't",
-  maxXP:180, starThresholds:{one:90, two:144, three:180},
-  sceneImages:{storyA:'campaign/img/g2-ch03-storyA-01.jpg', storyB:'campaign/img/g2-ch03-storyB-01.jpg', completion:'campaign/img/g2-ch03-completion.jpg'},
-  readingImage:'campaign/img/g2-ch03-pivot.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"Mrs. Mara needs help with the Halloween play. We're going to the staff room."},
-    {speaker:"elias", text:"I see Felix sitting alone outside the lunch room. He looks small.", image:"campaign/img/g2-ch03-storyA-02.jpg"}
-  ],
-  storyB:[
-    {speaker:"nora", text:"The hooks should hold engraving tools. They are missing."},
-    {speaker:"elias", text:"Mrs. Mara says Coach Martinez used those tools. He took them home?"},
-    {speaker:"nora", text:"We have a second item missing. The trophy and the engraving tools."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page three: TWO missing items. Trophy. Engraving tools."},
-    {speaker:"elias", text:"Both used by Coach Martinez. Both gone since June. Same hands."}
-  ],
-  tasks:[
-    {name:"Halloween at Watson Manor", type:"image-matching", context:"The school hall is being set up for the Halloween party. Name each spooky item while Nora and Elias search for clues backstage.", contextDe:"Die Aula wird f\u00fcr die Halloweenparty vorbereitet. Benenne jeden unheimlichen Gegenstand, w\u00e4hrend Nora und Elias hinter der B\u00fchne nach Hinweisen suchen.", xpEach:5,
-      items:[
-        {prompt:"A large orange vegetable you carve a face into", answer:"pumpkin", options:["pumpkin","melon","turnip","coconut"], icon:'<span style="font-size:2.5rem;">&#127875;</span>', hint:"The symbol of Halloween.", hintDe:"K\u00fcrbis"},
-        {prompt:"An outfit you wear to pretend to be someone else", answer:"costume", options:["costume","uniform","pyjamas","tracksuit"], icon:'<span style="font-size:2.5rem;">&#127917;</span>', hint:"Witches, ghosts, vampires wear these.", hintDe:"Kost\u00fcm"},
-        {prompt:"A face covering made of plastic or paper", answer:"mask", options:["mask","hat","scarf","hood"], icon:'<span style="font-size:2.5rem;">&#128122;</span>', hint:"Hides your real face.", hintDe:"Maske"},
-        {prompt:"A woman with a pointed hat who flies on a broomstick", answer:"witch", options:["witch","ghost","vampire","queen"], icon:'<span style="font-size:2.5rem;">&#129497;</span>', hint:"Wears black and casts spells.", hintDe:"Hexe"},
-        {prompt:"A pale creature that drinks blood in scary stories", answer:"vampire", options:["vampire","ghost","witch","alien"], icon:'<span style="font-size:2.5rem;">&#129499;</span>', hint:"Has fangs and avoids sunlight.", hintDe:"Vampir"},
-        {prompt:"A transparent spirit that haunts old buildings", answer:"ghost", options:["ghost","witch","vampire","skeleton"], icon:'<span style="font-size:2.5rem;">&#128123;</span>', hint:"Says BOO!", hintDe:"Geist"}
-      ]},
-    {name:"Detective Decisions", type:"mc", context:"Nora and Elias need a plan. They have a witness, a fabric sample, and a witness description. What should they do next? What shouldn't they do?", contextDe:"Nora und Elias brauchen einen Plan. Sie haben einen Zeugen, eine Stoffprobe und drei Verd\u00e4chtige. Was sollten sie tun? Was nicht?", xpEach:10,
-      items:[
-        {prompt:"We ___ talk to Leo Winkler first. He was at school in August.", answer:"should", options:["should","shouldn't","must","can't"], hint:"He is the most obvious lead.", hintDe:"Er ist die naheliegendste Spur."},
-        {prompt:"We ___ accuse anyone without proof.", answer:"shouldn't", options:["shouldn't","should","must","can"], hint:"That would be unfair.", hintDe:"Das w\u00e4re unfair."},
-        {prompt:"Nora thinks they ___ compare the fabric under a microscope.", answer:"should", options:["should","shouldn't","would","could"], hint:"To check if it matches Leo's jacket.", hintDe:"Um zu pr\u00fcfen, ob es zu Leos Jacke passt."},
-        {prompt:"Elias says they ___ search the school at night. It is not allowed.", answer:"shouldn't", options:["shouldn't","should","must","can"], hint:"It would get them in trouble.", hintDe:"Sie w\u00fcrden \u00c4rger bekommen."},
-        {prompt:"You ___ always write evidence down before you forget it.", answer:"should", options:["should","shouldn't","must not","can't"], hint:"Good detectives keep notes.", hintDe:"Gute Detektive machen Notizen."},
-        {prompt:"They ___ tell the whole school about their investigation yet.", answer:"shouldn't", options:["shouldn't","should","must","might"], hint:"Too many people talking could warn the suspect.", hintDe:"Zu viele Leute k\u00f6nnten den Verd\u00e4chtigen warnen."}
-      ]},
-    {name:"The Witness Statement", type:"reading", context:"Nora wrote down exactly what the drama teacher saw. Read the statement carefully.", contextDe:"Nora hat genau aufgeschrieben, was die Theaterlehrerin gesehen hat. Lies die Aussage aufmerksam.", xpEach:10,
-      passage:"<h4>Witness Statement \u2014 Ms. Richter, Drama Teacher</h4><p>Date of observation: August 14th, approximately 7 PM.</p><p>I was in the drama room preparing costumes for the autumn play. I walked to the entrance hall to get water from the fountain. I saw a young person standing near the trophy case. They wore a dark green jacket \u2014 thick material, like cotton. I could not see their face clearly because it was getting dark. They were shorter than me. I think it was a student, not an adult.</p>",
-      questions:[
-        {question:"What was Ms. Richter doing at school in August?", answer:"Preparing costumes", options:["Preparing costumes","Cleaning the hall","Teaching a class","Meeting a parent"]},
-        {question:"What colour was the jacket?", answer:"Dark green", options:["Dark green","Light green","Dark blue","Black"]},
-        {question:"Why couldn't Ms. Richter see the person's face?", answer:"It was getting dark", options:["It was getting dark","The person wore a mask","She was too far away","The person ran away"]},
-        {question:"Was the person taller or shorter than Ms. Richter?", answer:"Shorter", options:["Shorter","Taller","The same height","She could not tell"]},
-        {question:"What did Ms. Richter think \u2014 was it a student or an adult?", answer:"A student", options:["A student","An adult","She was not sure","A teacher"]}
-      ]},
-    {name:"What Should They Do Next?", type:"mc", context:"Elias writes a list of possible next steps. Choose the correct form for each piece of advice.", contextDe:"Elias schreibt eine Liste m\u00f6glicher n\u00e4chster Schritte. W\u00e4hle die richtige Form f\u00fcr jeden Ratschlag.", xpEach:10,
-      items:[
-        {prompt:"We should ___ Leo about his summer at school.", answer:"ask", options:["ask","asking","to ask","asked"], hint:"should + base form (no 'to').", hintDe:"should + Grundform (ohne 'to')."},
-        {prompt:"Nora shouldn't ___ the fabric sample at home. It might get lost.", answer:"keep", options:["keep","keeping","to keep","kept"], hint:"shouldn't + base form.", hintDe:"shouldn't + Grundform."},
-        {prompt:"They should ___ a list of everyone who owns a green jacket.", answer:"make", options:["make","making","to make","made"], hint:"should + base form.", hintDe:"should + Grundform."},
-        {prompt:"Elias thinks they should ___ the caretaker about his keys.", answer:"ask", options:["ask","to ask","asking","asked"], hint:"should + base form.", hintDe:"should + Grundform."},
-        {prompt:"You shouldn't ___ conclusions before you have all the facts.", answer:"jump to", options:["jump to","jumping to","to jump to","jumped to"], hint:"shouldn't + base form.", hintDe:"shouldn't + Grundform."},
-        {prompt:"The witness should ___ a picture of what she saw.", answer:"draw", options:["draw","drawing","to draw","drew"], hint:"should + base form.", hintDe:"should + Grundform."}
-      ]}
-  ]},
-
-  // ==================== LEVEL 4: Narrowing It Down ====================
-  {levelName:"The Bracket Years", topic:"What an Animal! (animal vocab) + the 2025 200m fix", grammar:"Comparatives, superlatives, as...as",
-  maxXP:190, starThresholds:{one:95, two:152, three:190},
-  sceneImages:{storyA:'campaign/img/g2-ch04-storyA-01.jpg', storyB:'campaign/img/g2-ch04-storyB-01.jpg', completion:'campaign/img/g2-ch04-completion.jpg'},
-  readingImage:'campaign/img/g2-ch04-reading.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"The library has the old Sports Week chronicles. Let's read."},
-    {speaker:"elias", text:"Felix is at the study table. He's pretending to read. He's watching us.", image:"campaign/img/g2-ch04-storyA-02.jpg"}
-  ],
-  storyB:[
-    {speaker:"elias", text:"Coach Martinez was the judge from 2010 to 2024. Same handwriting every year."},
-    {speaker:"nora", text:"The 2025 page is different. Mr. Kramer wrote it. And the times don't match the heats.", image:"campaign/img/g2-ch04-pivot.jpg"},
-    {speaker:"nora", text:"Look — qualifying heats: Lukas Brunner ran 27.4 seconds. Final result: Tobias Kramer 'won' at 30.9. Tobias is Mr. Kramer's nephew."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page four: the 2025 fix is in the chronicle. Lukas Brunner ran 27.4 seconds. Tobias Kramer was recorded as winning at 30.9."},
-    {speaker:"elias", text:"This is bigger than a missing trophy. Mr. Kramer wrote a lie about a child."}
-  ],
-  tasks:[
-    {name:"Animal Evidence", type:"image-matching", context:"The science lab has posters of animals on every wall. One poster was recently swapped — name the animals to find which one is new.", contextDe:"Das Labor hat \u00fcberall Tierposter an den W\u00e4nden. Ein Poster wurde k\u00fcrzlich ausgetauscht — benenne die Tiere, um herauszufinden, welches neu ist.", xpEach:5,
-      items:[
-        {prompt:"The fastest land animal — it can reach 110 km per hour", answer:"cheetah", options:["cheetah","leopard","lion","antelope"], icon:'<span style="font-size:2.5rem;">&#128006;</span>', hint:"Famous for incredible speed.", hintDe:"Gepard"},
-        {prompt:"An enormous grey animal with a horn on its nose", answer:"rhino", options:["rhino","hippo","elephant","buffalo"], icon:'<span style="font-size:2.5rem;">&#129430;</span>', hint:"Very heavy and endangered.", hintDe:"Nashorn"},
-        {prompt:"The largest animal on Earth — it lives in the ocean", answer:"whale", options:["whale","dolphin","shark","crocodile"], icon:'<span style="font-size:2.5rem;">&#128011;</span>', hint:"Can weigh over 100 tons.", hintDe:"Wal"},
-        {prompt:"A clever animal that swings through trees", answer:"chimpanzee", options:["chimpanzee","parrot","bat","pigeon"], icon:'<span style="font-size:2.5rem;">&#128018;</span>', hint:"Our closest relative in the animal kingdom.", hintDe:"Schimpanse"},
-        {prompt:"A friendly sea creature known for jumping out of the water", answer:"dolphin", options:["dolphin","whale","shark","crocodile"], icon:'<span style="font-size:2.5rem;">&#128044;</span>', hint:"Very intelligent and playful.", hintDe:"Delfin"},
-        {prompt:"A dangerous fish with sharp teeth", answer:"shark", options:["shark","whale","dolphin","crocodile"], icon:'<span style="font-size:2.5rem;">&#129416;</span>', hint:"The most feared fish in the sea.", hintDe:"Hai"}
-      ]},
-    {name:"Comparing Evidence", type:"mc", context:"Nora compares the evidence: the fabric, the suspects, the timelines. Help her describe the differences and similarities.", contextDe:"Nora vergleicht die Beweise: den Stoff, die Verd\u00e4chtigen, die Zeitabl\u00e4ufe. Hilf ihr, die Unterschiede und Gemeinsamkeiten zu beschreiben.", xpEach:10,
-      items:[
-        {prompt:"The hinge fabric is ___ than Leo's hoodie material.", answer:"thicker", options:["thicker","more thick","thickest","most thick"], hint:"One syllable: add -er.", hintDe:"Einsilbig: -er anh\u00e4ngen."},
-        {prompt:"Leo is ___ than the person the witness described.", answer:"taller", options:["taller","more tall","tallest","most tall"], hint:"One syllable: add -er.", hintDe:"Einsilbig: -er anh\u00e4ngen."},
-        {prompt:"This is the ___ clue we have found so far.", answer:"most important", options:["most important","importantest","more important","most importantest"], hint:"Long word: 'the most' + adjective.", hintDe:"Langes Wort: 'the most' + Adjektiv."},
-        {prompt:"Rudi's jacket is not as ___ as Leo's hoodie.", answer:"new", options:["new","newer","newest","most new"], hint:"as + basic form + as.", hintDe:"as + Grundform + as."},
-        {prompt:"Cotton is ___ than polyester.", answer:"heavier", options:["heavier","more heavy","heaviest","heavy"], hint:"-y changes to -ier.", hintDe:"-y wird zu -ier."},
-        {prompt:"This mystery is ___ than we expected.", answer:"more complicated", options:["more complicated","complicateder","most complicated","complicatedest"], hint:"Long word: 'more' + adjective.", hintDe:"Langes Wort: 'more' + Adjektiv."},
-        {prompt:"Leo has the ___ alibi of all the suspects.", answer:"best", options:["best","goodest","most good","better"], hint:"Irregular: good \u2192 better \u2192 best.", hintDe:"Unregelm\u00e4\u00dfig: good \u2192 better \u2192 best."}
-      ]},
-    {name:"Nora's Evidence Chart", type:"reading", context:"Nora makes a comparison chart in her notebook. Read it and answer the questions.", contextDe:"Nora erstellt eine Vergleichstabelle in ihrem Notizbuch. Lies sie und beantworte die Fragen.", xpEach:10,
-      passage:"<h4>Evidence Comparison \u2014 Fabric Analysis</h4><p>I examined two samples under the microscope today. Sample A is the green fabric from the trophy case hinge. It is thick, rough, and made of cotton. The colour is dark forest green.</p><p>Sample B is from Leo Winkler's hoodie. It is thin, smooth, and made of polyester. The colour is bright green \u2014 lighter than Sample A.</p><p>Conclusion: The two fabrics are NOT the same material. Leo's hoodie did not leave the fabric on the hinge. We need a different green jacket.</p>",
-      questions:[
-        {question:"What material is Sample A?", answer:"Cotton", options:["Cotton","Polyester","Wool","Silk"]},
-        {question:"Which sample is thicker?", answer:"Sample A", options:["Sample A","Sample B","They are the same","The chart does not say"]},
-        {question:"What colour is Leo's hoodie?", answer:"Bright green", options:["Bright green","Dark forest green","Light blue","Dark green"]},
-        {question:"Are the two fabrics the same?", answer:"No, they are different materials", options:["No, they are different materials","Yes, they are identical","They are almost the same","Nora is not sure"]},
-        {question:"What does Nora need to find now?", answer:"A different green jacket", options:["A different green jacket","More polyester","A bigger microscope","Leo's second hoodie"]}
-      ]},
-    {name:"Ranking the Suspects", type:"mc", context:"Time to rank what we know. Help Nora compare the suspects and the evidence.", contextDe:"Zeit, unser Wissen zu ordnen. Hilf Nora, die Verd\u00e4chtigen und Beweise zu vergleichen.", xpEach:10,
-      items:[
-        {prompt:"Leo's alibi is ___ than Rudi's. We know exactly where Leo was.", answer:"stronger", options:["stronger","more strong","strongest","most strong"], hint:"One syllable: add -er.", hintDe:"Einsilbig: -er anh\u00e4ngen."},
-        {prompt:"Rudi has the ___ access of anyone \u2014 he has keys to every room.", answer:"easiest", options:["easiest","most easy","easier","more easy"], hint:"-y changes to -iest.", hintDe:"-y wird zu -iest."},
-        {prompt:"The mystery is getting ___ every day.", answer:"harder", options:["harder","more hard","hardest","most hard"], hint:"One syllable: add -er.", hintDe:"Einsilbig: -er anh\u00e4ngen."},
-        {prompt:"Nora is a ___ detective than Elias because she checks facts first.", answer:"better", options:["better","gooder","more good","best"], hint:"Irregular: good \u2192 better.", hintDe:"Unregelm\u00e4\u00dfig: good \u2192 better."},
-        {prompt:"The fabric clue is as ___ as a fingerprint.", answer:"useful", options:["useful","more useful","most useful","usefuller"], hint:"as + basic form + as.", hintDe:"as + Grundform + as."},
-        {prompt:"August 14th is the ___ date in the whole case.", answer:"most important", options:["most important","importantest","more important","importanter"], hint:"Long word: 'the most' + adjective.", hintDe:"Langes Wort: 'the most' + Adjektiv."}
-      ]}
-  ]},
-
-  // ==================== LEVEL 5: The Map and the Alibi ====================
-  {levelName:"Lost Routes", topic:"Where's the Supermarket? + lost archive routes", grammar:"Prepositions, directions",
-  maxXP:180, starThresholds:{one:90, two:144, three:180},
-  sceneImages:{storyA:'campaign/img/g2-ch05-storyA-01.jpg', storyB:'campaign/img/g2-ch05-storyB-01.jpg', completion:'campaign/img/g2-ch05-completion.jpg'},
-  readingImage:'campaign/img/g2-ch05-pivot.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"Ms. Petrova needs help with old maps. We can help."},
-    {speaker:"elias", text:"We can also look for staff records while we\'re there."},
-    {speaker:"nora", text:"Ms. Petrova: The old school had two entrances. Coach Martinez had a key to both.", image:"campaign/img/g2-ch05-pivot.jpg"}
-  ],
-  storyB:[
-    {speaker:"petrova", text:"Look — a 2010 footnote. Master key issued to T. Martinez. Returned: blank."},
-    {speaker:"elias", text:"Sixteen years. He kept his key."},
-    {speaker:"nora", text:"He could enter the entrance hall any day. With permission."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page five: a key never returned. He could enter without breaking anything."}
-  ],
-  tasks:[
-    {name:"Around Town", type:"image-matching", context:"Nora traces Leo’s route on a map. She passes many buildings — name each one to mark it on the map.", contextDe:"Nora zeichnet Leos Route auf einer Karte. Sie kommt an vielen Geb\u00e4uden vorbei — benenne jedes, um es auf der Karte zu markieren.", xpEach:5,
-      items:[
-        {prompt:"A building where you go to buy medicine", answer:"chemist's", options:["chemist's","hospital","restaurant","bank"], icon:'<span style="font-size:2.5rem;">&#128138;</span>', hint:"The pharmacist works here.", hintDe:"Apotheke"},
-        {prompt:"A building where you can send letters and parcels", answer:"post office", options:["post office","police station","bank","cinema"], icon:'<span style="font-size:2.5rem;">&#128236;</span>', hint:"You buy stamps here.", hintDe:"Postamt"},
-        {prompt:"A place where you watch films on a big screen", answer:"cinema", options:["cinema","restaurant","museum","church"], icon:'<span style="font-size:2.5rem;">&#127916;</span>', hint:"Popcorn and darkness.", hintDe:"Kino"},
-        {prompt:"A building where police officers work", answer:"police station", options:["police station","hospital","bank","post office"], icon:'<span style="font-size:2.5rem;">&#128658;</span>', hint:"You report crimes here.", hintDe:"Polizeistation"},
-        {prompt:"A place where you catch a bus", answer:"bus stop", options:["bus stop","railway station","airport","taxi rank"], icon:'<span style="font-size:2.5rem;">&#128655;</span>', hint:"A sign and a timetable on a pole.", hintDe:"Bushaltestelle"},
-        {prompt:"A decorated stone structure where water flows in a square", answer:"fountain", options:["fountain","bridge","statue","well"], icon:'<span style="font-size:2.5rem;">&#9970;</span>', hint:"Coins are sometimes thrown in.", hintDe:"Brunnen"}
-      ]},
-    {name:"Following the Map", type:"gap-fill-mc", context:"Nora traces Leo's route from the football pitch to the school. Fill in each direction correctly.", contextDe:"Nora zeichnet Leos Route vom Sportplatz zur Schule nach. Setze jede Richtungsangabe richtig ein.", xpEach:10,
-      items:[
-        {prompt:"The football pitch is ___ the school, about twenty minutes away.", answer:"behind", options:["behind","under","above","inside"], hint:"Further back, not visible from the front.", hintDe:"Weiter hinten, nicht von vorne sichtbar."},
-        {prompt:"Leo walks ___ the park every day after training.", answer:"past", options:["past","above","under","between"], hint:"He goes alongside it but doesn't enter.", hintDe:"Er geht daran vorbei."},
-        {prompt:"The antique shop is ___ the park, on the other side of the road.", answer:"opposite", options:["opposite","behind","inside","above"], hint:"Directly facing, across the street.", hintDe:"Direkt gegen\u00fcber."},
-        {prompt:"The bus stop is ___ the corner, next to the bakery.", answer:"round", options:["round","in","under","over"], hint:"Just around the bend.", hintDe:"Gleich um die Ecke."},
-        {prompt:"The school gate is ___ the end of the street.", answer:"at", options:["at","in","on","by"], hint:"The final point of the route.", hintDe:"Am Ende der Stra\u00dfe."},
-        {prompt:"There is a small bridge ___ the old canal near the school.", answer:"over", options:["over","under","past","behind"], hint:"It crosses above the water.", hintDe:"Sie f\u00fchrt \u00fcber das Wasser."}
-      ]},
-    {name:"Leo's Alibi", type:"reading", context:"The football coach sent an email confirming Leo's alibi. Read it carefully \u2014 is Leo really cleared?", contextDe:"Der Fu\u00dfballtrainer hat eine E-Mail geschickt, die Leos Alibi best\u00e4tigt. Lies sie aufmerksam \u2014 ist Leo wirklich entlastet?", xpEach:10,
-      passage:"<h4>Email from: Coach Martinez</h4><p>Leo attended football training every Tuesday and Thursday from June to September. Sessions run from 5:00 PM to 7:00 PM at Riverside Pitch.</p><p>On August 14th (Thursday), Leo was at training as usual. I remember because he scored three goals that day and was very happy. He left at 7:05 PM and walked home. Riverside Pitch is about twenty minutes from the school on foot.</p><p>I hope this helps.</p>",
-      questions:[
-        {question:"How often did Leo train per week?", answer:"Twice (Tuesday and Thursday)", options:["Twice (Tuesday and Thursday)","Every day","Three times","Once a week"]},
-        {question:"What time did training end?", answer:"7:00 PM", options:["7:00 PM","6:00 PM","8:00 PM","5:00 PM"]},
-        {question:"Why does the coach remember August 14th?", answer:"Leo scored three goals", options:["Leo scored three goals","It was the last session","Leo was late","The weather was bad"]},
-        {question:"How far is the pitch from school on foot?", answer:"About twenty minutes", options:["About twenty minutes","About five minutes","About one hour","About ten minutes"]},
-        {question:"Can Leo have been at the trophy case at 7 PM on August 14th?", answer:"No \u2014 he was at the pitch until 7:05", options:["No \u2014 he was at the pitch until 7:05","Yes, he left early","Maybe he ran","The email does not say"]}
-      ]},
-    {name:"Giving Directions", type:"mc", context:"Elias calls Nora while she walks from school to the antique shop. He reads directions from the map.", contextDe:"Elias ruft Nora an, w\u00e4hrend sie von der Schule zum Antiquit\u00e4tenladen geht. Er liest die Wegbeschreibung von der Karte ab.", xpEach:10,
-      items:[
-        {prompt:"___ out of the school gate and turn left.", answer:"Go", options:["Go","Going","To go","Goes"], hint:"An instruction starts with the base form.", hintDe:"Ein Befehl beginnt mit der Grundform."},
-        {prompt:"Walk ___ ahead until you reach the crossroads.", answer:"straight", options:["straight","fast","slowly","left"], hint:"Directly forward, no turns.", hintDe:"Geradeaus."},
-        {prompt:"___ right at the crossroads.", answer:"Turn", options:["Turn","Turning","Turns","To turn"], hint:"An instruction starts with the base form.", hintDe:"Grundform."},
-        {prompt:"Go ___ the park. You will see the shop on the other side.", answer:"past", options:["past","in","under","between"], hint:"Walk alongside it.", hintDe:"Daran vorbeigehen."},
-        {prompt:"The shop is on the ___ of the street, next to a caf\u00e9.", answer:"corner", options:["corner","middle","end","top"], hint:"Where two streets meet.", hintDe:"An der Ecke."},
-        {prompt:"___ the street carefully and you are there.", answer:"Cross", options:["Cross","Crossing","Crosses","To cross"], hint:"Walk from one side to the other.", hintDe:"\u00dcberquere die Stra\u00dfe."}
-      ]}
-  ]},
-
-  // ==================== LEVEL 6-15: Remaining levels ====================
-  // Levels 6-15 follow the same pattern with their respective unit grammars.
-  // Each level has: storyA (3 beats), storyB (3 beats), completion (2 beats),
-  // and 4 tasks (vocab image-matching + grammar mc/gap-fill + reading + grammar mc)
-
-  // LEVEL 6: The Field Trip Lead
-  {levelName:"The Junior Sports Club", topic:"Time for Adventure (junior sports club field trip)", grammar:"have to / don't have to",
-  maxXP:180, starThresholds:{one:90, two:144, three:180},
-  sceneImages:{storyA:'campaign/img/g2-ch06-storyA-01.jpg', storyB:'campaign/img/g2-ch06-storyB-01.jpg', completion:'campaign/img/g2-ch06-completion.jpg'},
-  readingImage:'campaign/img/g2-ch06-pivot.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"Field trip day. We're going to the junior sports club."},
-    {speaker:"elias", text:"Felix is on the bus, but he sat at the front, alone."},
-    {speaker:"nora", text:"Look — that man near the equipment shed. That's Coach Martinez."}
-  ],
-  storyB:[
-    {speaker:"elias", text:"Coach Martinez, the trophy is missing. Did you hear?"},
-    {speaker:"martinez", text:"I heard. I'm sure it will turn up. By the way — how is Lukas Brunner?"},
-    {speaker:"nora", text:"We don't know who Lukas is. But Coach Martinez does. He stopped smiling."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page six: Coach Martinez knows. He didn't say so. But he knows."},
-    {speaker:"elias", text:"And he asked us about a name. Lukas Brunner. We need to find out who that is."}
-  ],
-  tasks:[
-    {name:"The Landscape", type:"image-matching", context:"The class field trip takes them through the countryside. Name each natural feature Nora sees from the bus window.", contextDe:"Der Klassenausflug f\u00fchrt durch die Landschaft. Benenne jedes Naturmerkmal, das Nora aus dem Busfenster sieht.", xpEach:5,
-      items:[
-        {prompt:"A large area of water surrounded by land", answer:"lake", options:["lake","sea","river","pond"], icon:'<span style="font-size:2.5rem;">&#127758;</span>', hint:"Smaller than the sea, bigger than a pond.", hintDe:"See"},
-        {prompt:"A thick area of trees where animals live", answer:"forest", options:["forest","field","valley","garden"], icon:'<span style="font-size:2.5rem;">&#127794;</span>', hint:"Dark, green, and full of wildlife.", hintDe:"Wald"},
-        {prompt:"A high piece of land with a peak at the top", answer:"mountain", options:["mountain","hill","valley","field"], icon:'<span style="font-size:2.5rem;">&#9968;&#65039;</span>', hint:"You need equipment to climb it.", hintDe:"Berg"},
-        {prompt:"A low area of land between two hills or mountains", answer:"valley", options:["valley","field","forest","lake"], icon:'<span style="font-size:2.5rem;">&#127966;&#65039;</span>', hint:"A river often flows through it.", hintDe:"Tal"},
-        {prompt:"Water that falls from a high rock into a pool below", answer:"waterfall", options:["waterfall","fountain","river","lake"], icon:'<span style="font-size:2.5rem;">&#127754;</span>', hint:"Loud and beautiful.", hintDe:"Wasserfall"},
-        {prompt:"A small boat you move with a paddle", answer:"canoe", options:["canoe","ship","raft","submarine"], icon:'<span style="font-size:2.5rem;">&#128758;</span>', hint:"You sit inside and paddle.", hintDe:"Kanu"}
-      ]},
-    {name:"Park Rules", type:"gap-fill-mc", context:"The adventure park has a rules board. Some things are necessary. Some things are your choice. Choose the correct form.", contextDe:"Der Kletterpark hat eine Regeltafel. Manche Dinge sind notwendig, manche sind freiwillig. W\u00e4hle die richtige Form.", xpEach:10,
-      items:[
-        {prompt:"You ___ wear a helmet on the climbing wall. It is the rule.", answer:"have to", options:["have to","don't have to","has to","doesn't have to"], hint:"It is required \u2014 no choice.", hintDe:"Es ist Pflicht \u2014 keine Wahl."},
-        {prompt:"You ___ bring your own lunch. The park provides food.", answer:"don't have to", options:["don't have to","have to","mustn't","has to"], hint:"It is optional \u2014 you can if you want.", hintDe:"Es ist freiwillig."},
-        {prompt:"Everyone ___ listen to the instructor before starting.", answer:"has to", options:["has to","have to","don't have to","doesn't have to"], hint:"Everyone = 3rd person singular.", hintDe:"Everyone = 3. Person Einzahl."},
-        {prompt:"You ___ do the zip line if you are scared. Nobody will judge you.", answer:"don't have to", options:["don't have to","have to","mustn't","has to"], hint:"It is your choice \u2014 not required.", hintDe:"Es ist deine Wahl \u2014 nicht Pflicht."},
-        {prompt:"She ___ sign the safety form before she can start.", answer:"has to", options:["has to","have to","don't has to","doesn't has to"], hint:"She = 3rd person singular.", hintDe:"She = 3. Person Einzahl."},
-        {prompt:"We ___ stay in groups of three on the forest trail.", answer:"have to", options:["have to","has to","don't have to","doesn't have to"], hint:"It is a safety rule.", hintDe:"Es ist eine Sicherheitsregel."}
-      ]},
-    {name:"Nora's Suspect File", type:"reading", context:"Nora updates her case file with everything she knows about Felix. Read her notes.", contextDe:"Nora aktualisiert ihre Fallakte mit allem, was sie \u00fcber Felix wei\u00df. Lies ihre Notizen.", xpEach:10,
-      passage:"<h4>Suspect File: Felix Novak</h4><p>Age: 13. Class: 3B. Father: Mr. Novak, owner of Novak and Son Antiques.</p><p>The antique shop is on Park Street, opposite the park, two minutes from the school gate. It was open all summer.</p><p>Felix helped his father during the holidays. He picked up and delivered items. He had access to a van and probably had keys to the shop.</p><p>At the adventure park, Felix did not join any activities. When I asked about his summer, he changed the subject. He avoids talking about the school building.</p><p>Status: Under investigation. No proof yet.</p>",
-      questions:[
-        {question:"How far is the antique shop from the school gate?", answer:"Two minutes", options:["Two minutes","Twenty minutes","Five minutes","Ten minutes"]},
-        {question:"What did Felix do during the summer holidays?", answer:"Helped his father in the shop", options:["Helped his father in the shop","Went on holiday","Played football","Stayed at home"]},
-        {question:"What happened when Nora asked Felix about his summer?", answer:"He changed the subject", options:["He changed the subject","He told her everything","He laughed","He walked away angry"]},
-        {question:"Does Nora have proof against Felix?", answer:"No, not yet", options:["No, not yet","Yes, she found his fingerprints","Yes, he confessed","She is not sure"]},
-        {question:"What is Felix's current status in the case file?", answer:"Under investigation", options:["Under investigation","Cleared","Arrested","Guilty"]}
-      ]},
-    {name:"Investigation Rules", type:"mc", context:"Nora and Elias set rules for the next phase of the investigation. What do they have to do? What is optional?", contextDe:"Nora und Elias legen Regeln f\u00fcr die n\u00e4chste Phase der Ermittlung fest. Was m\u00fcssen sie tun? Was ist freiwillig?", xpEach:10,
-      items:[
-        {prompt:"We ___ find solid evidence before we accuse anyone.", answer:"have to", options:["have to","don't have to","has to","doesn't have to"], hint:"This is necessary \u2014 without it, the accusation is unfair.", hintDe:"Ohne Beweis ist eine Anschuldigung unfair."},
-        {prompt:"We ___ work on the case every single day. We can take breaks.", answer:"don't have to", options:["don't have to","have to","mustn't","has to"], hint:"It is their choice how often they work.", hintDe:"Es ist ihre Wahl, wie oft sie arbeiten."},
-        {prompt:"Elias ___ stop guessing and start checking facts.", answer:"has to", options:["has to","have to","don't have to","doesn't have to"], hint:"Elias = 3rd person singular.", hintDe:"Elias = 3. Person Einzahl."},
-        {prompt:"We ___ tell Mr. Kramer everything yet. We can wait until we are sure.", answer:"don't have to", options:["don't have to","have to","mustn't","has to"], hint:"It is not required \u2014 they can choose.", hintDe:"Es ist nicht erforderlich."},
-        {prompt:"Nora ___ keep the evidence safe. It is the most important rule.", answer:"has to", options:["has to","have to","doesn't have to","don't have to"], hint:"Nora = 3rd person singular. Essential rule.", hintDe:"Nora = 3. Person Einzahl. Wichtige Regel."},
-        {prompt:"You ___ be a professional detective to solve a mystery. Anyone can do it.", answer:"don't have to", options:["don't have to","have to","mustn't","has to"], hint:"It is not necessary \u2014 enthusiasm is enough.", hintDe:"Man muss kein Profi sein."}
-      ]}
-  ]},
-
-  // LEVEL 7: Weekend Plans, Changed Plans
-  {levelName:"Felix in Pieces", topic:"Plans for the Weekend + Felix and Lukas", grammar:"going to (negative), might / might not",
-  maxXP:180, starThresholds:{one:90, two:144, three:180},
-  sceneImages:{storyA:'campaign/img/g2-ch07-storyA-01.jpg', storyB:'campaign/img/g2-ch07-storyB-01.jpg', completion:'campaign/img/g2-ch07-completion.jpg'},
-  readingImage:'campaign/img/g2-ch07-pivot.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"Lunch break. Felix is sitting alone again. His tray is full."},
-    {speaker:"elias", text:"He hasn't eaten anything. He keeps looking at the door."},
-    {speaker:"nora", text:"Wait — listen. He just told Anna his brother Lukas isn't going to be at Sports Week."}
-  ],
-  storyB:[
-    {speaker:"elias", text:"Lukas Brunner. Coach Martinez asked us about him. Now Felix is talking about him too."},
-    {speaker:"nora", text:"Felix wrote a letter in May. Coach Martinez read it. They met three times."},
-    {speaker:"nora", text:"And Lukas is Felix's brother. Why hasn't Lukas run since last June?"}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page seven: Felix is afraid of something. Lukas is involved. We don't know how yet."},
-    {speaker:"elias", text:"But the 2025 chronicle. The fix. And Lukas is the boy whose time was changed. It all connects."}
-  ],
-  tasks:[
-    {name:"Weekend Activities", type:"image-matching", context:"It is Saturday. Nora and Elias planned to investigate, but they also need to do normal weekend things. Name each activity.", contextDe:"Es ist Samstag. Nora und Elias wollten ermitteln, aber sie m\u00fcssen auch normale Wochenenddinge tun. Benenne jede Aktivit\u00e4t.", xpEach:5,
-      items:[
-        {prompt:"Going to the shops to buy food and other things", answer:"do the shopping", options:["do the shopping","do nothing","have a party","do your homework"], icon:'<span style="font-size:2.5rem;">&#128722;</span>', hint:"You come home with bags.", hintDe:"Einkaufen gehen"},
-        {prompt:"Sitting on the sofa and relaxing all day", answer:"do nothing", options:["do nothing","do the shopping","tidy your room","play basketball"], icon:'<span style="font-size:2.5rem;">&#128524;</span>', hint:"The laziest option.", hintDe:"Nichts tun"},
-        {prompt:"Making your bedroom clean and organised", answer:"tidy your room", options:["tidy your room","do the shopping","have a party","watch a film"], icon:'<span style="font-size:2.5rem;">&#128450;&#65039;</span>', hint:"Pick up clothes, make the bed.", hintDe:"Dein Zimmer aufr\u00e4umen"},
-        {prompt:"Inviting friends, playing music, eating cake", answer:"have a party", options:["have a party","do nothing","watch a film","do your homework"], icon:'<span style="font-size:2.5rem;">&#127881;</span>', hint:"Balloons and guests.", hintDe:"Eine Party machen"},
-        {prompt:"Sitting down and looking at a screen for entertainment", answer:"watch a film", options:["watch a film","play basketball","do the shopping","tidy your room"], icon:'<span style="font-size:2.5rem;">&#127909;</span>', hint:"Popcorn and a good story.", hintDe:"Einen Film schauen"},
-        {prompt:"Sleeping at your best friend’s house overnight", answer:"stay at a friend's house", options:["stay at a friend's house","have a party","do nothing","tidy your room"], icon:'<span style="font-size:2.5rem;">&#128716;</span>', hint:"A sleepover.", hintDe:"Bei einem Freund \u00fcbernachten"}
-      ]},
-    {name:"Changed Plans", type:"mc", context:"Nothing is going to plan today. Nora and Elias text each other about what is NOT going to happen.", contextDe:"Nichts l\u00e4uft heute nach Plan. Nora und Elias schreiben sich, was NICHT passieren wird.", xpEach:10,
-      items:[
-        {prompt:"The shop is closed. We ___ get inside today.", answer:"are not going to", options:["are not going to","is not going to","am not going to","not going to"], hint:"We = are not going to.", hintDe:"Wir = sind nicht dabei zu."},
-        {prompt:"Felix ___ come to the party. He avoids school events.", answer:"is not going to", options:["is not going to","are not going to","am not going to","not going to"], hint:"Felix = singular, 'is not going to'.", hintDe:"Felix = Einzahl."},
-        {prompt:"I ___ give up. We are too close to the answer now.", answer:"am not going to", options:["am not going to","is not going to","are not going to","not going to"], hint:"I = am not going to.", hintDe:"Ich = bin nicht dabei aufzugeben."},
-        {prompt:"Elias ___ tell anyone about the shop window yet.", answer:"is not going to", options:["is not going to","are not going to","am not going to","isn't going"], hint:"Elias = singular.", hintDe:"Elias = Einzahl."},
-        {prompt:"The teachers ___ help us. They think the police will handle it.", answer:"are not going to", options:["are not going to","is not going to","am not going to","not going to"], hint:"The teachers = plural.", hintDe:"Die Lehrer = Mehrzahl."},
-        {prompt:"This mystery ___ solve itself. We have to keep working.", answer:"is not going to", options:["is not going to","are not going to","am not going to","doesn't going to"], hint:"This mystery = singular.", hintDe:"Dieses R\u00e4tsel = Einzahl."}
-      ]},
-    {name:"Through the Shop Window", type:"reading", context:"Nora described what she saw through the antique shop window. Read her notes.", contextDe:"Nora hat beschrieben, was sie durch das Schaufenster des Antiquit\u00e4tenladens gesehen hat. Lies ihre Notizen.", xpEach:10,
-      passage:"<h4>Field Notes \u2014 Novak and Son Antiques, Saturday 11:15 AM</h4><p>The shop was closed. A handwritten sign said 'Open Mon-Fri, 9-5.' We looked through the front window.</p><p>The main room has shelves with old clocks, ceramic vases, framed paintings, and small bronze statues. Everything looks expensive and well-organised.</p><p>In the back room (partly visible through an open door), I could see more shelves. On the second shelf from the top, there was a small bronze object. It could be a cup or a trophy \u2014 but I could not see clearly because of the distance and the glass reflection.</p><p>We need to get inside. Legally.</p>",
-      questions:[
-        {question:"When is the shop open?", answer:"Monday to Friday, 9 to 5", options:["Monday to Friday, 9 to 5","Every day, 9 to 5","Weekends only","Monday to Saturday"]},
-        {question:"What kind of objects are in the main room?", answer:"Clocks, vases, paintings, and statues", options:["Clocks, vases, paintings, and statues","Only paintings","Only clocks","Sports trophies"]},
-        {question:"Where was the bronze object?", answer:"On the second shelf in the back room", options:["On the second shelf in the back room","In the front window","On the floor","Behind the counter"]},
-        {question:"Why couldn't Nora see the object clearly?", answer:"Distance and glass reflection", options:["Distance and glass reflection","The lights were off","The object was covered","The window was dirty"]},
-        {question:"What does Nora say they need to do?", answer:"Get inside legally", options:["Get inside legally","Break the window","Call the police","Forget about it"]}
-      ]},
-    {name:"What Might Happen?", type:"mc", context:"Nora and Elias discuss what might or might not be true. Nothing is certain yet.", contextDe:"Nora und Elias besprechen, was stimmen k\u00f6nnte oder nicht. Noch ist nichts sicher.", xpEach:10,
-      items:[
-        {prompt:"The bronze object ___ be the trophy. We cannot tell from outside.", answer:"might", options:["might","will","must","should"], hint:"It is possible, not certain.", hintDe:"Es ist m\u00f6glich, nicht sicher."},
-        {prompt:"Felix ___ know that the trophy is in his father's shop.", answer:"might not", options:["might not","must not","will not","should not"], hint:"We are not sure \u2014 maybe he does, maybe not.", hintDe:"Vielleicht wei\u00df er es, vielleicht nicht."},
-        {prompt:"The cellar log book ___ have the answer we need.", answer:"might", options:["might","will","must","should"], hint:"We hope so, but cannot be sure.", hintDe:"Wir hoffen es, sind aber nicht sicher."},
-        {prompt:"Mr. Novak ___ have taken the trophy on purpose. Or it was an accident.", answer:"might", options:["might","must","will","can"], hint:"Both options are possible.", hintDe:"Beide M\u00f6glichkeiten bestehen."},
-        {prompt:"We ___ find more evidence in the cellar on Monday.", answer:"might", options:["might","will","must","should"], hint:"A possibility \u2014 the cellar has old records.", hintDe:"Eine M\u00f6glichkeit."},
-        {prompt:"Felix ___ want to talk to us. He has been avoiding everyone.", answer:"might not", options:["might not","must not","will not","should not"], hint:"We are uncertain about his reaction.", hintDe:"Wir sind unsicher \u00fcber seine Reaktion."}
-      ]}
-  ]},
-
-  // LEVELS 8-15: Skeleton levels with story and minimal tasks
-  // These ensure the campaign map renders all 15 levels
-
-  {levelName:"The Cellar Log Book", topic:"Out of This World (cellar archives) + the smoking gun", grammar:"Past simple revision, time markers",
-  maxXP:190, starThresholds:{one:95, two:152, three:190},
-  sceneImages:{storyA:'campaign/img/g2-ch08-storyA-01.jpg', storyB:'campaign/img/g2-ch08-storyB-01.jpg', completion:'campaign/img/g2-ch08-completion.jpg'},
-  readingImage:'campaign/img/g2-ch08-pivot.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"Ms. Petrova\'s class is visiting the cellar archives today."},
-    {speaker:"elias", text:"Thick black notebook on the shelf. Items Incoming / Outgoing."},
-    {speaker:"nora", text:"Thirty June, seventeen forty-two. Coach Martinez signed out one long box.", image:"campaign/img/g2-ch08-pivot.jpg"}
-  ],
-  storyB:[
-    {speaker:"elias", text:"A long box. On his last working day. The trophy fits in a long box."},
-    {speaker:"nora", text:"This is the day. And this is the man. We have both now."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page eight: 30 June, 17:42. Coach Martinez. One long box. Case is building."}
-  ],
-  tasks:[
-    {name:"Out of This World", type:"image-matching", context:"The school cellar feels like another world. Old objects, strange machines, forgotten artefacts — like something from a science fiction story.", contextDe:"Der Schulkeller f\u00fchlt sich an wie eine andere Welt. Alte Gegenst\u00e4nde, seltsame Maschinen, vergessene Artefakte — wie aus einer Science-Fiction-Geschichte.", xpEach:5,
-      items:[
-        {prompt:"A vehicle that travels through outer space", answer:"spaceship", options:["spaceship","aeroplane","submarine","helicopter"], icon:'<span style="font-size:2.5rem;">&#128640;</span>', hint:"Astronauts fly in one.", hintDe:"Raumschiff"},
-        {prompt:"A being from another world or galaxy", answer:"alien", options:["alien","ghost","robot","hero"], icon:'<span style="font-size:2.5rem;">&#128125;</span>', hint:"Not from Earth.", hintDe:"Au\u00dferirdischer"},
-        {prompt:"A large round body that orbits a star", answer:"planet", options:["planet","star","moon","comet"], icon:'<span style="font-size:2.5rem;">&#127759;</span>', hint:"Earth is one.", hintDe:"Planet"},
-        {prompt:"A figure built to honour a person, often made of stone", answer:"statue", options:["statue","sculpture","painting","photograph"], icon:'<span style="font-size:2.5rem;">&#128509;&#65039;</span>', hint:"Stands in parks and squares.", hintDe:"Statue"},
-        {prompt:"A small metal item that opens a lock", answer:"key", options:["key","coin","button","pin"], icon:'<span style="font-size:2.5rem;">&#128273;</span>', hint:"Every door needs one.", hintDe:"Schl\u00fcssel"},
-        {prompt:"A picture taken with a camera", answer:"photograph", options:["photograph","painting","drawing","poster"], icon:'<span style="font-size:2.5rem;">&#128248;</span>', hint:"Shows a real moment.", hintDe:"Foto"}
-      ]},
-    {name:"The Timeline", type:"mc", context:"Elias puts the events in order. Help him use the right time words to build the full timeline.", contextDe:"Elias bringt die Ereignisse in die richtige Reihenfolge. Hilf ihm, die richtigen Zeitw\u00f6rter zu verwenden.", xpEach:10, items:[
-      {prompt:"___, the school year ended in June. The trophy was still in the case.", answer:"First", options:["First","Then","Suddenly","Finally"], hint:"The starting point of the story.", hintDe:"Der Ausgangspunkt."},
-      {prompt:"___, in July, heating workers came to the school.", answer:"Then", options:["Then","First","Finally","Before"], hint:"Next in the sequence.", hintDe:"Als N\u00e4chstes."},
-      {prompt:"___, on July 12th, the Novak shop collected the trophy for cleaning.", answer:"After that", options:["After that","First","Finally","Suddenly"], hint:"A later event in the sequence.", hintDe:"Ein sp\u00e4teres Ereignis."},
-      {prompt:"___, on August 14th, the drama teacher saw someone near the trophy case.", answer:"Later", options:["Later","First","Before","Already"], hint:"Weeks after the July events.", hintDe:"Wochen nach den Juli-Ereignissen."},
-      {prompt:"___, on Monday in September, Mr. Kramer found the case empty.", answer:"Finally", options:["Finally","First","Then","Suddenly"], hint:"The last event in the chain.", hintDe:"Das letzte Ereignis."},
-      {prompt:"The drama teacher heard a noise ___. She looked and saw the figure.", answer:"suddenly", options:["suddenly","slowly","finally","firstly"], hint:"An unexpected moment.", hintDe:"Ein unerwarteter Moment."}
-    ]},
-    {name:"The Log Book Entry", type:"reading", context:"Nora copied the log book entry word for word. Read it \u2014 this is the key piece of evidence.", contextDe:"Nora hat den Logbuch-Eintrag Wort f\u00fcr Wort abgeschrieben. Lies ihn \u2014 das ist das entscheidende Beweisst\u00fcck.", xpEach:10,
-      passage:"<h4>Watson Manor School \u2014 Items Log Book</h4><p><b>Entry #47 \u2014 Outgoing</b></p><p>Date: July 12th. Item: Watson Manor Trophy \u2014 bronze cup, engraved, display case in entrance hall.</p><p>Purpose: Annual brass polish and restoration. Contractor: Novak and Son Antiques (Park Street).</p><p>Collected by: F.N. (signed at door). Case left unlocked for drying.</p><p>Authorised by: Mr. Kramer (headmaster).</p><p><b>Entry #48</b></p><p>Date: July 13th. Trophy case lock re-engaged by caretaker (R. Eckhart). Trophy return from Novak and Son: PENDING.</p><p><i>Note: No return receipt filed as of September 1st.</i></p>",
-      questions:[
-        {question:"What item was collected on July 12th?", answer:"The Watson Manor Trophy", options:["The Watson Manor Trophy","A framed photograph","A clock","A painting"]},
-        {question:"Who collected the trophy?", answer:"Someone with initials F.N.", options:["Someone with initials F.N.","Mr. Kramer","The caretaker","A police officer"]},
-        {question:"Why was the case left unlocked?", answer:"For drying after cleaning", options:["For drying after cleaning","Because the key was lost","For visitors","Because it was broken"]},
-        {question:"Was the trophy returned before September?", answer:"No \u2014 no return receipt was filed", options:["No \u2014 no return receipt was filed","Yes, on July 13","Yes, in August","The log does not say"]},
-        {question:"Who locked the case on July 13th?", answer:"The caretaker", options:["The caretaker","Felix","Mr. Kramer","Ms. Petrova"]}
-      ]},
-    {name:"Reporting Back", type:"mc", context:"Elias tells a friend what happened in the cellar. Help him get the past tenses right.", contextDe:"Elias erz\u00e4hlt einem Freund, was im Keller passiert ist. Hilf ihm, die Vergangenheitsformen richtig zu verwenden.", xpEach:10, items:[
-      {prompt:"We ___ down the old stone staircase into the cellar.", answer:"went", options:["went","go","goed","gone"], hint:"Past of 'go'.", hintDe:"Vergangenheit von 'go'."},
-      {prompt:"Nora ___ an old log book on the back shelf.", answer:"found", options:["found","finded","find","founded"], hint:"Past of 'find'.", hintDe:"Vergangenheit von 'find'."},
-      {prompt:"The entry ___ that the Novak shop collected the trophy.", answer:"said", options:["said","sayed","say","sayed"], hint:"Past of 'say'.", hintDe:"Vergangenheit von 'say'."},
-      {prompt:"I ___ the entry twice because I could not believe it.", answer:"read", options:["read","readed","reads","red"], hint:"Past of 'read' \u2014 same spelling.", hintDe:"Vergangenheit von 'read'."},
-      {prompt:"Felix ___ at the school in July to pick up the item.", answer:"was", options:["was","were","is","been"], hint:"Felix = singular past of 'be'.", hintDe:"Felix = Einzahl Vergangenheit."},
-      {prompt:"We ___ the classroom before Ms. Petrova noticed anything.", answer:"left", options:["left","leaved","leave","lefted"], hint:"Past of 'leave'.", hintDe:"Vergangenheit von 'leave'."}
-    ]}
-  ]},
-
-  {levelName:"The Canteen Interview", topic:"Eating Out (canteen interview) + Lukas at the leaving-do", grammar:"some / any, one / ones",
-  maxXP:180, starThresholds:{one:90, two:144, three:180},
-  sceneImages:{storyA:'campaign/img/g2-ch09-storyA-01.jpg', storyB:'campaign/img/g2-ch09-storyB-01.jpg', completion:'campaign/img/g2-ch09-completion.jpg'},
-  readingImage:'campaign/img/g2-ch09-pivot.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"elias", text:"Mrs. Brennan knows everything. We need to talk to her."},
-    {speaker:"nora", text:"She was at Coach Martinez's leaving-do. She has photos on her phone."}
-  ],
-  storyB:[
-    {speaker:"brennan", text:"Mr. Kramer didn't come. Not even for the cake. People noticed."},
-    {speaker:"brennan", text:"Coach Martinez stood by the trophy. And Lukas Brunner stood next to him. Silent."},
-    {speaker:"nora", text:"Lukas. The boy from the 2025 chronicle. He came to say goodbye to his coach."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page nine: Coach Martinez stood by the trophy. Mr. Kramer was not there."},
-    {speaker:"elias", text:"And Lukas Brunner — Felix's brother — was at the leaving-do too. The connections are forming."}
-  ],
-  tasks:[
-    {name:"Canteen Menu", type:"image-matching", context:"Elias chats with Mrs. Brennan at the serving counter. While he talks, Nora reads today’s menu. Name each food.", contextDe:"Elias plaudert mit Frau Brennan an der Theke. W\u00e4hrend er redet, liest Nora das heutige Men\u00fc. Benenne jedes Essen.", xpEach:5,
-      items:[
-        {prompt:"A round red vegetable used in salads and pasta sauce", answer:"tomato", options:["tomato","pepper","onion","strawberry"], icon:'<span style="font-size:2.5rem;">&#127813;</span>', hint:"Ketchup is made from these.", hintDe:"Tomate"},
-        {prompt:"Small round vegetables that make you cry when you cut them", answer:"onions", options:["onions","mushrooms","olives","peppers"], icon:'<span style="font-size:2.5rem;">&#129473;</span>', hint:"They have layers.", hintDe:"Zwiebeln"},
-        {prompt:"Meat from a cow, often served as a steak or burger", answer:"beef", options:["beef","lamb","chicken","turkey"], icon:'<span style="font-size:2.5rem;">&#129385;</span>', hint:"Comes from cattle.", hintDe:"Rindfleisch"},
-        {prompt:"Small soft fungi that grow in forests and fields", answer:"mushrooms", options:["mushrooms","olives","onions","peppers"], icon:'<span style="font-size:2.5rem;">&#127812;</span>', hint:"Some are on pizza.", hintDe:"Pilze"},
-        {prompt:"A sweet baked dish with cream cheese on top", answer:"cheesecake", options:["cheesecake","pancakes","pumpkin pie","rice pudding"], icon:'<span style="font-size:2.5rem;">&#127856;</span>', hint:"A popular dessert.", hintDe:"K\u00e4sekuchen"},
-        {prompt:"The person who brings food to your table in a restaurant", answer:"waiter", options:["waiter","chef","teacher","manager"], icon:'<span style="font-size:2.5rem;">&#129489;&#8205;&#127858;</span>', hint:"Takes your order.", hintDe:"Kellner"}
-      ]},
-    {name:"Some or Any?", type:"gap-fill-mc", context:"Nora and Elias talk about the evidence over lunch. What do they have? What don't they have?", contextDe:"Nora und Elias sprechen beim Mittagessen \u00fcber die Beweise. Was haben sie? Was nicht?", xpEach:10, items:[
-      {prompt:"There are not ___ fingerprints on the trophy case.", answer:"any", options:["any","some","a","not some"], hint:"Negative sentence \u2192 'any'.", hintDe:"Verneinung \u2192 'any'."},
-      {prompt:"We have ___ good leads now. Felix Novak is the strongest one.", answer:"some", options:["some","any","a","not any"], hint:"Positive sentence with known quantity.", hintDe:"Positiver Satz."},
-      {prompt:"Are there ___ security cameras in the entrance hall?", answer:"any", options:["any","some","a","not any"], hint:"Question \u2192 'any'.", hintDe:"Frage \u2192 'any'."},
-      {prompt:"There is ___ evidence in the cellar log book.", answer:"some", options:["some","any","not any","a any"], hint:"Positive statement \u2014 evidence exists.", hintDe:"Positiver Satz."},
-      {prompt:"We do not have ___ proof that Felix took the trophy on purpose.", answer:"any", options:["any","some","not some","a"], hint:"Negative sentence \u2192 'any'.", hintDe:"Verneinung \u2192 'any'."},
-      {prompt:"Mrs. Brennan gave us ___ very useful information about Rudi's keys.", answer:"some", options:["some","any","not any","the any"], hint:"Positive \u2014 she shared useful info.", hintDe:"Positiv."}
-    ]},
-    {name:"Mrs. Brennan's Account", type:"reading", context:"Elias recorded what Mrs. Brennan told him. Read the summary carefully.", contextDe:"Elias hat aufgeschrieben, was Frau Brennan ihm erz\u00e4hlt hat. Lies die Zusammenfassung aufmerksam.", xpEach:10,
-      passage:"<h4>Canteen Interview \u2014 Mrs. Brennan</h4><p>In July, the school called a company to fix the heating system. Three workers came for about two weeks. They needed access to the cellar, the corridors, and the main entrance hall.</p><p>One of the workers asked Old Rudi for his keyring. Rudi lent it to him for five minutes. When Rudi got the keys back, he was worried. He told Mr. Kramer that someone might have copied a key, but the headmaster said it was probably fine.</p><p>Mrs. Brennan also said that during those two weeks, the main door was often left open because workers were carrying equipment in and out all day.</p>",
-      questions:[
-        {question:"Why did the workers come to the school?", answer:"To fix the heating system", options:["To fix the heating system","To paint the walls","To build a new classroom","To clean the cellar"]},
-        {question:"How long were the workers at the school?", answer:"About two weeks", options:["About two weeks","One day","Three months","The whole summer"]},
-        {question:"What did a worker borrow from Rudi?", answer:"His keyring", options:["His keyring","His phone","His van","His jacket"]},
-        {question:"What was Rudi worried about?", answer:"Someone might have copied a key", options:["Someone might have copied a key","The workers broke something","The keys were lost","The heating was not fixed"]},
-        {question:"Why was the main door often open in July?", answer:"Workers were carrying equipment in and out", options:["Workers were carrying equipment in and out","It was very hot","The lock was broken","Mr. Kramer wanted fresh air"]}
-      ]},
-    {name:"Which One?", type:"mc", context:"Nora and Elias need to be specific. Which suspect? Which key? Which shelf?", contextDe:"Nora und Elias m\u00fcssen genau sein. Welcher Verd\u00e4chtige? Welcher Schl\u00fcssel? Welches Regal?", xpEach:10, items:[
-      {prompt:"There were three heating workers. Which ___ borrowed Rudi's keys?", answer:"one", options:["one","ones","once","only"], hint:"Singular \u2014 only one person did it.", hintDe:"Einzahl."},
-      {prompt:"We checked many shelves. The log book was on the old ___, near the back wall.", answer:"one", options:["one","ones","once","only"], hint:"Replacing 'shelf' (singular).", hintDe:"Ersetzt 'Regal' (Einzahl)."},
-      {prompt:"There are two glass cases. The trophy was in the big ___.", answer:"one", options:["one","ones","once","only"], hint:"Replacing 'case' (singular).", hintDe:"Ersetzt 'Vitrine' (Einzahl)."},
-      {prompt:"I looked at several entries. The important ___ are from July.", answer:"ones", options:["ones","one","once","only"], hint:"Replacing 'entries' (plural).", hintDe:"Ersetzt 'Eintr\u00e4ge' (Mehrzahl)."},
-      {prompt:"Rudi has many keys. The ___ for the trophy case is small and silver.", answer:"one", options:["one","ones","once","only"], hint:"Replacing 'key' (singular).", hintDe:"Ersetzt 'Schl\u00fcssel' (Einzahl)."},
-      {prompt:"We interviewed several people. The most helpful ___ were Mrs. Brennan and the drama teacher.", answer:"ones", options:["ones","one","once","only"], hint:"Replacing 'people' (plural).", hintDe:"Ersetzt 'Personen' (Mehrzahl)."}
-    ]}
-  ]},
-
-  // LEVELS 10-15: Skeleton structures with story beats and one task each
-  // These render on the map and can be played through, but have minimal tasks
-  // Full task data for L10-L15 will be added in a subsequent update
-
-  {levelName:"Open Evening Footage", topic:"Who's in Your Family? (parent interviews + the family stake)", grammar:"like + -ing, must / mustn't",
-  maxXP:190, starThresholds:{one:95, two:152, three:190},
-  sceneImages:{storyA:'campaign/img/g2-ch10-storyA-01.jpg', storyB:'campaign/img/g2-ch10-pivot.jpg', completion:'campaign/img/g2-ch10-completion.jpg'},
-  readingImage:'campaign/img/g2-ch10-pivot.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"School open evening. Parents everywhere. We\'re looking for anyone who noticed the trophy."},
-    {speaker:"elias", text:"Mrs. Schmidt has a phone video from last year\'s open evening. It shows the trophy."},
-    {speaker:"nora", text:"Last confirmed sighting: 20 June 2025. After that, nothing.", image:"campaign/img/g2-ch10-pivot.jpg"}
-  ],
-  storyB:[
-    {speaker:"elias", text:"The disappearance window is wide. Twenty June to first September. All summer."},
-    {speaker:"nora", text:"And the school was closed. Nobody was there to notice the empty case."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page ten: window closed. 20 June was the last time the trophy was there."}
-  ],
-  tasks:[
-    {name:"Family Evening", type:"image-matching", context:"Parents visit the school. Nora watches families arrive. She listens to how people describe their relatives.", contextDe:"Eltern besuchen die Schule. Nora beobachtet die ankommenden Familien. Sie h\u00f6rt zu, wie Leute ihre Verwandten beschreiben.", xpEach:5,
-      items:[
-        {prompt:"A woman who is your mother’s or father’s sister", answer:"auntie", options:["auntie","grandmother","cousin","girlfriend"], icon:'<span style="font-size:2.5rem;">&#128105;</span>', hint:"Your parent’s sister.", hintDe:"Tante"},
-        {prompt:"The ability to make people laugh and smile", answer:"sense of humour", options:["sense of humour","foreign language","virus","fault"], icon:'<span style="font-size:2.5rem;">&#128514;</span>', hint:"Funny people have this.", hintDe:"Sinn f\u00fcr Humor"},
-        {prompt:"A language that is not your first language", answer:"foreign language", options:["foreign language","sense of humour","tool","opinion"], icon:'<span style="font-size:2.5rem;">&#127760;</span>', hint:"English is one for Austrian students.", hintDe:"Fremdsprache"},
-        {prompt:"Something you use to build or fix things — like a hammer", answer:"tool", options:["tool","tractor","key","machine"], icon:'<span style="font-size:2.5rem;">&#128295;</span>', hint:"Found in a toolbox.", hintDe:"Werkzeug"},
-        {prompt:"Not excited, not angry — just peaceful and relaxed", answer:"calm", options:["calm","upset","proud","embarrassed"], icon:'<span style="font-size:2.5rem;">&#128524;</span>', hint:"The opposite of stressed.", hintDe:"Ruhig"},
-        {prompt:"Feeling good about something you or someone else achieved", answer:"proud", options:["proud","calm","upset","ugly"], icon:'<span style="font-size:2.5rem;">&#128170;</span>', hint:"Parents feel this at open evening.", hintDe:"Stolz"}
-      ]},
-    {name:"What Do They Like Doing?", type:"gap-fill-mc", context:"At the open evening, parents ask students about their hobbies. Answer with the correct form.", contextDe:"Beim Tag der offenen T\u00fcr fragen Eltern die Sch\u00fcler nach ihren Hobbys. Antworte mit der richtigen Form.", xpEach:10, items:[
-      {prompt:"Nora likes ___ in her notebook. She always carries it.", answer:"drawing", options:["drawing","draw","to drawing","drewing"], hint:"like + verb-ing.", hintDe:"like + Verb-ing."},
-      {prompt:"Mr. Novak says he likes ___ old furniture.", answer:"restoring", options:["restoring","restore","to restoring","restoreing"], hint:"like + verb-ing.", hintDe:"like + Verb-ing."},
-      {prompt:"Elias likes ___ to people. He learns a lot from conversations.", answer:"talking", options:["talking","talk","to talking","talkking"], hint:"like + verb-ing.", hintDe:"like + Verb-ing."},
-      {prompt:"Felix does not like ___ about the summer.", answer:"talking", options:["talking","talk","to talking","talkking"], hint:"like + verb-ing (negative too).", hintDe:"like + Verb-ing."},
-      {prompt:"Mrs. Brennan likes ___ for the school.", answer:"cooking", options:["cooking","cook","to cooking","cookking"], hint:"like + verb-ing.", hintDe:"like + Verb-ing."},
-      {prompt:"I like ___ mysteries. That is why we started this investigation.", answer:"solving", options:["solving","solve","to solving","solveing"], hint:"like + verb-ing.", hintDe:"like + Verb-ing."}
-    ]},
-    {name:"Mr. Novak's Stall", type:"reading", context:"Elias visited Mr. Novak's stall and wrote down everything he said.", contextDe:"Elias hat den Stand von Herrn Novak besucht und alles aufgeschrieben.", xpEach:10,
-      passage:"<h4>Interview Notes \u2014 Mr. Novak, Antique Dealer</h4><p>Mr. Novak has owned his shop on Park Street for fifteen years. He buys, sells, and restores old furniture, paintings, and other valuable objects.</p><p>He told me that schools and museums sometimes ask him to clean or repair old items. 'Watson Manor School asks us to polish the trophy every summer,' he said. 'Beautiful piece.'</p><p>He said his son Felix helps with pickups during the holidays. 'He is a good boy. He takes the van sometimes and collects items for me.'</p><p>When I asked about the trophy, Mr. Novak looked confused. 'A trophy? The trophy? Yes, it should be at the shop. I got the museum commission and completely forgot to return it.'</p>",
-      questions:[
-        {question:"How long has Mr. Novak owned his shop?", answer:"Fifteen years", options:["Fifteen years","Five years","Twenty years","Ten years"]},
-        {question:"What did the school ask Mr. Novak to restore?", answer:"The Watson Manor Trophy", options:["The Watson Manor Trophy","A framed painting","An old clock","A certificate"]},
-        {question:"Who helps Mr. Novak with pickups during holidays?", answer:"Felix, his son", options:["Felix, his son","His wife","A delivery company","Old Rudi"]},
-        {question:"Does Mr. Novak know about the trophy?", answer:"No \u2014 he forgot to return it", options:["No \u2014 he forgot to return it","Yes, he took it","He is not sure","He refused to answer"]},
-        {question:"How did Mr. Novak react when asked about the trophy?", answer:"He looked surprised", options:["He looked surprised","He was angry","He laughed","He walked away"]}
-      ]},
-    {name:"School Rules", type:"mc", context:"The open evening has strict rules. And Nora has rules for the investigation too.", contextDe:"Der Tag der offenen T\u00fcr hat strenge Regeln. Und Nora hat Regeln f\u00fcr die Ermittlung.", xpEach:10, items:[
-      {prompt:"All visitors ___ wear a badge. No exceptions.", answer:"must", options:["must","mustn't","have to","don't have to"], hint:"It is required and enforced.", hintDe:"Es ist Pflicht."},
-      {prompt:"Students ___ leave the building without permission.", answer:"mustn't", options:["mustn't","must","don't have to","have to"], hint:"It is forbidden.", hintDe:"Es ist verboten."},
-      {prompt:"We ___ accuse Felix without evidence. It would be wrong.", answer:"mustn't", options:["mustn't","must","shouldn't","don't have to"], hint:"It is not allowed \u2014 ethically.", hintDe:"Es ist nicht erlaubt."},
-      {prompt:"Parents ___ sign in at the reception desk before entering.", answer:"must", options:["must","mustn't","don't have to","shouldn't"], hint:"It is a mandatory step.", hintDe:"Es ist ein Pflichtschritt."},
-      {prompt:"You ___ use your phone during the presentations.", answer:"mustn't", options:["mustn't","must","don't have to","have to"], hint:"It is not allowed.", hintDe:"Es ist nicht erlaubt."},
-      {prompt:"We ___ find a way to see inside the antique shop.", answer:"must", options:["must","mustn't","don't have to","shouldn't"], hint:"It is necessary for the case.", hintDe:"Es ist notwendig f\u00fcr den Fall."}
-    ]}
-  ]},
-
-  {levelName:"The Evidence Wall", topic:"Homes (Nora's bedroom as the case room) + Ownership & proof", grammar:"Possessive pronouns, who / whose",
-  maxXP:190, starThresholds:{one:95, two:152, three:190},
-  sceneImages:{storyA:'campaign/img/g2-ch11-storyA-01.jpg', storyB:'campaign/img/g2-ch11-storyB-01.jpg', completion:'campaign/img/g2-ch11-completion.jpg'},
-  readingImage:'campaign/img/g2-ch11-pivot.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"I cleared the shelf above my desk. The wall is empty. Bring your notes."},
-    {speaker:"elias", text:"I'm bringing the cardigan threads we found in Felix's locker too."}
-  ],
-  storyB:[
-    {speaker:"nora", text:"Trail one: Coach Martinez. Master key, missing engraving tools, cellar log, leaving-do, no Kramer."},
-    {speaker:"nora", text:"Trail two: green fabric, Leo rumour, Old Rudi key story. All from one person."},
-    {speaker:"elias", text:"The cardigan threads we found in Felix's locker match the fabric. Trail two is Felix."},
-    {speaker:"nora", text:"And underneath both trails: 2025 200m. Lukas Brunner. 27.4 seconds. Mr. Kramer's lie."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page eleven: two trails. Coach Martinez took it. Felix covered for him. Mr. Kramer caused it."},
-    {speaker:"elias", text:"Tomorrow we talk to Felix. Just us. No teachers."}
-  ],
-  tasks:[
-    {name:"Inside the Rooms", type:"image-matching", context:"Nora searches Felix’s old classroom for clues. She needs to name every piece of furniture to write an accurate report.", contextDe:"Nora durchsucht Felix' altes Klassenzimmer nach Hinweisen. Sie muss jedes M\u00f6belst\u00fcck benennen, um einen genauen Bericht zu schreiben.", xpEach:5,
-      items:[
-        {prompt:"A tall piece of furniture with doors for hanging clothes", answer:"wardrobe", options:["wardrobe","cupboard","bookshelf","fridge"], icon:'<span style="font-size:2.5rem;">&#128682;</span>', hint:"Your shirts and jackets hang in here.", hintDe:"Kleiderschrank"},
-        {prompt:"A soft piece of furniture where two or three people can sit", answer:"sofa", options:["sofa","armchair","bed","rug"], icon:'<span style="font-size:2.5rem;">&#128715;</span>', hint:"In the living room.", hintDe:"Sofa"},
-        {prompt:"A thick piece of fabric that covers the floor", answer:"carpet", options:["carpet","curtain","rug","blanket"], icon:'<span style="font-size:2.5rem;">&#129526;</span>', hint:"Soft under your feet.", hintDe:"Teppichboden"},
-        {prompt:"Fabric that hangs over windows to block light", answer:"curtain", options:["curtain","carpet","rug","blanket"], icon:'<span style="font-size:2.5rem;">&#129514;</span>', hint:"Pull them closed at night.", hintDe:"Vorhang"},
-        {prompt:"An underground room below the building", answer:"cellar", options:["cellar","attic","balcony","garden"], icon:'<span style="font-size:2.5rem;">&#128161;</span>', hint:"Dark and often used for storage.", hintDe:"Keller"},
-        {prompt:"A device on the wall that heats the room", answer:"radiator", options:["radiator","cooker","fridge","lamp"], icon:'<span style="font-size:2.5rem;">&#9832;&#65039;</span>', hint:"Warm in winter.", hintDe:"Heizk\u00f6rper"}
-      ]},
-    {name:"Whose Is It?", type:"gap-fill-mc", context:"Nora sorts the evidence. Every item belongs to someone.", contextDe:"Nora sortiert die Beweise. Jedes St\u00fcck geh\u00f6rt jemandem.", xpEach:10, items:[
-      {prompt:"This notebook belongs to Nora. It is ___.", answer:"hers", options:["hers","her","his","she"], hint:"her \u2192 hers.", hintDe:"ihr \u2192 ihres."},
-      {prompt:"That keyring belongs to Rudi. It is ___.", answer:"his", options:["his","him","her","he"], hint:"he \u2192 his (same form).", hintDe:"sein \u2192 seins."},
-      {prompt:"The fabric sample belongs to the case file. It is ___.", answer:"ours", options:["ours","our","theirs","yours"], hint:"We are the detectives. We \u2192 ours.", hintDe:"Wir \u2192 unseres."},
-      {prompt:"Those badges belong to the open evening visitors. They are ___.", answer:"theirs", options:["theirs","their","ours","yours"], hint:"they \u2192 theirs.", hintDe:"ihr \u2192 ihres."},
-      {prompt:"That green jacket belongs to Felix. It is ___.", answer:"his", options:["his","him","her","hers"], hint:"he \u2192 his.", hintDe:"sein \u2192 seins."},
-      {prompt:"Is this your marker, Elias? \u2014 Yes, it is ___.", answer:"mine", options:["mine","my","me","yours"], hint:"I \u2192 mine.", hintDe:"mein \u2192 meins."}
-    ]},
-    {name:"The Connections", type:"reading", context:"Nora wrote a summary connecting all the evidence. Read it.", contextDe:"Nora hat eine Zusammenfassung geschrieben, die alle Beweise verbindet. Lies sie.", xpEach:10,
-      passage:"<h4>Evidence Summary \u2014 Watson Manor Trophy Case</h4><p>The trophy disappeared between June and September. The glass was not broken and the lock was not forced.</p><p>In July, the school building was open because heating workers were there. Rudi's keyring was briefly borrowed.</p><p>Also in July, the Novak antique shop collected the trophy for polishing. The log book shows the item was picked up by 'F.N.' \u2014 Felix Novak.</p><p>A witness saw a student in a dark green cotton jacket near the trophy case on August 14th at 7 PM. Felix Novak owns a green cotton jacket. He stopped wearing it in September.</p>",
-      questions:[
-        {question:"Why was the glass case not broken?", answer:"The building was open during maintenance", options:["The building was open during maintenance","The glass was already broken","There is no glass","Rudi left it unlocked"]},
-        {question:"What item was Felix supposed to collect?", answer:"The Watson Manor Trophy for polishing", options:["The Watson Manor Trophy for polishing","A framed photograph","An old clock","A painting"]},
-        {question:"What connects Felix to the witness description?", answer:"He owns a dark green cotton jacket", options:["He owns a dark green cotton jacket","He is very tall","He was seen on camera","His fingerprints were found"]},
-        {question:"Why did Felix stop wearing his green jacket?", answer:"He knows the fabric was left on the hinge", options:["He knows the fabric was left on the hinge","It was too warm","He lost it","It was dirty"]},
-        {question:"What probably happened?", answer:"The trophy was taken for cleaning and never returned", options:["The trophy was taken for cleaning and never returned","Felix sold the trophy","Felix broke in at night","Felix copied Rudi's key"]}
-      ]},
-    {name:"Who Did What?", type:"mc", context:"Time to be precise. Answer each question about the case.", contextDe:"Zeit, genau zu sein. Beantworte jede Frage zum Fall.", xpEach:10, items:[
-      {prompt:"___ discovered the empty trophy case?", answer:"Who", options:["Who","Whose","What","Where"], hint:"Asking about a person (subject).", hintDe:"Frage nach einer Person."},
-      {prompt:"___ keys were borrowed by the heating worker?", answer:"Whose", options:["Whose","Who","What","Which"], hint:"Asking about possession.", hintDe:"Frage nach Besitz."},
-      {prompt:"___ signed the log book entry 'F.N.'?", answer:"Who", options:["Who","Whose","What","Where"], hint:"Asking about a person.", hintDe:"Frage nach einer Person."},
-      {prompt:"___ shop is on Park Street?", answer:"Whose", options:["Whose","Who","What","Which"], hint:"Asking about ownership.", hintDe:"Frage nach Besitz."},
-      {prompt:"___ saw the student in the green jacket?", answer:"Who", options:["Who","Whose","What","Where"], hint:"Asking about a person.", hintDe:"Frage nach einer Person."},
-      {prompt:"___ jacket left green fabric on the hinge?", answer:"Whose", options:["Whose","Who","What","Which"], hint:"Asking about possession of the jacket.", hintDe:"Frage nach dem Besitz der Jacke."}
-    ]}
-  ]},
-
-  {levelName:"The Fabric Match", topic:"Feeling Bad and Feeling Better + Felix's confession", grammar:"Present perfect (just)",
-  maxXP:200, starThresholds:{one:100, two:160, three:200},
-  sceneImages:{storyA:'campaign/img/g2-ch12-storyA-01.jpg', storyB:'campaign/img/g2-ch12-storyB-01.jpg', completion:'campaign/img/g2-ch12-completion.jpg'},
-  readingImage:'campaign/img/g2-ch12-pivot.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"Felix? Can we talk? Just the three of us. No teachers."},
-    {speaker:"felix", text:"I knew you would come. I have been waiting."}
-  ],
-  storyB:[
-    {speaker:"felix", text:"In May, Coach Martinez read my letter. He met me three times. He told me about Lukas."},
-    {speaker:"felix", text:"He showed me the qualifying heats. Lukas ran 27.4. Tobias ran 30.7. Mr. Kramer wrote a lie."},
-    {speaker:"felix", text:"He said: 'I am going to make this right. I am going to put Lukas's name on the trophy.'"},
-    {speaker:"felix", text:"On day one, I saw the empty case. I saw the missing tools. I knew exactly what he had done. And why."},
-    {speaker:"felix", text:"I tore my cardigan. I planted the fabric. I started the Leo rumour. All to give him time."},
-    {speaker:"felix", text:"I have never told him I did this. He doesn't know. He has been alone with my brother's name."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page twelve: Felix told us everything. The fix. The May meetings. His brother."},
-    {speaker:"felix", text:"I will go with you to Mr. Kramer tomorrow. For Lukas. I have just decided."}
-  ],
-  tasks:[
-    {name:"Aches and Pains", type:"image-matching", context:"Elias trips on the cellar stairs and hurts himself. The school nurse asks where it hurts. Name each type of pain.", contextDe:"Elias stolpert auf der Kellertreppe und verletzt sich. Die Schulkrankenschwester fragt, wo es wehtut. Benenne jede Art von Schmerz.", xpEach:5,
-      items:[
-        {prompt:"Pain in your head that makes it hard to think", answer:"headache", options:["headache","toothache","earache","backache"], icon:'<span style="font-size:2.5rem;">&#129504;</span>', hint:"You want to lie down in the dark.", hintDe:"Kopfschmerzen"},
-        {prompt:"Pain in the joint between your leg and your foot", answer:"pain in ankle", options:["pain in ankle","backache","stomach ache","headache"], icon:'<span style="font-size:2.5rem;">&#129462;</span>', hint:"Elias hurt this on the stairs.", hintDe:"Schmerzen im Kn\u00f6chel"},
-        {prompt:"Pain in the part of your body where food goes", answer:"stomach ache", options:["stomach ache","headache","toothache","backache"], icon:'<span style="font-size:2.5rem;">&#129298;</span>', hint:"Maybe you ate too much.", hintDe:"Bauchschmerzen"},
-        {prompt:"Pain in the area between your shoulders and your hips", answer:"backache", options:["backache","headache","stomach ache","earache"], icon:'<span style="font-size:2.5rem;">&#128556;</span>', hint:"Lifting heavy things can cause this.", hintDe:"R\u00fcckenschmerzen"},
-        {prompt:"The front part of your neck that hurts when you are ill", answer:"throat", options:["throat","knee","ankle","back"], icon:'<span style="font-size:2.5rem;">&#129298;</span>', hint:"It hurts when you swallow.", hintDe:"Hals"},
-        {prompt:"The joint in the middle of your leg", answer:"knee", options:["knee","ankle","throat","elbow"], icon:'<span style="font-size:2.5rem;">&#129470;</span>', hint:"You bend it when you sit down.", hintDe:"Knie"}
-      ]},
-    {name:"What Has Just Happened?", type:"gap-fill-mc", context:"Everything is happening fast. Use the present perfect to report what has just occurred.", contextDe:"Alles passiert schnell. Verwende das Present Perfect.", xpEach:12, items:[
-      {prompt:"Nora and Elias have just ___ the antique shop.", answer:"entered", options:["entered","enter","entering","enters"], hint:"have + past participle (regular: -ed).", hintDe:"have + Partizip."},
-      {prompt:"Mr. Novak has just ___ them the back room.", answer:"shown", options:["shown","show","showed","showing"], hint:"have + past participle (irregular).", hintDe:"have + Partizip."},
-      {prompt:"They have just ___ the Watson Manor Trophy on a shelf.", answer:"found", options:["found","find","finded","finding"], hint:"have + past participle (irregular).", hintDe:"have + Partizip."},
-      {prompt:"Felix has just ___ in from school. He looks shocked.", answer:"come", options:["come","came","comed","coming"], hint:"have + past participle (irregular).", hintDe:"have + Partizip."},
-      {prompt:"Nora has just ___ a photo of the trophy with her phone.", answer:"taken", options:["taken","took","taked","taking"], hint:"have + past participle (irregular).", hintDe:"have + Partizip."},
-      {prompt:"Elias has just ___ Mr. Novak about the tag on the trophy.", answer:"asked", options:["asked","ask","asking","asken"], hint:"have + past participle (regular: -ed).", hintDe:"have + Partizip."}
-    ]},
-    {name:"Inside the Shop", type:"reading", context:"Nora wrote the most important case file entry yet. Read every word.", contextDe:"Nora hat den wichtigsten Fallakte-Eintrag geschrieben. Lies jedes Wort.", xpEach:12,
-      passage:"<h4>Case File \u2014 Entry #12: The Trophy Located</h4><p>We have just visited Novak and Son Antiques. Mr. Novak let us into the back room.</p><p>On the second shelf from the top, between a restored clock and a ceramic vase, I saw the Watson Manor Trophy. It is bronze, about 25 cm tall, with engraved names on all four sides. A small tag on the base reads: 'Watson Manor School \u2014 collected July 12.'</p><p>Mr. Novak forgot to return it after the museum commission. He thinks everything on that shelf is a routine job he forgot about after the museum commission.</p><p>Felix arrived while we were there. He saw us looking at the trophy and his face went completely white. He has not said a word.</p><p>The trophy has been sitting in this shop for almost three months. The case is solved.</p>",
-      questions:[
-        {question:"Where exactly was the trophy?", answer:"On the second shelf in the back room", options:["On the second shelf in the back room","In the front window","Behind the counter","In a locked box"]},
-        {question:"What is written on the tag?", answer:"Watson Manor School \u2014 collected July 12", options:["Watson Manor School \u2014 collected July 12","Novak and Son Antiques","For sale \u2014 200 euros","Trophy \u2014 handle with care"]},
-        {question:"Does Mr. Novak know the trophy is in his shop?", answer:"No \u2014 he thinks it is a job he forgot about", options:["No \u2014 he thinks it is a job he forgot about","Yes, he took it on purpose","He is not sure","He refused to answer"]},
-        {question:"How did Felix react?", answer:"His face went white and he said nothing", options:["His face went white and he said nothing","He was angry","He ran away","He laughed"]},
-        {question:"How long has the trophy been in the shop?", answer:"Almost three months", options:["Almost three months","One week","Six months","One year"]}
-      ]},
-    {name:"Recent Events", type:"mc", context:"Report what has and hasn't happened.", contextDe:"Berichte, was passiert ist und was nicht.", xpEach:12, items:[
-      {prompt:"Felix has not ___ anything about the trophy.", answer:"said", options:["said","say","sayed","saying"], hint:"Past participle of 'say'.", hintDe:"Partizip von 'say'."},
-      {prompt:"We have ___ the trophy at last.", answer:"found", options:["found","find","finded","founded"], hint:"Past participle of 'find'.", hintDe:"Partizip von 'find'."},
-      {prompt:"Mr. Novak has never ___ at the shelf closely.", answer:"looked", options:["looked","look","looking","looken"], hint:"Past participle of 'look' (regular).", hintDe:"Partizip von 'look'."},
-      {prompt:"Has Felix ___ the trophy to anyone?", answer:"mentioned", options:["mentioned","mention","mentioning","mentionned"], hint:"Past participle of 'mention'.", hintDe:"Partizip von 'mention'."},
-      {prompt:"Nora has already ___ a photo as proof.", answer:"taken", options:["taken","took","taked","tooken"], hint:"Past participle of 'take'.", hintDe:"Partizip von 'take'."},
-      {prompt:"The police have not ___ anything useful since September.", answer:"done", options:["done","do","did","doed"], hint:"Past participle of 'do'.", hintDe:"Partizip von 'do'."}
-    ]}
-  ]},
-
-  {levelName:"The Headmaster's Office (Reprise)", topic:"Rain and Sun (weather as mood) + Felix tells Mr. Kramer the truth", grammar:"Will future, adverbs of manner",
-  maxXP:200, starThresholds:{one:100, two:160, three:200},
-  sceneImages:{storyA:'campaign/img/g2-ch13-storyA-01.jpg', storyB:'campaign/img/g2-ch13-storyB-01.jpg', completion:'campaign/img/g2-ch13-completion.jpg'},
-  readingImage:'campaign/img/g2-ch13-pivot.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"It's raining hard. Same office. Same desk. This time with Felix between us."},
-    {speaker:"felix", text:"The sky is dark. So is this room. I'll do this. Slowly. Carefully."}
-  ],
-  storyB:[
-    {speaker:"felix", text:"Mr. Kramer, Coach Martinez took the trophy on 30 June. With his master key."},
-    {speaker:"felix", text:"He is going to return it on Sports Week morning. With my brother Lukas's name engraved on it."},
-    {speaker:"felix", text:"Lukas ran 27.4 in the heats last June. You wrote 30.9 for Tobias. I have known since May."},
-    {speaker:"felix", text:"I planted the fabric. The rumours. Coach Martinez doesn't know. I did this alone. For Lukas."},
-    {speaker:"kramer", text:"(cannot meet Felix's eyes) Thank you for telling me, Felix. I will call him now."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page thirteen: Felix told the truth. Mr. Kramer could not look at him. Outside, the rain stopped."},
-    {speaker:"kramer", text:"(on the phone, very quietly) Tomas. It's Heinrich. The children know. Tomorrow morning."}
-  ],
-  tasks:[
-    {name:"Weather Report", type:"image-matching", context:"The day of the confession. Nora looks out of Mr. Kramer’s office window and describes the weather while they wait for Felix.", contextDe:"Der Tag des Gest\u00e4ndnisses. Nora schaut aus Herrn Kramers B\u00fcrofenster und beschreibt das Wetter, w\u00e4hrend sie auf Felix warten.", xpEach:5,
-      items:[
-        {prompt:"White flakes falling from the sky in winter", answer:"snowy", options:["snowy","rainy","cloudy","foggy"], icon:'<span style="font-size:2.5rem;">&#127784;&#65039;</span>', hint:"Everything turns white.", hintDe:"Schneereich"},
-        {prompt:"Grey sky with no sun visible", answer:"cloudy", options:["cloudy","foggy","rainy","snowy"], icon:'<span style="font-size:2.5rem;">&#9729;&#65039;</span>', hint:"The sun hides behind these.", hintDe:"Bew\u00f6lkt"},
-        {prompt:"Lightning, thunder, and heavy rain all at once", answer:"thunderstorm", options:["thunderstorm","rainy","windy","foggy"], icon:'<span style="font-size:2.5rem;">&#9928;&#65039;</span>', hint:"Loud and sometimes scary.", hintDe:"Gewitter"},
-        {prompt:"Strong air moving fast, bending trees", answer:"windy", options:["windy","rainy","cloudy","sunny"], icon:'<span style="font-size:2.5rem;">&#127788;&#65039;</span>', hint:"Hold onto your hat!", hintDe:"Windig"},
-        {prompt:"Thick white mist that makes it hard to see", answer:"foggy", options:["foggy","cloudy","rainy","snowy"], icon:'<span style="font-size:2.5rem;">&#127787;&#65039;</span>', hint:"Drivers must go slowly.", hintDe:"Neblig"},
-        {prompt:"A clear blue sky with the sun shining brightly", answer:"sunny", options:["sunny","cloudy","windy","foggy"], icon:'<span style="font-size:2.5rem;">&#9728;&#65039;</span>', hint:"A perfect day to be outside.", hintDe:"Sonnig"}
-      ]},
-    {name:"What Will Happen Next?", type:"gap-fill-mc", context:"The truth is out. Everyone makes promises and plans.", contextDe:"Die Wahrheit ist drau\u00dfen. Jetzt macht jeder Versprechen und Pl\u00e4ne.", xpEach:12, items:[
-      {prompt:"The trophy ___ go back to the school tomorrow.", answer:"will", options:["will","would","shall","going"], hint:"A definite future plan.", hintDe:"Ein fester Plan."},
-      {prompt:"Felix ___ apologise in front of the whole school.", answer:"will", options:["will","would","is","might"], hint:"A decided outcome.", hintDe:"Eine Entscheidung."},
-      {prompt:"Mr. Novak says he ___ check every item more carefully.", answer:"will", options:["will","would","is","has"], hint:"A promise about future behaviour.", hintDe:"Ein Versprechen."},
-      {prompt:"The school ___ install a security camera near the trophy case.", answer:"will", options:["will","would","is","has"], hint:"A planned action.", hintDe:"Eine geplante Ma\u00dfnahme."},
-      {prompt:"Felix ___ not be expelled. Mr. Kramer confirmed this.", answer:"will", options:["will","would","is","was"], hint:"A definite statement about the future.", hintDe:"Sichere Aussage \u00fcber die Zukunft."},
-      {prompt:"This case ___ not be forgotten.", answer:"will", options:["will","would","is","was"], hint:"Permanence.", hintDe:"Es wird immer erinnert."}
-    ]},
-    {name:"Felix's Statement", type:"reading", context:"Felix finally told the truth. Read his full statement.", contextDe:"Felix hat endlich die Wahrheit gesagt. Lies seine vollst\u00e4ndige Aussage.", xpEach:12,
-      passage:"<h4>Statement by Felix Novak \u2014 Mr. Kramer's Office</h4><p>My dad's shop has polished the Watson Manor Trophy every summer for ten years. I picked it up in July, like always. But my dad got a huge museum order and forgot to polish and return the school trophy.</p><p>When school started and Mr. Kramer said the trophy was missing, I panicked. Everyone knows I hate Sports Week. I wrote a letter last year asking to cancel it. I was sure everyone would blame me.</p><p>So I planted false evidence. I tore a piece of my green jacket and placed it on the trophy case hinge to make it look like a break-in. I spread rumours about Leo being at school at night. I told Mrs. Brennan about the caretaker's keys to make Rudi look suspicious.</p><p>I watched Nora and Elias follow my false trails for weeks. I felt terrible every day. I am sorry for all of it \u2014 for the lies, for trying to blame Leo and Rudi, and for not telling the truth sooner.</p>",
-      questions:[
-        {question:"Why was the trophy at the Novak shop?", answer:"It was there for annual cleaning", options:["It was there for annual cleaning","Felix stole it","Mr. Novak bought it","The school gave it away"]},
-        {question:"Why did Mr. Novak forget to return it?", answer:"He got a big museum commission", options:["He got a big museum commission","He was on holiday","He did not know about it","He wanted to keep it"]},
-        {question:"What did Felix do to the trophy case hinge?", answer:"He planted a piece of green fabric", options:["He planted a piece of green fabric","He broke the lock","He left it open","He put glue on it"]},
-        {question:"Who did Felix try to blame?", answer:"Leo and Rudi", options:["Leo and Rudi","Mr. Kramer and Ms. Petrova","The police","His father"]},
-        {question:"How did Felix feel about what he did?", answer:"Terrible \u2014 he felt worse every day", options:["Terrible \u2014 he felt worse every day","Proud of himself","He did not care","He thought it was funny"]}
-      ]},
-    {name:"How It Happened", type:"mc", context:"Nora describes the confession scene. Choose the correct adverb.", contextDe:"Nora beschreibt die Szene. W\u00e4hle das richtige Adverb.", xpEach:12, items:[
-      {prompt:"Felix spoke ___. His voice was barely a whisper.", answer:"quietly", options:["quietly","quiet","quick","quickly"], hint:"quiet \u2192 quietly.", hintDe:"leise."},
-      {prompt:"Nora presented the evidence ___.", answer:"carefully", options:["carefully","careful","quickly","careless"], hint:"careful \u2192 carefully.", hintDe:"sorgf\u00e4ltig."},
-      {prompt:"Mr. Kramer listened ___.", answer:"patiently", options:["patiently","patient","quickly","angry"], hint:"patient \u2192 patiently.", hintDe:"geduldig."},
-      {prompt:"Mr. Novak shook his head ___.", answer:"slowly", options:["slowly","slow","fast","sadly"], hint:"slow \u2192 slowly.", hintDe:"langsam."},
-      {prompt:"Elias wrote everything down ___.", answer:"quickly", options:["quickly","quick","slowly","quiet"], hint:"quick \u2192 quickly.", hintDe:"schnell."},
-      {prompt:"Felix apologised ___. He meant every word.", answer:"sincerely", options:["sincerely","sincere","loudly","angrily"], hint:"sincere \u2192 sincerely.", hintDe:"aufrichtig."}
-    ]}
-  ]},
-
-  {levelName:"The Garage on Linden Street", topic:"Move and Keep Fit! + the engraved trophy", grammar:"Present perfect (already/yet/ever/never)",
-  maxXP:200, starThresholds:{one:100, two:160, three:200},
-  sceneImages:{storyA:'campaign/img/g2-ch14-storyA-01.jpg', storyB:'campaign/img/g2-ch14-storyB-01.jpg', completion:'campaign/img/g2-ch14-completion.jpg'},
-  readingImage:'campaign/img/g2-ch14-pivot.jpg',
-  comicPanels:[],
-  storyA:[
-    {speaker:"nora", text:"Mr. Kramer's car. Linden Street. Number 17. Coach Martinez's house."},
-    {speaker:"felix", text:"I'm scared. I have never said sorry to a grown-up like this."},
-    {speaker:"martinez", text:"(opening the door) Heinrich. Children. Felix. You'd better come in."}
-  ],
-  storyB:[
-    {speaker:"martinez", text:"I took the trophy because Mr. Kramer wrote a lie about Lukas Brunner in June 2025."},
-    {speaker:"martinez", text:"I trained Lukas for two years. I was at the finish line. He won.", image:"campaign/img/g2-ch14-storyB-02.jpg"},
-    {speaker:"martinez", text:"(lifts the trophy) Read the new engraving. Lukas Brunner — 2025 — 27.4 seconds."},
-    {speaker:"kramer", text:"(reads the engraving, goes pale, says nothing for a long moment)"},
-    {speaker:"martinez", text:"The trophy goes back. Lukas's name stays on it. There will be a school assembly."},
-    {speaker:"kramer", text:"(very quietly) Yes. I will tell the school. Tomorrow morning. Before Sports Week."},
-    {speaker:"martinez", text:"Felix. I have never wanted you to lie for me. But I am glad you are your brother's brother."},
-    {speaker:"felix", text:"(very quietly) I made it worse. I should have asked you first. I'm sorry."}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page fourteen: trophy back. Lukas's name engraved on it. Mr. Kramer agreed to a school assembly."},
-    {speaker:"martinez", text:"(handing the trophy to Mr. Kramer) Take it home. Tell the school. Lukas runs again."}
-  ],
-  tasks:[
-    {name:"Sports Day", type:"image-matching", context:"After the big announcement, students celebrate outside. The sports field is busy. Name each sport the students are playing.", contextDe:"Nach der Versammlung feiern die Sch\u00fcler drau\u00dfen. Der Sportplatz ist voll. Benenne jede Sportart, die die Sch\u00fcler aus\u00fcben.", xpEach:5,
-      items:[
-        {prompt:"Riding a bicycle for exercise or competition", answer:"cycling", options:["cycling","swimming","skiing","surfing"], icon:'<span style="font-size:2.5rem;">&#128692;</span>', hint:"Two wheels, pedals, and a helmet.", hintDe:"Radfahren"},
-        {prompt:"Moving through water using your arms and legs", answer:"swimming", options:["swimming","surfing","windsurfing","skiing"], icon:'<span style="font-size:2.5rem;">&#127946;</span>', hint:"You do this in a pool or lake.", hintDe:"Schwimmen"},
-        {prompt:"Riding a board with four wheels on the street", answer:"skateboarding", options:["skateboarding","snowboarding","surfing","cycling"], icon:'<span style="font-size:2.5rem;">&#128761;</span>', hint:"Tricks and ramps.", hintDe:"Skateboardfahren"},
-        {prompt:"Going down snowy mountains on two long boards", answer:"skiing", options:["skiing","snowboarding","skating","surfing"], icon:'<span style="font-size:2.5rem;">&#9975;&#65039;</span>', hint:"Popular in Austria.", hintDe:"Skifahren"},
-        {prompt:"Climbing up steep rock faces with ropes and harnesses", answer:"mountain climbing", options:["mountain climbing","cycling","swimming","roller-skating"], icon:'<span style="font-size:2.5rem;">&#129495;</span>', hint:"Very high and sometimes dangerous.", hintDe:"Bergsteigen"},
-        {prompt:"Standing on a board and riding ocean waves", answer:"surfing", options:["surfing","windsurfing","swimming","skiing"], icon:'<span style="font-size:2.5rem;">&#127940;</span>', hint:"You need big waves.", hintDe:"Surfen"}
-      ]},
-    {name:"Progress Report", type:"gap-fill-mc", context:"Nora checks what has been done and what hasn't.", contextDe:"Nora pr\u00fcft, was erledigt ist und was nicht.", xpEach:12, items:[
-      {prompt:"Mr. Kramer has ___ returned the trophy to the case.", answer:"already", options:["already","yet","ever","never"], hint:"Completed action (positive).", hintDe:"Abgeschlossene Handlung."},
-      {prompt:"Felix has ___ apologised in the school hall.", answer:"already", options:["already","yet","ever","never"], hint:"It is done.", hintDe:"Es ist erledigt."},
-      {prompt:"The police haven't closed their investigation ___.", answer:"yet", options:["yet","already","ever","never"], hint:"Not done \u2014 still in progress.", hintDe:"Noch nicht erledigt."},
-      {prompt:"Nora has ___ started writing the final case report.", answer:"already", options:["already","yet","ever","never"], hint:"She has begun.", hintDe:"Sie hat angefangen."},
-      {prompt:"Have you ___ solved a real mystery?", answer:"ever", options:["ever","never","already","yet"], hint:"'ever' in questions about lifetime experience.", hintDe:"'ever' in Fragen."},
-      {prompt:"I have ___ been so proud of anything.", answer:"never", options:["never","ever","already","yet"], hint:"'never' = at no time before.", hintDe:"'never' = niemals zuvor."}
-    ]},
-    {name:"The School Article", type:"reading", context:"The school published a report about Sports Week and the Watson Manor Trophy.", contextDe:"Die Schulzeitung hat einen Artikel ver\u00f6ffentlicht.", xpEach:12,
-      passage:"<h4>Watson Manor Sports Week — Day 1 Report</h4><p>Sports Week has officially started! This morning, Mr. Kramer returned the Watson Manor Trophy to its case in a special ceremony in the school hall. The whole school cheered.</p><p>Events today included the 200-metre sprint, the swimming relay, and the cycling time trial. Leo Winkler from 4A has already won the sprint. 'I have never run that fast,' he said. Mia from 3B hasn't finished her swimming heat yet — it is tomorrow morning.</p><p>The biggest surprise: Felix Novak signed up for the relay race. 'I have never competed in Sports Week before,' he told a reporter from the school newspaper. 'But this year feels different.'</p><p>The trophy will be awarded on Friday to the student with the most points across all events. Have you ever seen the whole school this excited?</p>",
-      questions:[
-        {question:"What happened at the ceremony this morning?", answer:"Mr. Kramer returned the trophy to its case", options:["Mr. Kramer returned the trophy to its case","The school closed early","A new teacher arrived","The police came back"]},
-        {question:"Who has already won an event?", answer:"Leo Winkler (the sprint)", options:["Leo Winkler (the sprint)","Felix Novak (the relay)","Mia from 3B (swimming)","Nora (cycling)"]},
-        {question:"Why is Felix's sign-up surprising?", answer:"He has never competed in Sports Week before", options:["He has never competed in Sports Week before","He is injured","He does not like sports","He is in trouble"]},
-        {question:"When will the trophy be awarded?", answer:"On Friday", options:["On Friday","Today","Tomorrow","Next week"]},
-        {question:"What does the winner need?", answer:"The most points across all events", options:["The most points across all events","The fastest single time","The most friends","Teacher approval"]}
-      ]},
-    {name:"Have You Ever?", type:"mc", context:"After the announcement, students talk about the experience.", contextDe:"Nach der Versammlung reden die Sch\u00fcler \u00fcber das Erlebnis.", xpEach:12, items:[
-      {prompt:"Have you ___ solved a real mystery?", answer:"ever", options:["ever","never","already","yet"], hint:"'ever' in questions about lifetime experience.", hintDe:"'ever' in Fragen."},
-      {prompt:"I have ___ seen the school so excited.", answer:"never", options:["never","ever","already","yet"], hint:"'never' = at no time before now.", hintDe:"'never' = niemals zuvor."},
-      {prompt:"Has anyone ___ found something valuable in a shop?", answer:"ever", options:["ever","never","already","yet"], hint:"'ever' in a question.", hintDe:"'ever' in einer Frage."},
-      {prompt:"Leo said: 'I have ___ been so wrong about someone.'", answer:"never", options:["never","ever","already","yet"], hint:"'never' in a statement.", hintDe:"'never' in einer Aussage."},
-      {prompt:"Have you ___ kept a secret for three months?", answer:"ever", options:["ever","never","already","yet"], hint:"'ever' = at any time in your life.", hintDe:"'ever' = jemals."},
-      {prompt:"I have ___ met a real detective before. Now I have!", answer:"never", options:["never","ever","already","yet"], hint:"'never' before now \u2014 first time.", hintDe:"'never' vor jetzt."}
-    ]}
-  ]},
-
-  {levelName:"The Shelter", topic:"Caring for Animals + Lukas walks in + newspaper exposes the fix", grammar:"So do I / Neither do I",
-  maxXP:200, starThresholds:{one:100, two:160, three:200},
-  sceneImages:{storyA:'campaign/img/g2-ch15-storyA-01.jpg', storyB:'campaign/img/g2-ch15-storyB-01.jpg', completion:'campaign/img/g2-ch15-completion.jpg'},
-  readingImage:'campaign/img/g2-ch15-reading.jpg',
-  comicPanels:[],
-  
-  storyA:[
-    {speaker:"nora", text:"Sports Week is over. Today is Community Day. Our class is at Seaview Animal Shelter."},
-    {speaker:"felix", text:"I have never volunteered before. So I'm trying.", image:"campaign/img/g2-ch15-pivot.jpg"},
-    {speaker:"elias", text:"The shelter manager says one of the rabbits got out last night. They want our help."}
-  ],
-  storyB:[
-    {speaker:"felix", text:"The latch is loose. The volunteer last night didn't lock it properly."},
-    {speaker:"nora", text:"The rabbit is in the garden eating lettuce. No theft. No villain."},
-    {speaker:"elias", text:"Things aren't always crimes, even when they look like them."},
-    {speaker:"felix", text:"And things sometimes ARE crimes, even when they look like nothing. Like a 'winning' time."},
-    {speaker:"lukas", text:"(walks into the shelter, sees Felix, smiles) Thanks, little brother."},
-    {speaker:"felix", text:"(does not say anything; just stands beside his brother)"}
-  ],
-  completion:[
-    {speaker:"nora", text:"Page fifteen: Case 002 solved. The trophy is back. Lukas is back. The lie is exposed."},
-    {speaker:"elias", text:"Three detectives. Watson Manor Case CLOSED. Shelter Case SOLVED. We continue."}
-  ],
-  tasks:[
-    {name:"Caring for Pets", type:"image-matching", context:"The Investigation Club’s first casual meeting. Members share photos of their pets and talk about how they look after them.", contextDe:"Das erste lockere Treffen des Ermittlungsclubs. Mitglieder zeigen Fotos ihrer Haustiere und erz\u00e4hlen, wie sie sich um sie k\u00fcmmern.", xpEach:5,
-      items:[
-        {prompt:"Giving food to your animal at the right times", answer:"feed your pet", options:["feed your pet","walk your pet","brush your pet","dry your pet"], icon:'<span style="font-size:2.5rem;">&#128054;</span>', hint:"Cats and dogs need this twice a day.", hintDe:"Dein Haustier f\u00fcttern"},
-        {prompt:"Taking your dog outside for exercise on a lead", answer:"walk your pet", options:["walk your pet","feed your pet","play with your pet","stroke"], icon:'<span style="font-size:2.5rem;">&#128694;</span>', hint:"Dogs love this.", hintDe:"Mit deinem Haustier spazieren gehen"},
-        {prompt:"Running your hand gently over your animal’s fur", answer:"stroke", options:["stroke","brush","dry your pet","feed your pet"], icon:'<span style="font-size:2.5rem;">&#129293;</span>', hint:"Cats purr when you do this.", hintDe:"Streicheln"},
-        {prompt:"Using a tool to untangle your pet’s fur", answer:"brush", options:["brush","stroke","dry your pet","clean out cage"], icon:'<span style="font-size:2.5rem;">&#129526;</span>', hint:"Keeps the coat smooth and shiny.", hintDe:"B\u00fcrsten"},
-        {prompt:"Removing old bedding and waste from a small animal’s home", answer:"clean out cage", options:["clean out cage","feed your pet","walk your pet","give your pet a bath"], icon:'<span style="font-size:2.5rem;">&#128038;</span>', hint:"Hamsters and rabbits need this regularly.", hintDe:"Den K\u00e4fig deines Haustieres s\u00e4ubern"},
-        {prompt:"Bringing your sick animal to a doctor for animals", answer:"take your pet to the vet", options:["take your pet to the vet","feed your pet","brush","walk your pet"], icon:'<span style="font-size:2.5rem;">&#129658;</span>', hint:"The animal doctor.", hintDe:"Dein Haustier zum Tierarzt bringen"}
-      ]},
-    {name:"We Agree!", type:"mc", context:"The Investigation Club's first meeting. Everyone shares what they think. When you agree, say so!", contextDe:"Erstes Treffen des Ermittlungsclubs. Wenn du zustimmst, sag es!", xpEach:12, items:[
-      {prompt:"'I love mysteries.' \u2014 '___!'", answer:"So do I", options:["So do I","Neither do I","So have I","Neither have I"], hint:"Positive + present simple \u2192 'So do I'.", hintDe:"Positiv + Present Simple."},
-      {prompt:"'I don't like giving up.' \u2014 '___!'", answer:"Neither do I", options:["Neither do I","So do I","Neither have I","So have I"], hint:"Negative + present simple \u2192 'Neither do I'.", hintDe:"Negativ + Present Simple."},
-      {prompt:"'I have never solved a real case before.' \u2014 '___.'", answer:"Neither have I", options:["Neither have I","So have I","Neither do I","So do I"], hint:"Negative + present perfect \u2192 'Neither have I'.", hintDe:"Negativ + Present Perfect."},
-      {prompt:"'I have already started my own notebook.' \u2014 '___!'", answer:"So have I", options:["So have I","So do I","Neither have I","Neither do I"], hint:"Positive + present perfect \u2192 'So have I'.", hintDe:"Positiv + Present Perfect."},
-      {prompt:"'I don't want to make mistakes.' \u2014 '___.'", answer:"Neither do I", options:["Neither do I","So do I","Neither have I","So have I"], hint:"Negative + present simple \u2192 'Neither do I'.", hintDe:"Negativ + Present Simple."},
-      {prompt:"'I enjoy working in a team.' \u2014 '___!'", answer:"So do I", options:["So do I","Neither do I","So have I","Neither have I"], hint:"Positive + present simple \u2192 'So do I'.", hintDe:"Positiv + Present Simple."}
-    ]},
-    {name:"Nora's Final Entry", type:"reading", context:"The last page of Nora's notebook. Read her closing case file entry.", contextDe:"Die letzte Seite von Noras Notizbuch.", xpEach:12,
-      passage:"<h4>Seaview Animal Shelter \u2014 Incident Report</h4><p>Date: Community Day. Three animals were reported missing this morning: Mist (grey cat), Hoppy (brown rabbit), and Herbert (tortoise, very old).</p><p>The night volunteer locked all enclosures at 10 PM. The front gate was still locked this morning. No signs of a break-in.</p><p>Three student volunteers from Watson Manor School investigated. They discovered a gap in the garden fence, approximately 15 cm wide. Cat and rabbit tracks led through the gap. Tortoise tracks led along the inside of the fence to the gap and then onto the pavement outside.</p><p>The students found Mist under a car on Park Street, Hoppy in a garden on Elm Road eating lettuce, and Herbert on the pavement just outside the shelter gate. All three animals were returned safely.</p><p>The fence gap has been repaired. The shelter thanks the Investigation Club for their quick work.</p>",
-      questions:[
-        {question:"How many animals escaped?", answer:"Three", options:["Three","Two","Four","Five"]},
-        {question:"How did the animals escape?", answer:"Through a gap in the garden fence", options:["Through a gap in the garden fence","Through the front gate","Through a window","Someone let them out"]},
-        {question:"Where was the cat found?", answer:"Under a car on Park Street", options:["Under a car on Park Street","In a garden on Elm Road","On the pavement outside","In the shelter kitchen"]},
-        {question:"Why did Herbert not get far?", answer:"He is a tortoise and very slow", options:["He is a tortoise and very slow","He was injured","He was too heavy","He went back inside"]},
-        {question:"Who solved the case?", answer:"The Investigation Club", options:["The Investigation Club","The shelter manager","The police","The night volunteer"]}
-      ]},
-    {name:"Looking Back", type:"mc", context:"Nora and Elias reflect on the case.", contextDe:"Nora und Elias blicken auf den Fall zur\u00fcck.", xpEach:12, items:[
-      {prompt:"'I liked working on this case.' \u2014 '___.'", answer:"So did I", options:["So did I","Neither did I","So do I","Neither do I"], hint:"Positive + past simple \u2192 'So did I'.", hintDe:"Positiv + Vergangenheit."},
-      {prompt:"'I didn't expect Felix to join the club.' \u2014 '___.'", answer:"Neither did I", options:["Neither did I","So did I","Neither do I","So do I"], hint:"Negative + past simple \u2192 'Neither did I'.", hintDe:"Negativ + Vergangenheit."},
-      {prompt:"'I have learned a lot from this.' \u2014 '___.'", answer:"So have I", options:["So have I","So do I","Neither have I","Neither do I"], hint:"Positive + present perfect \u2192 'So have I'.", hintDe:"Positiv + Present Perfect."},
-      {prompt:"'I didn't sleep well the night before the shop visit.' \u2014 '___.'", answer:"Neither did I", options:["Neither did I","So did I","Neither do I","So do I"], hint:"Negative + past simple \u2192 'Neither did I'.", hintDe:"Negativ + Vergangenheit."},
-      {prompt:"'I want to solve more cases.' \u2014 '___!'", answer:"So do I", options:["So do I","So did I","Neither do I","Neither did I"], hint:"Positive + present simple \u2192 'So do I'.", hintDe:"Positiv + Present Simple."},
-      {prompt:"'I have never been so proud of anything.' \u2014 '___.'", answer:"Neither have I", options:["Neither have I","So have I","Neither do I","So do I"], hint:"Negative + present perfect \u2192 'Neither have I'.", hintDe:"Negativ + Present Perfect."}
-    ]}
-  ]}
-
-];
+// campaignLevels — defined in data/m2-campaign.js
 
 // G2 campaign: prologue enabled
 // (prologueWatched is managed by localStorage — first visit shows prologue)
