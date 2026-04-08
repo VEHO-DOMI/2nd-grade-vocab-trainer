@@ -5225,14 +5225,24 @@ function showHomeScreen() {
   checkPendingDuels();
   setTimeout(cleanupStaleBattleData, 5000);
 
-  // Show deferred campaign level-ups (queued during campaign play)
+  // --- Consume deferred campaign level-up popups for the CURRENT mode ---
+  // Campaign play pushes {mode:'vocab'|'grammar', level:N} onto
+  // window._campaignLevelUps when a level threshold is crossed. We only
+  // fire popups that match the mode the student just entered; any
+  // entries for the *other* pool stay queued until they switch modes.
   if (window._campaignLevelUps && window._campaignLevelUps.length > 0) {
+    var currentMode = (state.mode === 'grammar') ? 'grammar' : 'vocab';
     var levelsToShow = [];
+    var remaining = [];
     window._campaignLevelUps.forEach(function(lu) {
-      var levelDefs = lu.mode === 'grammar' ? GRAMMAR_LEVELS : LEVELS;
-      if (levelDefs[lu.level - 1]) levelsToShow.push(levelDefs[lu.level - 1]);
+      if (lu.mode === currentMode) {
+        var defs = (lu.mode === 'grammar') ? GRAMMAR_LEVELS : LEVELS;
+        if (defs && defs[lu.level - 1]) levelsToShow.push(defs[lu.level - 1]);
+      } else {
+        remaining.push(lu);
+      }
     });
-    window._campaignLevelUps = [];
+    window._campaignLevelUps = remaining;
     if (levelsToShow.length > 0 && typeof showLevelUpQueue === 'function') {
       setTimeout(function() { showLevelUpQueue(levelsToShow); }, 500);
     }
