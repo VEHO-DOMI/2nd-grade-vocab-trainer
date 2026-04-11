@@ -2531,6 +2531,15 @@ body.playing .header-container { display: none; }
 .campaign-card-progress .mode-select-stats { background: rgba(255,255,255,0.2); color: #fff; font-size: 0.65rem; padding: 2px 8px; }
 .campaign-card-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; }
 .campaign-card-fill { height: 100%; background: #4ade80; border-radius: 3px; transition: width 0.6s ease; }
+
+/* ===== FULLWIDTH CARD CHILDREN (from G1) ===== */
+.home-fullwidth-info { flex: 1; min-width: 0; }
+.home-fullwidth-title { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 0.92rem; color: var(--text); display: block; }
+.home-fullwidth-subtitle { font-size: 0.72rem; color: var(--muted); display: block; margin-top: 1px; }
+.home-fullwidth-icon { font-size: 1.5rem; flex-shrink: 0; width: 36px; text-align: center; }
+.home-fullwidth-arrow { color: var(--muted); font-size: 0.9rem; flex-shrink: 0; }
+.home-action-icon { font-size: 1.4rem; line-height: 1; }
+.home-action-label { font-size: 0.75rem; font-weight: 700; color: var(--text); font-family: 'Fredoka', sans-serif; text-align: center; line-height: 1.2; }
 </style>
 <script src="data/m2-campaign.js"></script>
 <!-- Watson Manor Case critical-path image preload (v2.2) -->
@@ -2881,11 +2890,6 @@ body.playing .header-container { display: none; }
     <div class="stat-card"><div class="stat-value" id="stat-streak">0</div><div class="stat-label">Streak</div></div>
   </div>
   <div id="review-btn" style="display:none;"></div>
-
-  <!-- Campaign Button (G2 Watson Manor) -->
-  <div class="home-section">
-    <button class="btn" style="width:100%;background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;font-weight:700;font-size:1rem;padding:0.8rem;border-radius:12px;border:none;cursor:pointer;" onclick="showCampaignMap()">🔎 The Watson Manor Case</button>
-  </div>
 
   <!-- Start Practice + Smart Review hint + Mode Switch -->
   <div class="home-section">
@@ -5981,7 +5985,7 @@ function showHomeScreen() {
 
   // Practice button labels
   var pracLabel = document.getElementById('practice-btn-label');
-  if (pracLabel) pracLabel.textContent = '🎯 ' + t('startPractice');
+  if (pracLabel) pracLabel.textContent = '🎯 ' + t('startVocabPractice');
   var pracSub = document.getElementById('practice-subtitle');
   if (pracSub) pracSub.textContent = state.mode === 'grammar' ? (uiLang === 'de' ? 'Themen und Aufgabentyp auswählbar' : 'Choose topics and task type') : (uiLang === 'de' ? 'Units und Übungsformat auswählbar' : 'Choose units and exercise type');
   var modeSwitch = document.getElementById('home-mode-switch');
