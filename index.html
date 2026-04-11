@@ -2757,7 +2757,7 @@ body.playing .header-container { display: none; }
 <!-- CAMPAIGN MAP SCREEN -->
 <div id="campaign-map-screen" class="screen">
   <div class="progress-nav">
-    <button class="btn btn-secondary" onclick="showModeSelectScreen()">&#8592; Back</button>
+    <button class="btn btn-secondary" onclick="state.mode='vocab';localStorage.setItem(LS_KEY+'-mode','vocab');showModeSelectScreen()">&#8592; Back</button>
     <span class="nav-title">Campaign</span>
     <span style="width:60px;"></span>
   </div>
@@ -2830,7 +2830,7 @@ body.playing .header-container { display: none; }
 <!-- GRAMMAR TOPIC SELECT SCREEN -->
 <div id="grammar-topic-screen" class="screen">
   <div class="progress-nav">
-    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+    <button class="btn btn-secondary" onclick="showHomeScreen()">← Back</button>
     <span class="nav-title" id="grammar-topic-title">Grammar Topics</span>
   </div>
   <div id="grammar-topic-list" class="grammar-topic-list"></div>
@@ -2839,7 +2839,7 @@ body.playing .header-container { display: none; }
 <!-- GRAMMAR REFERENCE SCREEN -->
 <div id="grammar-ref-screen" class="screen">
   <div class="progress-nav">
-    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+    <button class="btn btn-secondary" onclick="showHomeScreen()">← Back</button>
     <span class="nav-title">Grammar Reference</span>
   </div>
   <div id="grammar-ref-content" class="grammar-ref-content"></div>
@@ -2989,7 +2989,7 @@ body.playing .header-container { display: none; }
 <!-- LEADERBOARD SCREEN -->
 <div id="leaderboard-screen" class="screen">
   <div class="progress-nav">
-    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+    <button class="btn btn-secondary" onclick="showHomeScreen()">← Back</button>
   </div>
   <h2 style="margin-bottom:0.5rem;">🏆 Class Leaderboard</h2>
   <div id="lb-main"></div>
@@ -3007,7 +3007,7 @@ body.playing .header-container { display: none; }
 <!-- PROGRESS SCREEN -->
 <div id="progress-screen" class="screen">
   <div class="progress-nav">
-    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+    <button class="btn btn-secondary" onclick="showHomeScreen()">← Back</button>
   </div>
 
   <!-- Overall ring + stats -->
@@ -3103,7 +3103,7 @@ body.playing .header-container { display: none; }
 <!-- WORD REFERENCE SCREEN -->
 <div id="reference-screen" class="screen">
   <div class="progress-nav">
-    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+    <button class="btn btn-secondary" onclick="showHomeScreen()">← Back</button>
   </div>
 
   <div class="card" style="margin-bottom:0.8rem;">
@@ -3151,7 +3151,7 @@ body.playing .header-container { display: none; }
 <!-- BATTLE HISTORY SCREEN -->
 <div id="battle-history-screen" class="screen">
   <div class="progress-nav">
-    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+    <button class="btn btn-secondary" onclick="showHomeScreen()">← Back</button>
     <h2 style="flex:1;text-align:center;margin:0;">Battle History</h2>
     <div style="width:60px;"></div>
   </div>
@@ -3179,7 +3179,7 @@ body.playing .header-container { display: none; }
 
 <div id="map-screen" class="screen">
   <div class="progress-nav">
-    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+    <button class="btn btn-secondary" onclick="showHomeScreen()">← Back</button>
     <h2 style="flex:1;text-align:center;margin:0;">Journey Map</h2>
     <div style="width:60px;"></div>
   </div>
@@ -10286,7 +10286,7 @@ function renderGrammarTypeCards() {
     'context-picker': { icon: '🎯', name: 'Context Picker', desc: 'Pick the sentence that fits' },
   };
 
-  let html = '<div class="progress-nav"><button class="btn btn-secondary" onclick="goHome()">← Back</button><span class="nav-title">Practice Grammar</span></div>';
+  let html = '<div class="progress-nav"><button class="btn btn-secondary" onclick="showHomeScreen()">← Back</button><span class="nav-title">Practice Grammar</span></div>';
   html += renderGrammarPracticeTabs('tasks');
   html += renderGrammarLevelSelector();
   html += '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0.3rem 0;">';
@@ -10430,7 +10430,7 @@ function renderGrammarUnits() {
   const gProgress = d.grammarProgress || {};
 
   // Build unit list with tabs
-  let html = '<div class="progress-nav"><button class="btn btn-secondary" onclick="goHome()">← Back</button><span class="nav-title">Practice Grammar</span></div>';
+  let html = '<div class="progress-nav"><button class="btn btn-secondary" onclick="showHomeScreen()">← Back</button><span class="nav-title">Practice Grammar</span></div>';
   html += renderGrammarPracticeTabs('topics');
   html += renderGrammarLevelSelector();
   html += '<div style="display:flex;flex-direction:column;gap:8px;padding:0.3rem 0;">';
@@ -11477,7 +11477,7 @@ goHome = function() {
 <!-- DUEL HUB SCREEN -->
 <div id="duel-hub-screen" class="screen">
   <div class="progress-nav">
-    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+    <button class="btn btn-secondary" onclick="showHomeScreen()">← Back</button>
     <h2 id="duel-hub-title" style="flex:1;text-align:center;margin:0;">Word Duel</h2>
     <div style="width:60px;"></div>
   </div>
@@ -11585,7 +11585,7 @@ grammarDataLoaded = true;
 <!-- DUEL HUB SCREEN -->
 <div id="duel-hub-screen" class="screen">
   <div class="progress-nav">
-    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+    <button class="btn btn-secondary" onclick="showHomeScreen()">← Back</button>
     <h2 id="duel-hub-title" style="flex:1;text-align:center;margin:0;">Word Duel</h2>
     <div style="width:60px;"></div>
   </div>
@@ -13329,7 +13329,7 @@ function escapeHtml(str) {
 <!-- DUEL HUB SCREEN -->
 <div id="duel-hub-screen" class="screen">
   <div class="progress-nav">
-    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+    <button class="btn btn-secondary" onclick="showHomeScreen()">← Back</button>
     <h2 id="duel-hub-title" style="flex:1;text-align:center;margin:0;">Word Duel</h2>
     <div style="width:60px;"></div>
   </div>
