@@ -2421,6 +2421,15 @@ body.playing .header-container { display: none; }
   background: var(--card); cursor: pointer; transition: all 0.15s;
   box-shadow: var(--shadow-card); text-align: left; box-sizing: border-box;
 }
+.home-fullwidth-info { flex: 1; min-width: 0; }
+.home-fullwidth-title { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 0.92rem; color: var(--text); display: block; }
+.home-fullwidth-subtitle { font-size: 0.72rem; color: var(--muted); display: block; margin-top: 1px; }
+.home-fullwidth-icon { font-size: 1.5rem; flex-shrink: 0; width: 36px; text-align: center; }
+.home-fullwidth-arrow { color: var(--muted); font-size: 0.9rem; flex-shrink: 0; }
+.home-fullwidth-card:hover { border-color: var(--accent); box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.home-action-icon { font-size: 1.4rem; line-height: 1; }
+.home-action-label { font-size: 0.75rem; font-weight: 700; color: var(--text); font-family: 'Fredoka', sans-serif; text-align: center; line-height: 1.2; }
+
 .home-fullwidth-card:hover { border-color: var(--accent); background: var(--card-hover); transform: translateY(-1px); }
 .home-fullwidth-card:active { transform: scale(0.98); }
 .home-fullwidth-card { background: #fff; }
@@ -2532,14 +2541,7 @@ body.playing .header-container { display: none; }
 .campaign-card-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; }
 .campaign-card-fill { height: 100%; background: #4ade80; border-radius: 3px; transition: width 0.6s ease; }
 
-/* ===== FULLWIDTH CARD CHILDREN (from G1) ===== */
-.home-fullwidth-info { flex: 1; min-width: 0; }
-.home-fullwidth-title { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 0.92rem; color: var(--text); display: block; }
-.home-fullwidth-subtitle { font-size: 0.72rem; color: var(--muted); display: block; margin-top: 1px; }
-.home-fullwidth-icon { font-size: 1.5rem; flex-shrink: 0; width: 36px; text-align: center; }
-.home-fullwidth-arrow { color: var(--muted); font-size: 0.9rem; flex-shrink: 0; }
-.home-action-icon { font-size: 1.4rem; line-height: 1; }
-.home-action-label { font-size: 0.75rem; font-weight: 700; color: var(--text); font-family: 'Fredoka', sans-serif; text-align: center; line-height: 1.2; }
+
 </style>
 <script src="data/m2-campaign.js"></script>
 <!-- Watson Manor Case critical-path image preload (v2.2) -->
