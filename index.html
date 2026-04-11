@@ -4469,6 +4469,51 @@ function showClassLevelProgression() {
   loadClassLevelRoadmap();
 }
 
+async function loadClassLevelRoadmap() {
+  var container = document.getElementById('class-level-roadmap-content');
+  if (!container || !db || !CLASS_ID) return;
+  try {
+    var snap = await db.collection('classes').doc(CLASS_ID).collection('students').get();
+    var totalXp = 0, count = 0;
+    snap.forEach(function(doc) { var d = doc.data(); totalXp += (d.xp || 0) + (d.grammarXp || 0); count++; });
+    var cl = getClassLevel(totalXp);
+    var sectionLabel = SECTIONS.find(function(s) { return s.id === CLASS_ID; });
+    var label = sectionLabel ? sectionLabel.label : CLASS_ID;
+    var html = '';
+    // Current class level card
+    html += '<div style="background:linear-gradient(135deg,var(--accent-deep),var(--accent));border-radius:var(--radius-lg);padding:1.2rem;margin-bottom:1rem;color:#fff;text-align:center;">';
+    html += '<div style="font-size:1rem;opacity:0.8;margin-bottom:4px;">' + (uiLang==='de'?'Klasse':'Class') + ' ' + label + ' · ' + count + ' ' + (uiLang==='de'?'Schüler':'students') + '</div>';
+    html += '<div style="font-size:2.2rem;font-weight:900;font-family:Fredoka,sans-serif;">Lv ' + cl.level + '</div>';
+    html += '<div style="font-size:1rem;font-weight:700;margin-top:4px;">' + cl.name + '</div>';
+    if (cl.vibe) html += '<div style="font-size:0.78rem;opacity:0.8;font-style:italic;margin-top:2px;">' + cl.vibe + '</div>';
+    html += '<div style="margin-top:8px;font-size:0.82rem;opacity:0.9;">' + totalXp.toLocaleString() + ' XP ' + (uiLang==='de'?'gesamt':'total') + '</div>';
+    if (cl.next) {
+      var pct = Math.round(cl.progress * 100);
+      html += '<div style="height:8px;background:rgba(255,255,255,0.2);border-radius:4px;overflow:hidden;margin-top:8px;"><div style="width:' + pct + '%;height:100%;background:#fff;border-radius:4px;"></div></div>';
+      html += '<div style="font-size:0.7rem;opacity:0.7;margin-top:4px;">' + (cl.next.xp - totalXp).toLocaleString() + ' XP ' + (uiLang==='de'?'bis':'to') + ' ' + cl.next.name + '</div>';
+    }
+    html += '</div>';
+    // Roadmap
+    html += '<div style="background:var(--card);border:1.5px solid var(--card-border);border-radius:var(--radius-lg);padding:0.8rem;">';
+    CLASS_LEVELS.forEach(function(lv) {
+      var done = totalXp >= lv.xp && lv.level < cl.level;
+      var isCurrent = lv.level === cl.level;
+      var locked = lv.level > cl.level;
+      var bg = isCurrent ? 'background:var(--accent-glow);border-radius:10px;padding:10px 8px;margin:2px -8px;' : '';
+      html += '<div class="roadmap-item" style="' + (locked?'opacity:0.4;':'') + bg + '">';
+      html += '<div class="roadmap-lvl" style="color:var(--accent);">' + lv.level + '</div>';
+      html += '<div class="roadmap-icon" style="background:var(--accent-glow);">' + (done ? '<span class="roadmap-check">✓</span>' : '🏫') + '</div>';
+      html += '<div class="roadmap-info"><div class="roadmap-name"' + (isCurrent?' style="color:var(--accent);font-weight:800;"':'') + '>' + (locked ? '?? ??' : lv.name) + '</div>';
+      if (!locked && lv.vibe) html += '<div class="roadmap-vibe">' + lv.vibe + '</div>';
+      html += '</div>';
+      html += '<div class="roadmap-xp">' + (isCurrent ? '<strong style="color:var(--accent);">YOU</strong>' : (lv.xp === 0 ? 'Start' : lv.xp.toLocaleString() + ' XP')) + '</div></div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  } catch(e) { container.innerHTML = '<p style="color:var(--muted);">Error loading class data</p>'; }
+}
+
+
 
 
 const ZONE_COLORS = {
@@ -10157,6 +10202,7 @@ function _showGrammarProgressScreen() {
 }
 
 function showGrammarHomeScreen() {
+  loadGrammarData();
   const sectionLabel = SECTIONS.find(s => s.id === CLASS_ID)?.label || CLASS_ID;
   document.getElementById('welcome-name').textContent = state.studentName;
   const classTag = document.getElementById('profile-class-tag');
@@ -10257,6 +10303,7 @@ function addModeSwitchPill() { return; /* disabled — mode switch via home-mode
 let grammarPracticeTab = 'topics'; // 'topics' or 'tasks'
 
 function openGrammarPractice() {
+  initGrammarLevelFilter();
   if (grammarPracticeTab === 'tasks') {
     renderGrammarTypeCards();
   } else {
