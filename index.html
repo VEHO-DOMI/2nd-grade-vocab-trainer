@@ -9982,45 +9982,79 @@ showHomeScreen = function() {
   } else if (state.mode === 'grammar') {
     showGrammarHomeScreen();
   } else {
-    // Restore vocab UI elements before showing
-    const practiceBtn = document.querySelector('.btn-start-practice');
+    // Restore vocab UI elements
+    var practiceBtn = document.querySelector('.btn-start-practice');
     if (practiceBtn) {
-      practiceBtn.textContent = '\uD83C\uDFAF Start Practice';
+      var pLabel = document.getElementById('practice-btn-label');
+      if (pLabel) pLabel.textContent = '🎯 ' + t('startVocabPractice');
+      else practiceBtn.textContent = '🎯 ' + t('startVocabPractice');
       practiceBtn.onclick = openPracticeSetup;
     }
-    // Restore Words button (was Rules in grammar mode)
-    const wordsBtn = document.getElementById('home-words-btn');
+    var practiceSub = document.getElementById('practice-subtitle');
+    if (practiceSub) practiceSub.textContent = uiLang==='de' ? 'Units und Übungsformat auswählbar' : 'Choose units and exercise type';
+    // Words card
+    var wordsBtn = document.getElementById('home-words-btn');
     if (wordsBtn) {
-      wordsBtn.textContent = '\uD83D\uDCD6 Words';
+      var wIcon = wordsBtn.querySelector('.home-fullwidth-icon'); if (wIcon) wIcon.textContent = '📖';
+      var wTitle = document.getElementById('home-words-title'); if (wTitle) wTitle.textContent = uiLang==='de' ? 'Wörterbuch' : 'Dictionary';
+      var wSub = document.getElementById('home-words-subtitle'); if (wSub) wSub.textContent = uiLang==='de' ? 'Deine gesamte Vokabel-Bibliothek durchsuchen' : 'Browse your full vocabulary library';
       wordsBtn.onclick = function() { showWordReference(); };
     }
-    const navGrid = document.querySelector('.home-nav-grid');
-    if (navGrid) {
-      navGrid.innerHTML = '<button class="btn btn-secondary btn-small" onclick="showProgressMap()">\uD83D\uDDFA\uFE0F<span>Map</span></button>' +
-        '<button class="btn btn-secondary btn-small" onclick="showProgressScreen()">\uD83D\uDCCA<span>Progress</span></button>' +
-        '<button class="btn btn-secondary btn-small" onclick="showLeaderboard()">\uD83C\uDFC6<span>Leaderboard</span></button>';
+    // Smart review hint
+    var srHint = document.getElementById('smart-review-hint');
+    var reviewWords = getSmartReviewWords();
+    if (srHint) {
+      if (reviewWords.length > 0) {
+        srHint.style.display = 'flex';
+        document.getElementById('smart-review-hint-text').textContent = reviewWords.length + ' ' + (uiLang==='de' ? 'Wörter zur Wiederholung' : 'words to review');
+        srHint.onclick = function() { startSmartReview(); };
+      } else { srHint.style.display = 'none'; }
     }
-    // Update mode pill if present
-    const pill = document.getElementById('mode-switch-pill');
-    if (pill) {
-      pill.className = 'mode-pill';
-      pill.innerHTML = '<span>Current: \uD83D\uDCDA Vocab</span> <span style="margin-left:8px;padding:2px 10px;background:var(--accent-glow);border:1px solid var(--accent);border-radius:8px;font-size:0.7rem;cursor:pointer;">Switch Mode</span>';
-      pill.onclick = function() { showModeSelectScreen(); };
-    }
-    // Restore today-card innerHTML (grammar mode replaces it with Rule of the Day)
-    const todayCard = document.getElementById('today-card');
+    var srDesc = document.getElementById('smart-review-desc');
+    if (srDesc) srDesc.textContent = uiLang==='de' ? 'Übt automatisch Wörter, die du falsch hattest' : 'Automatically reviews words you got wrong';
+    // Mode switch link
+    var modeLink = document.getElementById('home-mode-switch');
+    if (modeLink) modeLink.textContent = uiLang==='de' ? '🔄 Zu Grammatik oder Story Mode wechseln' : '🔄 Switch to Grammar or Story Mode';
+    // Battle arena subtitle
+    var bSub = document.getElementById('battle-arena-subtitle');
+    if (bSub) bSub.textContent = uiLang==='de' ? 'Duell, Klassenquiz & Kampfverlauf' : 'Duel, Class Quiz & Battle History';
+    // Restore today-card
+    var todayCard = document.getElementById('today-card');
     if (todayCard) {
       todayCard.style.display = 'none';
       todayCard.innerHTML =
-        '<div class="today-section"><div class="today-header"><span class="today-label">\uD83D\uDCDD Word of the Day</span><span class="today-source" id="wotd-source"></span></div><div class="today-wotd"><span class="today-word" id="wotd-word"></span><span class="today-german" id="wotd-german"></span></div><div class="today-def" id="wotd-def"></div></div>' +
+        '<div class="today-section"><div class="today-header"><span class="today-label">📝 ' + t('wordOfTheDay') + '</span><span class="today-source" id="wotd-source"></span></div><div class="today-wotd"><span class="today-word" id="wotd-word"></span><span class="today-german" id="wotd-german"></span></div><div class="today-def" id="wotd-def"></div></div>' +
         '<div class="today-divider"></div>' +
-        '<div class="today-section"><div class="today-header"><span class="today-label">\u26A1 Daily Challenge</span><span class="today-date" id="daily-date"></span></div><div class="today-daily-desc">10 words \u00B7 same for everyone today</div><div id="daily-action"></div></div>';
+        '<div class="today-section"><div class="today-header"><span class="today-label">⚡ ' + t('dailyChallenge') + '</span><span class="today-date" id="daily-date"></span></div><div class="today-daily-desc">10 ' + t('words').toLowerCase() + ' · ' + (uiLang==='de' ? 'gleich für alle heute' : 'same for everyone today') + '</div><div id="daily-action"></div></div>';
     }
-    // Restore weekly goal card visibility (grammar mode hides it)
-    const weeklyCard = document.getElementById('weekly-goal-card');
-    if (weeklyCard) weeklyCard.style.display = '';
+    // Overall level bar
+    var d2 = state.studentData || {};
+    var totalXp = (d2.xp || 0) + (d2.grammarXp || 0);
+    var ol = getOverallLevel(totalXp);
+    var olBadge = document.getElementById('overall-badge');
+    if (olBadge) olBadge.textContent = '🌍 Lv ' + ol.level + ' · ' + ol.name;
+    var olLabel = document.getElementById('overall-label');
+    if (olLabel) olLabel.textContent = totalXp.toLocaleString() + ' XP';
+    var olFill = document.getElementById('overall-progress-fill');
+    if (olFill) olFill.style.width = Math.round(ol.progress * 100) + '%';
+    // Class level
+    loadClassLevel();
+    // Hide weekly goal (replaced by class level)
+    var wgc = document.getElementById('weekly-goal-card');
+    if (wgc) wgc.style.display = 'none';
     _origShowHomeScreen();
-    addModeSwitchPill();
+  }
+  // Show deferred campaign level-ups
+  if (window._campaignLevelUps && window._campaignLevelUps.length > 0) {
+    var levelsToShow = [];
+    window._campaignLevelUps.forEach(function(lu) {
+      var levelDefs = lu.mode === 'grammar' ? GRAMMAR_LEVELS : LEVELS;
+      if (levelDefs[lu.level - 1]) levelsToShow.push(levelDefs[lu.level - 1]);
+    });
+    window._campaignLevelUps = [];
+    if (levelsToShow.length > 0 && typeof showLevelUpQueue === 'function') {
+      setTimeout(function() { showLevelUpQueue(levelsToShow); }, 500);
+    }
   }
 };
 
@@ -10180,7 +10214,7 @@ function showGrammarHomeScreen() {
   if (battleBtn) battleBtn.style.display = '';
 }
 
-function addModeSwitchPill() {
+function addModeSwitchPill() { return; /* disabled — mode switch via home-mode-switch btn */
   let pill = document.getElementById('mode-switch-pill');
   if (!pill) {
     pill = document.createElement('div');
