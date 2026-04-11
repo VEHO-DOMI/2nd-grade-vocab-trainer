@@ -11413,31 +11413,12 @@ function toggleRefCard(header) {
 // --- Restore vocab home when switching back ---
 const _origGoHome = goHome;
 goHome = function() {
-  if (state.mode === 'grammar') {
-    document.body.classList.remove('playing');
-    // Restore practice button
-    const practiceBtn = document.querySelector('.btn-start-practice');
-    if (practiceBtn) {
-      practiceBtn.textContent = '🧠 Start Grammar Practice';
-      practiceBtn.onclick = openGrammarPractice;
-    }
-    showGrammarHomeScreen();
-  } else {
-    // Restore vocab nav and practice button
-    const practiceBtn = document.querySelector('.btn-start-practice');
-    if (practiceBtn) {
-      practiceBtn.textContent = '🎯 Start Practice';
-      practiceBtn.onclick = openPracticeSetup;
-    }
-    const navGrid = document.querySelector('.home-nav-grid');
-    if (navGrid) {
-      navGrid.innerHTML = '<button class="btn btn-secondary btn-small" onclick="showProgressMap()">🗺️<span>Map</span></button>' +
-        '<button class="btn btn-secondary btn-small" onclick="showProgressScreen()">📊<span>Progress</span></button>' +
-        '<button class="btn btn-secondary btn-small" onclick="showLeaderboard()">🏆<span>Leaderboard</span></button>' +
-        '<button class="btn btn-secondary btn-small" onclick="showWordReference()">📖<span>Words</span></button>';
-    }
-    _origGoHome();
-  }
+  // Simplified: just do cleanup then route through mode-aware showHomeScreen
+  resetSpeedTimer();
+  state.isSprint = false;
+  state.isSpeedRound = false;
+  document.body.classList.remove('playing');
+  showHomeScreen();
 };
 
 </script>
