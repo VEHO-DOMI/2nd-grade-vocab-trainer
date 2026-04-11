@@ -2434,7 +2434,7 @@ body.playing .header-container { display: none; }
 
 .home-fullwidth-card:hover { border-color: var(--accent); background: var(--card-hover); transform: translateY(-1px); }
 .home-fullwidth-card:active { transform: scale(0.98); }
-.home-fullwidth-card { background: #fff; }
+.home-fullwidth-card { background: var(--card-solid, #fff); }
 .home-action-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%;
 }
@@ -2446,7 +2446,7 @@ body.playing .header-container { display: none; }
 }
 .home-action-card:hover { border-color: var(--accent); background: var(--card-hover); transform: translateY(-1px); }
 .home-action-card:active { transform: scale(0.97); }
-.home-action-card { background: #fff; }
+.home-action-card { background: var(--card-solid, #fff); }
 .home-class-level-card {
   background: var(--card); border: 1.5px solid var(--card-border); border-radius: var(--radius);
   padding: 0.8rem 1rem; margin-bottom: 0.6rem; box-shadow: var(--shadow-card); width: 100%;
