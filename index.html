@@ -10479,13 +10479,20 @@ function renderGrammarUnits() {
   html += renderGrammarPracticeTabs('topics');
   html += renderGrammarLevelSelector();
   html += '<div style="display:flex;flex-direction:column;gap:8px;padding:0.3rem 0;">';
-  const unitNames = {
+  const m1UnitNames = {
+    1:'Time for School', 2:'At the Zoo', 3:'My Family', 4:'After School',
+    5:'Favourite Things', 6:'Daily Life', 7:'Food & Drink', 8:'Asking Questions',
+    9:'Around Town', 10:'In a Shop', 11:"What's the Time?", 12:'The Birthday Cake',
+    13:'Help!', 14:"It's My Favourite", 15:'Holiday Plans'
+  };
+  const m2UnitNames = {
     1:'First Day Back at School', 2:'How Embarrassing!', 3:'Halloween',
     4:'What an Animal!', 5:"Where's the Supermarket?", 6:'Time for Adventure',
     7:'Plans for the Weekend', 8:'Out of This World', 9:'Eating Out',
     10:"Who's in Your Family?", 11:'Homes', 12:'Feeling Bad and Feeling Better',
     13:'Rain and Sun', 14:'Move and Keep Fit!', 15:'Caring for Animals'
   };
+  const unitNames = grammarLevelFilter === 'm1' ? m1UnitNames : m2UnitNames;
   Object.keys(unitMap).sort((a,b) => a - b).forEach(u => {
     const structs = unitMap[u];
     const masteredCount = structs.filter(s => {
@@ -11404,8 +11411,9 @@ function renderGrammarDailyCard() {
 
 // --- Grammar Reference ---
 function showGrammarReference() {
+  initGrammarLevelFilter();
   const showDe = typeof SHOW_DE_FEEDBACK !== 'undefined' ? SHOW_DE_FEEDBACK : true;
-  let html = '';
+  let html = renderGrammarLevelSelector();
   grammarStructures.forEach(s => {
     const practiceBtn = '<button class="grammar-practice-full-btn" onclick="showGrammarFormatSelection(\'' + s.id + '\', \'reference\')">\u25B6 Practice this</button>';
     html += '<div class="grammar-ref-card">';
