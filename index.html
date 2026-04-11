@@ -9922,7 +9922,7 @@ function onGrammarLevelChange(level) {
   setGrammarLevelFilter(level);
   // Stay on current screen (practice or reference)
   var refScreen = document.getElementById('grammar-ref-screen');
-  if (refScreen && refScreen.style.display !== 'none') {
+  if (refScreen && refScreen.classList.contains('active')) {
     showGrammarReference();
   } else {
     openGrammarPractice();
