@@ -10158,59 +10158,74 @@ function showGrammarHomeScreen() {
   const d = state.studentData || {};
   const gxp = d.grammarXp || 0;
   const glv = getLevel(gxp);
-  document.getElementById('welcome-xp').innerHTML = '⭐ ' + gxp.toLocaleString() + ' XP · <span style="opacity:0.7;">' + glv.name + '</span>' + (glv.vibe ? '<br><span style="opacity:0.5;font-style:italic;font-size:0.75rem;">' + glv.vibe + '</span>' : '');
+  document.getElementById('welcome-xp').innerHTML = '⭐ ' + gxp.toLocaleString() + ' XP';
+  var vibeEl = document.getElementById('welcome-vibe');
+  if (vibeEl) vibeEl.textContent = glv.vibe || '';
   updateAllAvatars();
-  // Stats
+  updateRankDisplay();
+  renderBadgeRow();
+  // Stats (hidden but kept for data)
   document.getElementById('stat-sessions').textContent = d.grammarSessions || 0;
   const gAns = d.grammarAnswered || 0;
   const gCorr = d.grammarCorrect || 0;
   const acc = gAns > 0 ? Math.round((gCorr / gAns) * 100) + '%' : '–';
   document.getElementById('stat-accuracy').textContent = acc;
-  const mastered = getGrammarMasteredCount();
-  document.getElementById('stat-mastered').textContent = mastered;
+  document.getElementById('stat-mastered').textContent = getGrammarMasteredCount();
   document.getElementById('stat-streak').textContent = d.grammarStreak || 0;
-  updateRankDisplay();
-  renderBadgeRow();
-  // Show grammar daily card (Rule of the Day + Daily Grammar Challenge)
+  // Daily card
   renderGrammarDailyCard();
-  const weeklyCard = document.getElementById('weekly-goal-card');
+  var weeklyCard = document.getElementById('weekly-goal-card');
   if (weeklyCard) weeklyCard.style.display = 'none';
-  // Update practice button
-  const practiceBtn = document.querySelector('.btn-start-practice');
+  // Practice button + subtitle
+  var practiceBtn = document.querySelector('.btn-start-practice');
   if (practiceBtn) {
-    practiceBtn.textContent = '\uD83E\uDDE0 Start Grammar Practice';
+    var pLabel = document.getElementById('practice-btn-label');
+    if (pLabel) pLabel.textContent = '🧠 ' + t('startGrammarPractice');
+    else practiceBtn.textContent = '🧠 ' + t('startGrammarPractice');
     practiceBtn.onclick = openGrammarPractice;
   }
-  // Swap Words → Rules in action area
-  const wordsBtn = document.getElementById('home-words-btn');
+  var practiceSub = document.getElementById('practice-subtitle');
+  if (practiceSub) practiceSub.textContent = uiLang==='de' ? 'Themen und Aufgabentyp auswählbar' : 'Choose topics and exercise type';
+  // Smart review hint
+  var srHint = document.getElementById('smart-review-hint');
+  var srDesc = document.getElementById('smart-review-desc');
+  var weakStructures = getGrammarWeakStructures();
+  if (srHint) {
+    if (weakStructures.length > 0) {
+      srHint.style.display = 'flex';
+      document.getElementById('smart-review-hint-text').textContent = weakStructures.length + ' ' + t('topics') + ' ' + (uiLang==='de' ? 'zur Wiederholung' : 'to review');
+      srHint.onclick = function() { startGrammarSmartReview(weakStructures); };
+    } else { srHint.style.display = 'none'; }
+  }
+  if (srDesc) srDesc.textContent = uiLang==='de' ? 'Übt automatisch Themen, die du falsch hattest' : 'Automatically reviews topics you got wrong';
+  // Mode switch link
+  var modeLink = document.getElementById('home-mode-switch');
+  if (modeLink) modeLink.textContent = uiLang==='de' ? '🔄 Zu Vokabel oder Story Mode wechseln' : '🔄 Switch to Vocab or Story Mode';
+  // Words → Rules card
+  var wordsBtn = document.getElementById('home-words-btn');
   if (wordsBtn) {
-    wordsBtn.textContent = '\uD83D\uDCDD Rules';
+    var wIcon = wordsBtn.querySelector('.home-fullwidth-icon'); if (wIcon) wIcon.textContent = '📝';
+    var wTitle = document.getElementById('home-words-title'); if (wTitle) wTitle.textContent = uiLang==='de' ? 'Regelübersicht' : 'Grammar Rules';
+    var wSub = document.getElementById('home-words-subtitle'); if (wSub) wSub.textContent = uiLang==='de' ? 'Alle Grammatik-Regeln nachschlagen' : 'Browse all grammar rules';
     wordsBtn.onclick = function() { showGrammarReference(); };
   }
-  // Smart review for grammar
-  const reviewBtn = document.getElementById('review-btn');
-  if (reviewBtn) {
-    const weakStructures = getGrammarWeakStructures();
-    if (weakStructures.length > 0) {
-      reviewBtn.style.display = '';
-      reviewBtn.textContent = '🔄 Smart Review (' + weakStructures.length + ' topics)';
-      reviewBtn.onclick = function() { startGrammarSmartReview(weakStructures); };
-    } else {
-      reviewBtn.style.display = 'none';
-    }
-  }
-  // Update nav buttons
-  const navGrid = document.querySelector('.home-nav-grid');
-  if (navGrid) {
-    navGrid.innerHTML = '<button class="btn btn-secondary btn-small" onclick="showGrammarMap()">\uD83D\uDDFA\uFE0F<span>Map</span></button>' +
-      '<button class="btn btn-secondary btn-small" onclick="showProgressScreen()">\uD83D\uDCCA<span>Progress</span></button>' +
-      '<button class="btn btn-secondary btn-small" onclick="showLeaderboard()">\uD83C\uDFC6<span>Leaderboard</span></button>';
-  }
-  // Add mode switch pill
-  addModeSwitchPill();
+  // Battle arena subtitle
+  var bSub = document.getElementById('battle-arena-subtitle');
+  if (bSub) bSub.textContent = uiLang==='de' ? 'Duell, Klassenquiz & Kampfverlauf' : 'Duel, Class Quiz & Battle History';
+  // Overall level bar
+  var totalXp = (d.xp || 0) + (d.grammarXp || 0);
+  var ol = getOverallLevel(totalXp);
+  var olBadge = document.getElementById('overall-badge');
+  if (olBadge) olBadge.textContent = '🌍 Lv ' + ol.level + ' · ' + ol.name;
+  var olLabel = document.getElementById('overall-label');
+  if (olLabel) olLabel.textContent = totalXp.toLocaleString() + ' XP';
+  var olFill = document.getElementById('overall-progress-fill');
+  if (olFill) olFill.style.width = Math.round(ol.progress * 100) + '%';
+  // Class level
+  loadClassLevel();
   showScreen('home-screen');
   setupPresence();
-  const battleBtn = document.getElementById('btn-battle');
+  var battleBtn = document.getElementById('btn-battle');
   if (battleBtn) battleBtn.style.display = '';
 }
 
