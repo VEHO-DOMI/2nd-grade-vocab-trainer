@@ -7683,12 +7683,18 @@ async function contributeToWeeklyGoal(sessionXp) {
 function renderWeeklyGoal() {
   const card = document.getElementById('weekly-goal-card');
   if (!card) return;
+  // Weekly goal replaced by class level card — keep hidden
+  card.style.display = 'none';
+  var fill = document.getElementById('weekly-goal-fill');
+  var text = document.getElementById('weekly-goal-text');
+  var label = document.getElementById('weekly-goal-label');
+  if (!fill || !text || !label) return;
   card.style.display = '';
   const current = weeklyGoalData.xp || 0;
   const pct = Math.min(100, Math.round((current / WEEKLY_GOAL_TARGET) * 100));
-  document.getElementById('weekly-goal-fill').style.width = pct + '%';
-  document.getElementById('weekly-goal-text').textContent = `${current.toLocaleString()} / ${WEEKLY_GOAL_TARGET.toLocaleString()} XP (${pct}%)`;
-  document.getElementById('weekly-goal-label').textContent = 'Week of ' + getCurrentWeekMonday();
+  fill.style.width = pct + '%';
+  text.textContent = current.toLocaleString() + ' / ' + WEEKLY_GOAL_TARGET.toLocaleString() + ' XP (' + pct + '%)';
+  label.textContent = 'Week of ' + getCurrentWeekMonday();
 }
 
 
