@@ -314,11 +314,30 @@ h1 { display: none; }
 
 /* Combo multiplier */
 @keyframes comboPulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.12);} }
+
+@keyframes comboTierUp { 0%{transform:scale(0.5);opacity:0;} 50%{transform:scale(1.3);} 100%{transform:scale(1);opacity:1;} }
+@keyframes xpBurst { 0%{opacity:1;transform:translateY(0) scale(1);} 100%{opacity:0;transform:translateY(-60px) scale(1.2);} }
 @keyframes comboLostFlash { 0%{opacity:1;transform:translate(-50%,-50%) scale(1.1);} 100%{opacity:0;transform:translate(-50%,-50%) scale(0.8);} }
 #combo-badge.x15 { background: #5DCAA5; color: #04342C; }
 #combo-badge.x2 { background: #EF9F27; color: #412402; }
 #combo-badge.x3 { background: #E24B4A; color: #fff; }
 @keyframes popIn { 0%{transform:scale(0.5);opacity:0;} 100%{transform:scale(1);opacity:1;} }
+.xp-burst {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 1.8rem; font-weight: 900; color: var(--accent); font-family: 'Fredoka', sans-serif;
+  pointer-events: none; z-index: 9999; text-shadow: 0 2px 8px rgba(22,163,74,0.3);
+  animation: xpBurst 0.9s ease-out forwards;
+}
+/* Error Correction clickable words */
+.ec-words { display: flex; flex-wrap: wrap; gap: 4px; line-height: 2; }
+.ec-word {
+  display: inline-block; padding: 4px 8px; border-radius: 8px; cursor: pointer;
+  border: 1.5px solid transparent; transition: all 0.15s; font-size: 1rem;
+}
+.ec-word:hover { background: var(--accent-glow); border-color: var(--card-border); }
+.ec-word:active { transform: scale(0.95); }
+.ec-word.ec-selected { background: rgba(220,38,38,0.1); border-color: var(--wrong); color: var(--wrong); font-weight: 700; text-decoration: line-through; }
+
 
 /* Buttons */
 .btn {
@@ -2670,6 +2689,7 @@ body.playing .header-container { display: none; }
   <div class="home-nav-footer">
     <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn btn-secondary btn-small">☀️ Light</button>
     <button id="sfx-toggle-btn" onclick="toggleSfx()" class="btn btn-secondary btn-small">🔊 Sound: ON</button>
+    <button id="lang-toggle-btn" onclick="setUiLang(uiLang==='de'?'en':'de')" class="btn btn-secondary btn-small">🇩🇪 Deutsch</button>
   </div>
 </div>
 
@@ -3671,6 +3691,274 @@ async function selectAvatar(id) {
 function preloadAvatars() { for (let i = 1; i <= TOTAL_AVATARS; i++) { const img = new Image(); img.src = avatarSrc(i); } }
 
 // ===== APP STATE =====
+
+/* ===== UI LANGUAGE SYSTEM ===== */
+let uiLang = localStorage.getItem('ui-lang') || 'de';
+const UI_TEXT = {
+  de: {
+    // Mode select
+    greeting: 'Hallo,',
+    whatToPractice: 'Was möchtest du üben?',
+    vocab: 'Vokabel',
+    grammar: 'Grammatik',
+    storyMode: 'Story Mode',
+    wordsAndDefs: 'Wörter & Bedeutungen',
+    rulesAndStructures: 'Regeln & Strukturen',
+    overallLeaderboard: 'Gesamt-Bestenliste',
+    // Home screen
+    startPractice: 'Übung starten',
+    startGrammarPractice: 'Grammatik üben',
+    startVocabPractice: 'Vokabel üben',
+    smartReview: 'Wiederholung',
+    rules: 'Regeln',
+    words: 'Wörter',
+    classQuiz: 'Klassenquiz',
+    battleArena: 'Battle Arena',
+    map: 'Karte',
+    progress: 'Fortschritt',
+    leaderboard: 'Bestenliste',
+    ruleOfTheDay: 'Regel des Tages',
+    wordOfTheDay: 'Wort des Tages',
+    dailyChallenge: 'Tägliche Challenge',
+    dailyGrammarChallenge: 'Tägliche Grammatik-Challenge',
+    // Stats
+    sessions: 'Sitzungen',
+    accuracy: 'Genauigkeit',
+    mastered: 'Gemeistert',
+    streak: 'Serie',
+    // Navigation
+    switchMode: 'Modus wechseln',
+    current: 'Aktuell',
+    back: 'Zurück',
+    logOut: 'Abmelden',
+    settings: 'Einstellungen',
+    language: 'Sprache',
+    theme: 'Erscheinungsbild',
+    sound: 'Sound',
+    light: 'Hell',
+    dark: 'Dunkel',
+    soundOn: 'Sound: AN',
+    soundOff: 'Sound: AUS',
+    // Grammar practice
+    practiceGrammar: 'Grammatik üben',
+    byTopic: 'Nach Thema',
+    byTask: 'Nach Aufgabe',
+    topics: 'Themen',
+    started: 'begonnen',
+    sprint: 'Sprint',
+    sprintDesc: 'Gemischte Aufgaben, schnelle Runde',
+    focusPractice: 'Gezieltes Üben',
+    selectTypeToStart: 'Wähle eine Aufgabe zum Starten',
+    items: 'Aufgaben',
+    // Vocab practice
+    selectUnits: 'Units auswählen',
+    chooseMode: 'Modus wählen',
+    step1of2: 'Schritt 1 von 2',
+    step2of2: 'Schritt 2 von 2',
+    selectAll: 'Alle auswählen',
+    clear: 'Zurücksetzen',
+    next: 'Weiter',
+    go: 'Los!',
+    fullRun: 'Komplett',
+    fullRunDesc: 'Alle gewählten Wörter, gemischte Aufgaben',
+    sprintMode: 'Sprint',
+    sprintModeDesc: '10 zufällige Wörter, schnelle Runde',
+    speedRound: 'Speed-Runde',
+    speedRoundDesc: '60 Sekunden, antworte schnell!',
+    multipleChoice: 'Multiple Choice',
+    multipleChoiceDesc: 'Wähle aus 4 Möglichkeiten',
+    flashcards: 'Karteikarten',
+    flashcardsDesc: 'Lernmodus, kein Druck',
+    exerciseType: 'Aufgabentyp',
+    mix: 'Mix',
+    mixDesc: 'Zufälliger Mix aller Typen',
+    contextEasy: 'Kontext (leicht)',
+    contextEasyDesc: 'Lücke ausfüllen — Anfangsbuchstabe + Buchstabenzahl',
+    contextHard: 'Kontext (schwer)',
+    contextHardDesc: 'Lücke ausfüllen — nur Anfangsbuchstabe',
+    definitionEasy: 'Definition (leicht)',
+    definitionEasyDesc: 'Definition lesen — Wortzahl + Anfangsbuchstaben',
+    definitionHard: 'Definition (schwer)',
+    definitionHardDesc: 'Definition lesen — keine Hinweise',
+    translation: 'Übersetzung',
+    translationDesc: 'Deutsches Wort sehen, Englisch tippen',
+    wordPartners: 'Wort-Partner',
+    wordPartnersDesc: 'Welches Wort passt nicht & Wort-Partner',
+    // Quiz
+    skip: 'Überspringen',
+    check: 'Prüfen',
+    correct: 'Richtig!',
+    correctAnswerIs: 'Die richtige Antwort ist:',
+    endPractice: 'Übung beenden',
+    chooseOpponent: 'Gegner wählen',
+    classmatOnline: 'Mitschüler online',
+    wordDuel: 'Wort-Duell',
+    grammarDuel: 'Grammatik-Duell',
+    battleHistory: 'Kampf-Verlauf',
+    cancel: 'Abbrechen',
+    challenge: 'Herausfordern',
+    // Results
+    ofCorrect: 'richtig',
+    progressSaved: 'Fortschritt gespeichert!',
+    results: 'Ergebnisse',
+    tryAgain: 'Nochmal',
+    home: 'Startseite',
+    // Progress
+    totalWords: 'Alle Wörter',
+    practiced: 'Geübt',
+    weak: 'Schwach',
+    notYetPracticed: 'Noch nicht geübt',
+    levelRoadmap: 'Level-Übersicht',
+    battleStats: 'Kampf-Statistiken',
+    played: 'Gespielt',
+    won: 'Gewonnen',
+    winRate: 'Siegquote',
+    battleXP: 'Kampf-XP',
+    recentBattles: 'Letzte Kämpfe',
+    bySource: 'Nach Unit',
+    // Words reference
+    searchWords: 'Wörter suchen...',
+    allSources: 'Alle Units',
+    showing: 'Zeige',
+    word: 'Wort',
+    definition: 'Definition',
+    example: 'Beispiel',
+    due: 'Fällig',
+  },
+  en: {
+    greeting: 'Hey,',
+    whatToPractice: 'What do you want to practice?',
+    vocab: 'Vocab',
+    grammar: 'Grammar',
+    storyMode: 'Story Mode',
+    wordsAndDefs: 'Words & Definitions',
+    rulesAndStructures: 'Rules & Structures',
+    overallLeaderboard: 'Overall Leaderboard',
+    startPractice: 'Start Practice',
+    startGrammarPractice: 'Start Grammar Practice',
+    startVocabPractice: 'Start Practice',
+    smartReview: 'Smart Review',
+    rules: 'Rules',
+    words: 'Words',
+    classQuiz: 'Class Quiz',
+    battleArena: 'Battle Arena',
+    map: 'Map',
+    progress: 'Progress',
+    leaderboard: 'Leaderboard',
+    ruleOfTheDay: 'Rule of the Day',
+    wordOfTheDay: 'Word of the Day',
+    dailyChallenge: 'Daily Challenge',
+    dailyGrammarChallenge: 'Daily Grammar Challenge',
+    sessions: 'Sessions',
+    accuracy: 'Accuracy',
+    mastered: 'Mastered',
+    streak: 'Streak',
+    switchMode: 'Switch Mode',
+    current: 'Current',
+    back: 'Back',
+    logOut: 'Log Out',
+    settings: 'Settings',
+    language: 'Language',
+    theme: 'Theme',
+    sound: 'Sound',
+    light: 'Light',
+    dark: 'Dark',
+    soundOn: 'Sound: ON',
+    soundOff: 'Sound: OFF',
+    practiceGrammar: 'Practice Grammar',
+    byTopic: 'By Topic',
+    byTask: 'By Task',
+    topics: 'topics',
+    started: 'started',
+    sprint: 'Sprint',
+    sprintDesc: 'Mixed types, quick round',
+    focusPractice: 'Focus Practice',
+    selectTypeToStart: 'Select a type to start',
+    items: 'items',
+    selectUnits: 'Select Units',
+    chooseMode: 'Choose Mode',
+    step1of2: 'Step 1 of 2',
+    step2of2: 'Step 2 of 2',
+    selectAll: 'Select All',
+    clear: 'Clear',
+    next: 'Next',
+    go: 'Go!',
+    fullRun: 'Full Run',
+    fullRunDesc: 'All selected words, mixed types',
+    sprintMode: 'Sprint',
+    sprintModeDesc: '10 random words, quick round',
+    speedRound: 'Speed Round',
+    speedRoundDesc: '60 seconds, answer fast!',
+    multipleChoice: 'Multiple Choice',
+    multipleChoiceDesc: 'Choose from 4 options',
+    flashcards: 'Flashcards',
+    flashcardsDesc: 'Study mode, no pressure',
+    exerciseType: 'Exercise Type',
+    mix: 'Mix',
+    mixDesc: 'Random mix of all types',
+    contextEasy: 'Context (easy)',
+    contextEasyDesc: 'Fill the blank — first letter + letter count shown',
+    contextHard: 'Context (hard)',
+    contextHardDesc: 'Fill the blank — only first letter, no count',
+    definitionEasy: 'Definition (easy)',
+    definitionEasyDesc: 'Read a definition — word count + first letters shown',
+    definitionHard: 'Definition (hard)',
+    definitionHardDesc: 'Read a definition — no hints',
+    translation: 'Translation',
+    translationDesc: 'See the German word, type the English',
+    wordPartners: 'Word Partners',
+    wordPartnersDesc: 'Odd one out & word partners',
+    skip: 'Skip',
+    check: 'Check',
+    correct: 'Correct!',
+    correctAnswerIs: 'The correct answer is:',
+    endPractice: 'End Practice',
+    chooseOpponent: 'Choose your opponent',
+    classmatOnline: 'classmate online',
+    wordDuel: 'Word Duel',
+    grammarDuel: 'Grammar Duel',
+    battleHistory: 'Battle History',
+    cancel: 'Cancel',
+    challenge: 'Challenge',
+    ofCorrect: 'correct',
+    progressSaved: 'Progress saved!',
+    results: 'Results',
+    tryAgain: 'Try Again',
+    home: 'Home',
+    totalWords: 'Total Words',
+    practiced: 'Practiced',
+    weak: 'Weak',
+    notYetPracticed: 'Not Yet Practiced',
+    levelRoadmap: 'Level Roadmap',
+    battleStats: 'Battle Stats',
+    played: 'Played',
+    won: 'Won',
+    winRate: 'Win Rate',
+    battleXP: 'Battle XP',
+    recentBattles: 'Recent battles',
+    bySource: 'By Source',
+    searchWords: 'Search words...',
+    allSources: 'All Sources',
+    showing: 'Showing',
+    word: 'word',
+    definition: 'Definition',
+    example: 'Example',
+    due: 'Due',
+  }
+};
+function t(key) { return (UI_TEXT[uiLang] || UI_TEXT.de)[key] || (UI_TEXT.en[key] || key); }
+function setUiLang(lang) {
+  uiLang = lang;
+  localStorage.setItem('ui-lang', lang);
+  // Update button immediately
+  var langBtn = document.getElementById('lang-toggle-btn');
+  if (langBtn) langBtn.textContent = lang === 'de' ? '🇩🇪 Deutsch' : '🇬🇧 English';
+  // Refresh current screen
+  if (state.mode === 'grammar') showGrammarHomeScreen();
+  else if (state.mode === 'campaign') return;
+  else showHomeScreen();
+}
+
 let state = {
   studentId: null,
   studentName: null,
@@ -3742,6 +4030,54 @@ function getLevel(xp, mode) {
   const progress = next ? (xp - lvl.xp) / (next.xp - lvl.xp) : 1;
   return { ...lvl, next, progress, currentXp: xp, prestige: lvl.prestige || 0 };
 }
+const OVERALL_LEVELS = [
+  {level:1,xp:0,name:'First Steps',zone:'bronze',vibe:'every journey starts here'},
+  {level:2,xp:300,name:'Listener',zone:'bronze',vibe:'tuning in to English'},
+  {level:3,xp:1000,name:'Communicator',zone:'silver',vibe:'starting to get your point across'},
+  {level:4,xp:3000,name:'Storyteller',zone:'silver',vibe:'finding your voice in English'},
+  {level:5,xp:6000,name:'Translator',zone:'gold',vibe:'bridging two languages'},
+  {level:6,xp:12000,name:'Globetrotter',zone:'gold',vibe:'English takes you places'},
+  {level:7,xp:20000,name:'Polyglot',zone:'gold',vibe:'fluency is within reach'},
+  {level:8,xp:35000,name:'Native Speaker',zone:'diamond',vibe:'sounds like you grew up with it'},
+  {level:9,xp:55000,name:'Language Architect',zone:'diamond',vibe:'building English like a pro'},
+  {level:10,xp:80000,name:'English GOAT',zone:'diamond',vibe:'greatest English learner of all time'},
+];
+const CLASS_LEVELS = [
+  {level:1,xp:0,name:'Study Group',vibe:'just getting started together'},
+  {level:2,xp:2000,name:'Book Club',vibe:'reading the same page'},
+  {level:3,xp:8000,name:'Think Tank',vibe:'brains working together'},
+  {level:4,xp:20000,name:'Dream Team',vibe:'unstoppable together'},
+  {level:5,xp:40000,name:'Brain Squad',vibe:'collective genius'},
+  {level:6,xp:70000,name:'Power Crew',vibe:'no challenge too big'},
+  {level:7,xp:110000,name:'Super Class',vibe:'above and beyond'},
+  {level:8,xp:160000,name:'Legend League',vibe:'the stuff of legends'},
+  {level:9,xp:220000,name:'Hall of Famers',vibe:'every name remembered'},
+  {level:10,xp:300000,name:'World Class',vibe:'the best class on the planet'},
+];
+function getLevelsForMode(mode) { return mode === 'grammar' ? GRAMMAR_LEVELS : LEVELS; }
+function getLevel(xp, mode) {
+  const levels = mode ? getLevelsForMode(mode) : (state.mode === 'grammar' ? GRAMMAR_LEVELS : LEVELS);
+  let lvl = levels[0];
+  for (let i = levels.length - 1; i >= 0; i--) { if (xp >= levels[i].xp) { lvl = levels[i]; break; } }
+  const next = levels[lvl.level] || null;
+  const progress = next ? (xp - lvl.xp) / (next.xp - lvl.xp) : 1;
+  return { ...lvl, next, progress, currentXp: xp, prestige: lvl.prestige || 0 };
+}
+function getOverallLevel(totalXp) {
+  let lvl = OVERALL_LEVELS[0];
+  for (let i = OVERALL_LEVELS.length - 1; i >= 0; i--) { if (totalXp >= OVERALL_LEVELS[i].xp) { lvl = OVERALL_LEVELS[i]; break; } }
+  const next = OVERALL_LEVELS[lvl.level] || null;
+  const progress = next ? (totalXp - lvl.xp) / (next.xp - lvl.xp) : 1;
+  return { ...lvl, next, progress, currentXp: totalXp };
+}
+function getClassLevel(classXp) {
+  let lvl = CLASS_LEVELS[0];
+  for (let i = CLASS_LEVELS.length - 1; i >= 0; i--) { if (classXp >= CLASS_LEVELS[i].xp) { lvl = CLASS_LEVELS[i]; break; } }
+  const next = CLASS_LEVELS[lvl.level] || null;
+  const progress = next ? (classXp - lvl.xp) / (next.xp - lvl.xp) : 1;
+  return { ...lvl, next, progress, currentXp: classXp };
+}
+
 const ZONE_COLORS = {
   bronze:{bg:'#92572a',light:'#f5c4a1',text:'#4a1b0c',accent:'#d4874a'},
   silver:{bg:'#6b6b6b',light:'#d3d1c7',text:'#2c2c2a',accent:'#9e9e9e'},
@@ -9862,6 +10198,33 @@ function renderErrorCorrection(item) {
   html += '<button class="grammar-check-btn" onclick="checkGrammarTyped()">Check Answer</button>';
   return html;
 }
+function tapEcWord(el) {
+  // Toggle selection
+  var wasSelected = el.classList.contains('ec-selected');
+  // Deselect all first
+  document.querySelectorAll('.ec-word.ec-selected').forEach(function(w) { w.classList.remove('ec-selected'); });
+  if (wasSelected) {
+    document.getElementById('ec-input-area').style.display = 'none';
+    return;
+  }
+  el.classList.add('ec-selected');
+  var inputArea = document.getElementById('ec-input-area');
+  inputArea.style.display = '';
+  var label = document.getElementById('ec-input-label');
+  if (label) label.textContent = (uiLang==='de' ? 'Korrektur für: ' : 'Fix: ') + '"' + el.textContent + '"';
+  var input = document.getElementById('grammar-answer-input');
+  if (input) { input.value = ''; input.focus(); }
+}
+function showEcDirectInput() {
+  document.querySelectorAll('.ec-word.ec-selected').forEach(function(w) { w.classList.remove('ec-selected'); });
+  var inputArea = document.getElementById('ec-input-area');
+  inputArea.style.display = '';
+  var label = document.getElementById('ec-input-label');
+  if (label) label.textContent = uiLang==='de' ? 'Ganzen korrigierten Satz eingeben:' : 'Type the full corrected sentence:';
+  var input = document.getElementById('grammar-answer-input');
+  if (input) { input.value = ''; input.focus(); }
+}
+
 
 function renderTypedAnswer(item, label) {
   let html = '<div class="grammar-instruction">' + label + ':</div>';
@@ -10066,6 +10429,10 @@ function checkSentenceBuilding() {
 }
 
 // --- Answer Handling ---
+function cleanPromptForMC(p) {
+  return p.replace(/\s*\([^)]*\/[^)]*\)\s*/g, ' ').replace(/\s{2,}/g, ' ').trim();
+}
+
 function selectGrammarOption(btn, answer) {
   // Disable all options
   document.querySelectorAll('#grammar-options .grammar-option-btn').forEach(b => { b.disabled = true; });
@@ -10177,11 +10544,21 @@ function processGrammarAnswer(item, answer, isCorrect, isClose) {
 }
 
 function showGrammarHint() {
-  const item = grammarSession.items[grammarSession.index];
+  var item = grammarSession.items[grammarSession.index];
   grammarSession.hintUsed = true;
-  const hintBox = document.getElementById('grammar-hint-box');
+  // Penalty: break combo
+  if (grammarSession.combo >= 2) showComboLost();
+  grammarSession.combo = 0;
+  updateComboBadge();
+  // Track hint count for XP penalty
+  grammarSession.hintCount = (grammarSession.hintCount || 0) + 1;
+  if (grammarSession.hintCount >= 3) {
+    grammarSession.xpEarned = Math.max(0, grammarSession.xpEarned - 5);
+  }
+  var hintBox = document.getElementById('grammar-hint-box');
   if (hintBox) {
-    hintBox.innerHTML = '\uD83D\uDCA1 ' + item.h + (item.hd ? '<br><span style="color:var(--muted);font-style:italic;">\uD83C\uDDE9\uD83C\uDDEA ' + item.hd + '</span>' : '');
+    var penaltyText = '<div style="font-size:0.65rem;color:var(--wrong);margin-top:6px;">' + (uiLang==='de' ? '⚠️ Combo zurückgesetzt' : '⚠️ Combo reset') + (grammarSession.hintCount >= 3 ? ' · -5 XP' : '') + '</div>';
+    hintBox.innerHTML = '💡 ' + item.h + (item.hd ? '<br><span style="color:var(--muted);font-style:italic;">🇩🇪 ' + item.hd + '</span>' : '') + penaltyText;
     hintBox.style.display = '';
   }
   document.getElementById('grammar-hint-btn').style.display = 'none';
