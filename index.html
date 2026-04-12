@@ -10897,7 +10897,8 @@ function renderGapFill(item) {
 
 function renderMC(item) {
   const options = [...(item.ds || []), item.c].sort(() => Math.random() - 0.5);
-  let html = '<div class="grammar-prompt">' + item.p + '</div>';
+  var cleanP = cleanPromptForMC(item.p);
+  let html = '<div class="grammar-prompt">' + cleanP + '</div>';
   html += '<div class="grammar-options" id="grammar-options" style="flex-direction:column;">';
   options.forEach(opt => {
     html += '<button class="grammar-option-btn" style="min-width:100%;text-align:left;" onclick="selectGrammarOption(this,\'' + opt.replace(/'/g, "\\'") + '\')">' + opt + '</button>';
@@ -10907,10 +10908,23 @@ function renderMC(item) {
 }
 
 function renderErrorCorrection(item) {
-  let html = '<div class="grammar-instruction">Find and fix the mistake:</div>';
-  html += '<div class="grammar-prompt">' + item.p.replace('Find and fix the mistake: ', '').replace('Find and fix the mistake:', '') + '</div>';
-  html += '<input type="text" class="grammar-type-input" id="grammar-answer-input" placeholder="Type the corrected sentence..." autocomplete="off" autocapitalize="off">';
-  html += '<button class="grammar-check-btn" onclick="checkGrammarTyped()">Check Answer</button>';
+  var sentence = item.p.replace(/^Find and fix the mistake:\s*/i, '').trim();
+  var html = '<div class="grammar-instruction">Find and fix the mistake:</div>';
+  var words = sentence.split(/(\s+)/);
+  html += '<div class="grammar-prompt ec-words" id="ec-word-area">';
+  var wordIdx = 0;
+  words.forEach(function(w) {
+    if (/^\s+$/.test(w)) { html += ' '; return; }
+    html += '<span class="ec-word" data-idx="' + wordIdx + '" onclick="tapEcWord(this)">' + w + '</span>';
+    wordIdx++;
+  });
+  html += '</div>';
+  html += '<div id="ec-input-area" style="display:none;margin-top:0.6rem;">';
+  html += '<div id="ec-input-label" style="font-size:0.78rem;color:var(--accent);font-weight:600;margin-bottom:4px;"></div>';
+  html += '<input type="text" class="grammar-type-input" id="grammar-answer-input" placeholder="Type the correction..." autocomplete="off" autocapitalize="off">';
+  html += '<button class="grammar-check-btn" onclick="checkGrammarTyped()">Check</button>';
+  html += '</div>';
+  html += '<div style="text-align:center;margin-top:0.5rem;"><button class="grammar-hint-btn" onclick="showEcDirectInput()" style="font-size:0.68rem;">Or type full sentence</button></div>';
   return html;
 }
 function tapEcWord(el) {
@@ -11009,64 +11023,48 @@ function renderContextPicker(item) {
 }
 
 function renderMatching(item) {
-  // Parse left items (numbered) and right items (lettered) from prompt
-  // Prompt may contain both: "1. eat\n2. see\n\na. eaten\nb. seen"
-  // Or right items may be in distractors array (item.ds)
-  let leftItems = [], rightItems = [];
-  const prompt = item.p || '';
-
-  // Split prompt into sections: before numbered items, numbered items, lettered items
-  // Try splitting on double newline or "—" separator
-  var parts = prompt.split(/\n\n|(?<=\n)(?=[a-e][\s:.)]+)/);
-  var numberedPart = '', letteredPart = '';
-
-  // Find instruction text, numbered items, and lettered items
-  var instruction = '';
-  var allLines = prompt.split('\n');
-  var numLines = [], letLines = [];
-  allLines.forEach(function(line) {
-    var trimmed = line.trim();
-    if (/^\d+[\s:.)]+/.test(trimmed)) numLines.push(trimmed);
-    else if (/^[a-z][\s:.)]+/i.test(trimmed) && trimmed.length > 2) letLines.push(trimmed);
-    else if (!instruction && trimmed.length > 5 && numLines.length === 0) instruction = trimmed;
-  });
-
-  // Parse left items from numbered lines
-  numLines.forEach(function(line) {
-    var m = line.match(/^(\d+)\s*[:.)]\s*(.+)/);
-    if (m) leftItems.push({id: m[1], text: m[2].trim().replace(/[,.]$/, '')});
-  });
-
-  // Parse right items: prefer distractors array, fallback to lettered lines in prompt
-  if (item.ds && item.ds.length > 0) {
-    rightItems = item.ds.map(function(s) {
-      var m = s.match(/^([a-z])[\s:.)]+\s*(.+)/i);
-      return m ? {id: m[1].toLowerCase(), text: m[2].trim().replace(/[.]$/, '')} : {id: '?', text: s.trim().replace(/[.]$/, '')};
-    });
-  } else if (letLines.length > 0) {
-    letLines.forEach(function(line) {
-      var m = line.match(/^([a-z])[\s:.)]+\s*(.+)/i);
-      if (m) rightItems.push({id: m[1].toLowerCase(), text: m[2].trim().replace(/[.]$/, '')});
+  var leftItems = [], rightItems = [];
+  var prompt = item.p || '';
+  var parts = prompt.split(/\s*[—–]\s*/);
+  var leftPart = parts[0] || '';
+  var rightPart = parts[1] || '';
+  if (!rightPart) {
+    var letterStart = leftPart.search(/\s[a-d]\)\s/);
+    if (letterStart > 0) {
+      rightPart = leftPart.substring(letterStart).trim();
+      leftPart = leftPart.substring(0, letterStart).trim();
+    }
+  }
+  if (!rightPart && item.ds && item.ds.length > 0) {
+    rightPart = item.ds.join(' ');
+  }
+  var instructionMatch = leftPart.match(/^(.*?)(?=\s*1\s*[:.)])/s);
+  var instruction = instructionMatch ? instructionMatch[1].trim().replace(/[:]$/, '') : '';
+  var leftMatches = leftPart.match(/(\d+)\s*[:.)]?\s*([^0-9]+?)(?=\s*\d+\s*[:.)]|$)/g);
+  if (leftMatches) {
+    leftItems = leftMatches.map(function(s) {
+      var m = s.match(/(\d+)\s*[:.)]?\s*(.+)/);
+      return m ? {id: m[1], text: m[2].trim().replace(/[,.]$/, '')} : {id: '?', text: s.trim()};
     });
   }
-
-  if (!instruction) {
-    instruction = prompt.split(/\n/)[0].replace(/[:.]$/, '').trim();
+  var rightMatches = rightPart.match(/([a-d])\s*[:.)]?\s*([^a-d]+?)(?=\s*[a-d]\s*[:.)]|$)/gi);
+  if (rightMatches) {
+    rightItems = rightMatches.map(function(s) {
+      var m = s.match(/([a-d])\s*[:.)]?\s*(.+)/i);
+      return m ? {id: m[1].toLowerCase(), text: m[2].trim().replace(/[,.]$/, '')} : {id: '?', text: s.trim()};
+    });
   }
-
-  // Shuffle right column
-  rightItems = rightItems.sort(() => Math.random() - 0.5);
-
-  let html = '<div class="grammar-instruction">Match the items:</div>';
+  rightItems = rightItems.sort(function() { return Math.random() - 0.5; });
+  var html = '<div class="grammar-instruction">Match the items:</div>';
   html += '<div class="grammar-prompt" style="font-size:0.85rem;">' + instruction + '</div>';
   html += '<div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">Tap one item on the left, then tap its match on the right.</div>';
   html += '<div class="match-columns" id="match-area">';
   html += '<div class="match-col" id="match-left">';
-  leftItems.forEach(l => {
+  leftItems.forEach(function(l) {
     html += '<div class="match-item match-left-item" data-id="' + l.id + '" onclick="selectMatchItem(this,\'left\')">' + l.id + '. ' + l.text + '</div>';
   });
   html += '</div><div class="match-col" id="match-right">';
-  rightItems.forEach(r => {
+  rightItems.forEach(function(r) {
     html += '<div class="match-item match-right-item" data-id="' + r.id + '" onclick="selectMatchItem(this,\'right\')">' + r.id + ') ' + r.text + '</div>';
   });
   html += '</div></div>';
@@ -11074,9 +11072,6 @@ function renderMatching(item) {
   html += '<button class="grammar-check-btn" id="match-check-btn" onclick="checkMatchingAnswer()" style="display:none;">Check Answer</button>';
   return html;
 }
-
-let matchState = { selectedLeft: null, selectedRight: null, pairs: {} };
-
 function selectMatchItem(el, side) {
   if (el.classList.contains('matched')) return;
   const col = side === 'left' ? 'match-left-item' : 'match-right-item';
