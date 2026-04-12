@@ -1099,6 +1099,14 @@ body.playing .header-container { display: none; }
   transition: transform 0.1s;
 }
 .flashcard-btn-got-it:active { transform: scale(0.97); }
+/* Compact flashcard layout */
+.flashcard { min-height: 250px; }
+.flashcard-front, .flashcard-back { min-height: 250px; padding: 1.5rem 1.2rem; }
+.flashcard-word { font-size: 1.4rem; word-break: break-word; overflow-wrap: break-word; }
+.flashcard-sentence { font-size: 0.9rem; }
+.flashcard-stage { padding: 0 0.8rem; }
+.flashcard-swipe-hint { margin-top: 0.5rem; }
+.flashcard-tap-hint { margin-top: 0.8rem; }
 
 /* Swipe overlay indicators */
 .flashcard-swipe-indicator {
@@ -3215,7 +3223,7 @@ body.playing .header-container { display: none; }
       </button>
     </div>
     <button class="btn btn-sprint sprint-again" id="sprint-again-btn" style="display:none;" onclick="startSprint()">🏃 Another Sprint</button>
-    <button class="btn btn-secondary" onclick="goHome()">New Practice</button>
+    <button class="btn btn-secondary" id="results-home-btn" onclick="goHome()">New Practice</button>
   </div>
 </div>
 
@@ -6756,7 +6764,11 @@ async function saveFlashcardProgress(word, status) {
   } catch(e) { console.error('Flashcard progress save error:', e); }
 }
 
+var _fcReturnToDict = false;
 async function endFlashcards() {
+  _fcReturnToDict = true;
+  var homeBtn = document.getElementById('results-home-btn');
+  if (homeBtn) { homeBtn.textContent = '📖 Back to Dictionary'; homeBtn.onclick = function() { showWordReference(); }; }
   showScreen('results-screen');
   const total = flashcardGotWords.size;
   const remaining = flashcardDeck.length;
@@ -10125,8 +10137,8 @@ showHomeScreen = function() {
     var wordsBtn = document.getElementById('home-words-btn');
     if (wordsBtn) {
       var wIcon = wordsBtn.querySelector('.home-fullwidth-icon'); if (wIcon) wIcon.textContent = '📖';
-      var wTitle = document.getElementById('home-words-title'); if (wTitle) wTitle.textContent = uiLang==='de' ? 'Wörterbuch' : 'Dictionary';
-      var wSub = document.getElementById('home-words-subtitle'); if (wSub) wSub.textContent = uiLang==='de' ? 'Deine gesamte Vokabel-Bibliothek durchsuchen' : 'Browse your full vocabulary library';
+      var wTitle = document.getElementById('home-words-title'); if (wTitle) wTitle.textContent = uiLang==='de' ? 'Wörterbuch & Karteikarten' : 'Dictionary & Flashcards';
+      var wSub = document.getElementById('home-words-subtitle'); if (wSub) wSub.textContent = uiLang==='de' ? 'Vokabeln nachschlagen und mit Karteikarten üben' : 'Look up words and study with flashcards';
       wordsBtn.onclick = function() { showWordReference(); };
     }
     // Smart review hint
