@@ -316,6 +316,16 @@ h1 { display: none; }
 @keyframes comboPulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.12);} }
 
 @keyframes comboTierUp { 0%{transform:scale(0.5);opacity:0;} 50%{transform:scale(1.3);} 100%{transform:scale(1);opacity:1;} }
+.combo-tierup {
+  position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
+  font-size: 1.5rem; font-weight: 900; color: #fff; font-family: 'Fredoka', sans-serif;
+  padding: 12px 24px; border-radius: 16px; pointer-events: none; z-index: 9999;
+  animation: comboTierUp 0.6s ease-out forwards;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.combo-tierup.t15 { background: linear-gradient(135deg, #5DCAA5, #2dd4bf); }
+.combo-tierup.t2 { background: linear-gradient(135deg, #EF9F27, #f59e0b); }
+.combo-tierup.t3 { background: linear-gradient(135deg, #E24B4A, #ef4444); }
 @keyframes xpBurst { 0%{opacity:1;transform:translateY(0) scale(1);} 100%{opacity:0;transform:translateY(-60px) scale(1.2);} }
 @keyframes comboLostFlash { 0%{opacity:1;transform:translate(-50%,-50%) scale(1.1);} 100%{opacity:0;transform:translate(-50%,-50%) scale(0.8);} }
 #combo-badge.x15 { background: #5DCAA5; color: #04342C; }
@@ -4613,12 +4623,29 @@ function updateComboBadge() {
 function showComboLost() {
   const el = document.getElementById('combo-lost');
   if (!el) return;
-  el.textContent = 'Combo lost!';
+  el.textContent = uiLang==='de' ? 'Combo verloren!' : 'Combo lost!';
   el.style.display = 'block';
   el.style.animation = 'none';
   el.offsetHeight;
   el.style.animation = 'comboLostFlash 1s ease-out forwards';
   setTimeout(() => { el.style.display = 'none'; }, 1000);
+}
+
+function showXPBurst(xp) {
+  var el = document.createElement('div');
+  el.className = 'xp-burst';
+  el.textContent = '+' + xp + ' XP';
+  document.body.appendChild(el);
+  setTimeout(function() { el.remove(); }, 1000);
+}
+
+function showComboTierUp(tier) {
+  var cls = tier.mult === 1.5 ? 't15' : tier.mult === 2 ? 't2' : 't3';
+  var el = document.createElement('div');
+  el.className = 'combo-tierup ' + cls;
+  el.textContent = tier.label + ' COMBO!';
+  document.body.appendChild(el);
+  setTimeout(function() { el.remove(); }, 1200);
 }
 
 function showLevelUpQueue(levels) {
@@ -11231,36 +11258,47 @@ function processGrammarAnswer(item, answer, isCorrect, isClose) {
   // SHOW_DE_FEEDBACK: true for grades 1-2, false for grades 3-4 (set per trainer)
   const showDe = typeof SHOW_DE_FEEDBACK !== 'undefined' ? SHOW_DE_FEEDBACK : true;
 
-  let xp = 0;
+  var xp = 0;
+  var correctLabel = uiLang==='de' ? '✅ Richtig!' : '✅ Correct!';
+  var almostLabel = uiLang==='de' ? '🔶 Fast!' : '🔶 Almost!';
+  var wrongLabel = uiLang==='de' ? '❌ Nicht ganz' : '❌ Not quite';
+  var yourAnswer = uiLang==='de' ? 'Deine Antwort' : 'Your answer';
+  var correctIs = uiLang==='de' ? 'Richtig' : 'Correct';
   if (isCorrect) {
+    var prevTier = getComboTier(grammarSession.combo);
     grammarSession.combo++;
-    const comboTier = getComboTier(grammarSession.combo);
+    var comboTier = getComboTier(grammarSession.combo);
     xp = Math.round(10 * comboTier.mult);
     if (grammarSession.hintUsed) xp = Math.round(xp * 0.5);
     grammarSession.xpEarned += xp;
-    const deExpl = (showDe && item.ed) ? '<br><span style="color:var(--muted);font-style:italic;">\uD83C\uDDE9\uD83C\uDDEA ' + item.ed + '</span>' : '';
+    showXPBurst(xp);
+    if (comboTier.mult > prevTier.mult && comboTier.mult > 1) {
+      setTimeout(function() { showComboTierUp(comboTier); }, 300);
+    }
+    const deExpl = (showDe && item.ed) ? '<br><span style="color:var(--muted);font-style:italic;">🇩🇪 ' + item.ed + '</span>' : '';
     feedbackArea.innerHTML = '<div class="grammar-feedback correct">' +
-      '<div class="grammar-feedback-title">\u2705 Correct!' + (xp > 10 ? ' +' + xp + ' XP' : ' +10 XP') + '</div>' +
+      '<div class="grammar-feedback-title">' + correctLabel + ' +' + xp + ' XP</div>' +
       '<div class="grammar-feedback-text">' + item.e + deExpl + '</div>' +
     '</div>';
   } else if (isClose) {
-    // Phase 5h: half XP for typo-tolerated answers, scaled by base XP, combo reset
+    if (grammarSession.combo >= 2) showComboLost();
     grammarSession.combo = 0;
     xp = Math.max(1, Math.round(10 * 0.5));  // base 10 × 0.5 = 5; combo doesn't apply on close
     if (grammarSession.hintUsed) xp = Math.max(1, Math.round(xp * 0.5));
     grammarSession.xpEarned += xp;
-    const deExpl2 = (showDe && item.ed) ? '<br><span style="color:var(--muted);font-style:italic;">\uD83C\uDDE9\uD83C\uDDEA ' + item.ed + '</span>' : '';
+    const deExpl2 = (showDe && item.ed) ? '<br><span style="color:var(--muted);font-style:italic;">🇩🇪 ' + item.ed + '</span>' : '';
     feedbackArea.innerHTML = '<div class="grammar-feedback correct">' +
-      '<div class="grammar-feedback-title">\uD83D\uDD0D Almost! +' + xp + ' XP <span style="opacity:0.7;font-size:0.85em;">(\u00BD)</span></div>' +
-      '<div class="grammar-feedback-text">Your answer: <em>' + escapeHtml(answer) + '</em><br>Correct: <strong>' + escapeHtml(item.c) + '</strong><br>' + item.e + deExpl2 + '</div>' +
+      '<div class="grammar-feedback-title">' + almostLabel + ' +' + xp + ' XP</div>' +
+      '<div class="grammar-feedback-text">' + yourAnswer + ': <em>' + escapeHtml(answer) + '</em><br>' + correctIs + ': <strong>' + escapeHtml(item.c) + '</strong><br>' + item.e + deExpl2 + '</div>' +
     '</div>';
     isCorrect = true; // count as partial correct
   } else {
+    if (grammarSession.combo >= 2) showComboLost();
     grammarSession.combo = 0;
-    const deExpl3 = (showDe && item.ed) ? '<br><span style="color:var(--muted);font-style:italic;">\uD83C\uDDE9\uD83C\uDDEA ' + item.ed + '</span>' : '';
+    const deExpl3 = (showDe && item.ed) ? '<br><span style="color:var(--muted);font-style:italic;">🇩🇪 ' + item.ed + '</span>' : '';
     feedbackArea.innerHTML = '<div class="grammar-feedback wrong">' +
-      '<div class="grammar-feedback-title">\u274C Not quite</div>' +
-      '<div class="grammar-feedback-text">Your answer: <em>' + answer + '</em><br>Correct: <strong>' + item.c + '</strong><br>' + item.e + deExpl3 + '</div>' +
+      '<div class="grammar-feedback-title">' + wrongLabel + '</div>' +
+      '<div class="grammar-feedback-text">' + yourAnswer + ': <em>' + answer + '</em><br>' + correctIs + ': <strong>' + item.c + '</strong><br>' + item.e + deExpl3 + '</div>' +
     '</div>';
   }
 
