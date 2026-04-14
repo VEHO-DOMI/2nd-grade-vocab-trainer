@@ -3409,6 +3409,10 @@ body.playing .header-container { display: none; }
         <div><span class="mm-stat-label">Moves:</span><span id="mm-moves">0</span></div>
       </div>
     </div>
+    <div class="wh-prompt-card" id="mm-title-card" style="display:none;">
+      <div class="wh-prompt-label" id="mm-title-label">Memory Match</div>
+      <div class="wh-prompt-text" id="mm-title-text"></div>
+    </div>
     <div id="mm-grid" class="mm-grid"></div>
     <div id="mm-done" class="mm-done" style="display:none;">
       <h2 id="mm-done-title">🎉 Perfect!</h2>
@@ -4139,6 +4143,232 @@ const vocabData = {
 {w:"pyjamas",g:"Pyjama, Schlafanzug",d:"Soft clothes you wear when you go to sleep",s:"I put on my _____ and brushed my teeth before going to sleep.",a:["pajamas"],mc:["uniform","tracksuit","dressing gown"]},
 {w:"to tidy (up)",g:"aufräumen",d:"To make a place clean and neat by putting things where they belong",s:"Please _____ your messy room by putting your toys in boxes before your friends come over.",cf:"tidy up",a:["tidy","tidy up","tidies up","tidied up"],mc:["to mess up","to decorate","to paint"]},
 ],
+};
+
+// =========================================================
+// ========== CURATED VOCAB TASKS for G2 (per-unit) ========
+// Hand-authored Memory Match / Word Hunt / Spelling Bee content.
+// Every EN string below exactly matches a `w` field in vocabData[unit].
+// =========================================================
+const VOCAB_TASKS = {
+"Unit 1": {
+  mm: [
+    { t:{en:"School Subjects", de:"Schulfächer"}, pairs:[["English","Englisch"],["French","Französisch"],["music","Musik"],["maths","Mathematik"],["geography","Geografie"],["science","Naturwissenschaften"],["art","Kunst"],["history","Geschichte"]] },
+    { t:{en:"Daily Routine Verbs", de:"Alltagsverben"}, pairs:[["to stay at home","zu Hause bleiben"],["to travel","reisen"],["to get dressed","sich anziehen"],["to go for a walk","spazieren gehen"],["to prepare","(zu-)bereiten"],["to put on","anziehen"],["to visit","besuchen"],["to book","buchen"]] },
+    { t:{en:"School Life", de:"Schulalltag"}, pairs:[["lesson","Unterrichtsstunde"],["(school) subject","Schulfach"],["break","Pause"],["timetable","Stundenplan"],["bicycle lane","Radweg"],["webpage","Internetseite"]] },
+    { t:{en:"People & Places", de:"Menschen & Orte"}, pairs:[["grandmother","Großmutter"],["king","König"],["queen","Königin"],["area","Gebiet"],["spring","Frühling"],["shadow","Schatten"]] }
+  ],
+  wh: [
+    { t:{en:"School Subjects", de:"Schulfächer"}, correct:["English","French","music","maths","geography","science","art","history"], distractors:["king"] },
+    { t:{en:"Daily Routine Verbs", de:"Alltagsverben"}, correct:["to stay at home","to travel","to get dressed","to go for a walk","to prepare","to put on","to visit","to book"], distractors:["king"] },
+    { t:{en:"Descriptions & Feelings", de:"Beschreibungen"}, correct:["glad","scary","popular","colourful","noisy","daily"], distractors:["king","queen","break"] },
+    { t:{en:"Online & Safety", de:"Online & Sicherheit"}, correct:["online safety","opinion","webpage","rubbish","calendar","joke"], distractors:["king","queen"] }
+  ],
+  sb: ["geography","information technology (IT)","physical education (PE)","design and technology","timetable","colourful","grandmother","to get dressed","to go for a walk","webpage","kilometre","bicycle lane","online safety","as soon as","to take a rest"]
+},
+"Unit 2": {
+  mm: [
+    { t:{en:"Art & Museums", de:"Kunst & Museum"}, pairs:[["artist","Künstler/in"],["exhibition","Ausstellung"],["museum","Museum"],["sculpture","Skulptur"],["modern","modern"],["to be worth","wert sein"]] },
+    { t:{en:"Opinion Adjectives", de:"Meinungs-Adjektive"}, pairs:[["awesome","großartig"],["boring","langweilig"],["confusing","verwirrend"],["difficult","schwierig"],["exciting","spannend"],["funny","lustig"],["embarrassed","verlegen"],["upset","verärgert"]] },
+    { t:{en:"Online & Posting", de:"Online & Posten"}, pairs:[["password","Passwort"],["to post","posten"],["posting","Beitrag"],["to pass on","weitergeben"],["to contact","kontaktieren"],["tip","Tipp"]] },
+    { t:{en:"Party & Feelings", de:"Party & Gefühle"}, pairs:[["surprise party","Überraschungsparty"],["admission fee","Eintritt"],["behaviour","Verhalten"],["mess","Unordnung"],["secret","Geheimnis"],["to fail","scheitern"]] }
+  ],
+  wh: [
+    { t:{en:"Art & Museums", de:"Kunst & Museum"}, correct:["artist","exhibition","museum","sculpture","modern","to be worth"], distractors:["password","funny"] },
+    { t:{en:"Opinion Adjectives", de:"Meinungs-Adjektive"}, correct:["awesome","boring","confusing","difficult","exciting","funny","embarrassed","upset"], distractors:["password"] },
+    { t:{en:"Online Behaviour", de:"Online-Verhalten"}, correct:["password","to post","posting","to pass on","to contact","behaviour","tip","to add"], distractors:["museum"] },
+    { t:{en:"Party & Feelings", de:"Party & Gefühle"}, correct:["surprise party","admission fee","mess","secret","plate","to fail","to organise"], distractors:["museum"] }
+  ],
+  sb: ["exhibition","sculpture","confusing","embarrassed","awesome","behaviour","surprise party","admission fee","to organise","to contact","password","posting","What's the matter?","I promise.","to pass on"]
+},
+"Unit 3": {
+  mm: [
+    { t:{en:"Halloween Creatures", de:"Halloween-Wesen"}, pairs:[["witch","Hexe"],["ghost","Geist"],["vampire","Vampir"],["superheroine","Superheldin"]] },
+    { t:{en:"Halloween Things", de:"Halloween-Sachen"}, pairs:[["pumpkin bucket","Kürbiseimer"],["mask","Maske"],["costume","Kostüm"],["sticker","Aufkleber"],["sweets","Süßigkeiten"],["knife (pl knives)","Messer"]] },
+    { t:{en:"Traditions & Places", de:"Traditionen & Orte"}, pairs:[["trick or treat","Süßes oder Saures"],["apple bobbing","Äpfeltauchen"],["tradition","Tradition"],["graveyard","Friedhof"],["century","Jahrhundert"],["front window","Vorderfenster"]] },
+    { t:{en:"Scary Feelings", de:"Gruselige Gefühle"}, pairs:[["to fear","sich fürchten"],["to scare","erschrecken"],["sick","krank"],["wild","wild"],["cute","niedlich"],["to lose","verlieren"]] }
+  ],
+  wh: [
+    { t:{en:"Halloween", de:"Halloween"}, correct:["witch","ghost","pumpkin bucket","vampire","mask","costume","graveyard","sweets"], distractors:["cycle helmet"] },
+    { t:{en:"Halloween Traditions", de:"Halloween-Bräuche"}, correct:["trick or treat","apple bobbing","tradition","century","costume","mask"], distractors:["cycle helmet","stairs"] },
+    { t:{en:"Fear & Action Verbs", de:"Angst & Aktionen"}, correct:["to fear","to scare","to cut off","to keep","to lose"], distractors:["witch","ghost","stairs"] },
+    { t:{en:"Description Words", de:"Beschreibungen"}, correct:["cute","sick","wild","couldn't"], distractors:["witch","ghost","knife (pl knives)","stairs"] }
+  ],
+  sb: ["graveyard","superheroine","pumpkin bucket","apple bobbing","tradition","century","costume","vampire","trick or treat","knife (pl knives)","couldn't","cycle helmet","myself","to scare","front window"]
+},
+"Unit 4": {
+  mm: [
+    { t:{en:"Birds & Small Animals", de:"Vögel & kleine Tiere"}, pairs:[["mosquito","Moskito"],["pigeon","Taube"],["parrot","Papagei"],["ostrich","Strauß"],["bat","Fledermaus"]] },
+    { t:{en:"Big Wild Animals", de:"Große Wildtiere"}, pairs:[["chimpanzee","Schimpanse"],["antelope","Antilope"],["giraffe","Giraffe"],["rhino","Nashorn"],["cheetah","Gepard"],["anaconda","Anakonda"],["crocodile","Krokodil"]] },
+    { t:{en:"Ocean Animals", de:"Meerestiere"}, pairs:[["dolphin","Delfin"],["whale","Wal"],["shark","Hai"]] },
+    { t:{en:"Animal Adjectives", de:"Tier-Adjektive"}, pairs:[["incredible","unglaublich"],["dangerous","gefährlich"],["hairy","haarig"],["heavy","schwer"],["strong","stark"],["fast","schnell"],["intelligent","intelligent"],["venomous","giftig"]] }
+  ],
+  wh: [
+    { t:{en:"Wild Animals", de:"Wilde Tiere"}, correct:["chimpanzee","antelope","giraffe","rhino","cheetah","anaconda","crocodile","bat"], distractors:["truck"] },
+    { t:{en:"Ocean & Flying Animals", de:"Meeres- & Flugtiere"}, correct:["dolphin","whale","shark","pigeon","parrot","ostrich","mosquito"], distractors:["truck","desert"] },
+    { t:{en:"Describing Animals", de:"Tiere beschreiben"}, correct:["incredible","dangerous","hairy","heavy","strong","fast","intelligent","venomous"], distractors:["truck"] },
+    { t:{en:"Science & Nature Words", de:"Wissenschaft & Natur"}, correct:["scientist","mammal","climate change","desert","length","speed","reason"], distractors:["giraffe","shark"] }
+  ],
+  sb: ["chimpanzee","anaconda","crocodile","cheetah","incredible","dangerous","venomous","intelligent","scientist","climate change","to die out","powerful","centimetre","mammal","to protect"]
+},
+"Unit 5": {
+  mm: [
+    { t:{en:"Places in Town", de:"Orte in der Stadt"}, pairs:[["cinema","Kino"],["church","Kirche"],["bank","Bank"],["restaurant","Restaurant"],["railway station","Bahnhof"],["chemist's","Apotheke"],["post office","Postamt"],["hospital","Krankenhaus"]] },
+    { t:{en:"More Places", de:"Weitere Orte"}, pairs:[["tourist office","Touristeninformation"],["music shop","Musikgeschäft"],["supermarket","Supermarkt"],["police station","Polizeistation"],["airport","Flughafen"],["market square","Marktplatz"]] },
+    { t:{en:"Giving Directions", de:"Wegbeschreibung"}, pairs:[["to go past","vorbeigehen"],["to go straight ahead","geradeaus gehen"],["to cross the street","die Straße überqueren"],["to turn left","links abbiegen"],["round the corner","um die Ecke"],["opposite","gegenüber"],["next to","neben"]] },
+    { t:{en:"Reviews & Feedback", de:"Rezensionen"}, pairs:[["comment","Kommentar"],["to comment","kommentieren"],["feedback","Feedback"],["guest","Gast"],["to offer","anbieten"],["positive","positiv"],["review","Rezension"]] }
+  ],
+  wh: [
+    { t:{en:"Places in Town", de:"Orte in der Stadt"}, correct:["cinema","church","bank","restaurant","railway station","chemist's","supermarket","hospital"], distractors:["map"] },
+    { t:{en:"Giving Directions", de:"Wegbeschreibung"}, correct:["to go past","to go straight ahead","to cross the street","to turn left","to take the second right","round the corner","opposite","as far as"], distractors:["bank"] },
+    { t:{en:"Transport & Travel", de:"Verkehr & Reise"}, correct:["airport","to change trains","underground","bus stop","traffic lights","fountain"], distractors:["cinema","church","opposite"] },
+    { t:{en:"Feedback Words", de:"Feedback-Wörter"}, correct:["comment","to comment","feedback","guest","to offer","positive","review","the worst"], distractors:["bank"] }
+  ],
+  sb: ["restaurant","railway station","chemist's","tourist office","police station","supermarket","traffic lights","underground","to change trains","opposite","to interrupt","politely","market square","fountain","somewhere"]
+},
+"Unit 6": {
+  mm: [
+    { t:{en:"Landscape", de:"Landschaft"}, pairs:[["sun","Sonne"],["sea","Meer"],["beach","Strand"],["river","Fluss"],["hill","Hügel"],["valley","Tal"],["lake","See"],["forest","Wald"]] },
+    { t:{en:"Camping Gear", de:"Camping-Ausrüstung"}, pairs:[["life jacket","Schwimmweste"],["campfire","Lagerfeuer"],["anorak","Anorak"],["hard hat","Schutzhelm"],["canoe","Kanu"],["picnic","Picknick"]] },
+    { t:{en:"Outdoor Activities", de:"Outdoor-Aktivitäten"}, pairs:[["to build a tree house","ein Baumhaus bauen"],["canoeing","Kanufahren"],["rock climbing","Klettern"],["to wash up","abspülen"],["to be good at sth.","gut in etw. sein"],["to trust","vertrauen"]] },
+    { t:{en:"Sky & Story", de:"Himmel & Geschichte"}, pairs:[["stars","Sterne"],["moon","Mond"],["once upon a time","es war einmal"],["sheep (pl sheep)","Schaf"],["shepherd","Schäfer/in"],["cry","Schrei"]] }
+  ],
+  wh: [
+    { t:{en:"Landscape", de:"Landschaft"}, correct:["sun","sea","beach","river","hill","valley","lake","forest"], distractors:["canoe"] },
+    { t:{en:"Camping & Gear", de:"Camping-Ausrüstung"}, correct:["life jacket","campfire","anorak","hard hat","canoe","picnic","waterfall"], distractors:["sheep (pl sheep)","gate"] },
+    { t:{en:"Positions", de:"Positionen"}, correct:["bottom","left-hand","middle","right-hand"], distractors:["beach","river","gate","campfire"] },
+    { t:{en:"Story Words", de:"Geschichtswörter"}, correct:["once upon a time","shepherd","sheep (pl sheep)","to trust","cry","alive","adventure camp"], distractors:["beach"] }
+  ],
+  sb: ["waterfall","campfire","life jacket","adventure camp","shepherd","once upon a time","mountains","although","absolutely","actually","rock climbing","canoeing","to be afraid (of)","to wash up","Poor you!"]
+},
+"Unit 7": {
+  mm: [
+    { t:{en:"Free Time Activities", de:"Freizeit-Aktivitäten"}, pairs:[["to do nothing","nichts tun"],["to play basketball","Basketball spielen"],["to tidy your room","Zimmer aufräumen"],["to have a party","eine Party machen"],["to do the shopping","einkaufen gehen"],["to do your homework","Hausaufgaben machen"],["to watch a film","einen Film schauen"],["to take it easy","sich entspannen"]] },
+    { t:{en:"Social Media & Truth", de:"Soziale Medien"}, pairs:[["communication","Kommunikation"],["group chat","Gruppenchat"],["social media","soziale Medien"],["to tell a lie","lügen"],["truth","Wahrheit"],["excuse","Ausrede"]] },
+    { t:{en:"Theatre & Tickets", de:"Theater & Tickets"}, pairs:[["fancy dress party","Kostümparty"],["ticket","Ticket"],["row","Sitzreihe"],["sold out","ausverkauft"],["disappointment","Enttäuschung"],["That's a pity.","Das ist schade!"]] }
+  ],
+  wh: [
+    { t:{en:"Free Time Activities", de:"Freizeit-Aktivitäten"}, correct:["to do nothing","to play basketball","to stay at a friend's house","to tidy your room","to have a party","to do the shopping","to do your homework","to watch a film"], distractors:["truth"] },
+    { t:{en:"Social Media & Communication", de:"Kommunikation"}, correct:["communication","group chat","social media","to tell a lie","truth","excuse","to come over"], distractors:["ticket"] },
+    { t:{en:"Theatre & Tickets", de:"Theater & Tickets"}, correct:["fancy dress party","ticket","row","sold out","disappointment","That's a pity.","What a shame!"], distractors:["truth","excuse"] }
+  ],
+  sb: ["communication","disappointment","fancy dress party","to be ashamed","honestly","to get into trouble","to tell a lie","to be worried","social media","group chat","to take it easy","sold out","What a shame!","German","instead"]
+},
+"Unit 8": {
+  mm: [
+    { t:{en:"Space Vehicles & Aliens", de:"Raumschiffe & Aliens"}, pairs:[["spaceship","Raumschiff"],["spacesuit","Raumanzug"],["alien","Außerirdische/r"],["UFO","UFO"],["space centre","Raumfahrtzentrum"],["planet","Planet"]] },
+    { t:{en:"Space People", de:"Menschen im Weltall"}, pairs:[["commander","Kommandant/in"],["boss","Chef/in"],["hero, heroine","Held, Heldin"],["crew","Besatzung"],["traveller","Reisende/r"],["visitor","Besucher/in"]] },
+    { t:{en:"Sci-Fi Actions", de:"Sci-Fi-Aktionen"}, pairs:[["to connect","anschließen"],["to repair","reparieren"],["to take over","erobern"],["to destroy","zerstören"],["to kidnap","entführen"]] },
+    { t:{en:"Objects & Investigation", de:"Dinge & Ermittlung"}, pairs:[["cable","Kabel"],["machine","Maschine"],["statue","Statue"],["hoax","Streich"],["investigation","Ermittlung"],["photograph","Foto"]] }
+  ],
+  wh: [
+    { t:{en:"Space", de:"Weltall"}, correct:["spaceship","spacesuit","alien","UFO","space centre","planet","space","commander"], distractors:["statue"] },
+    { t:{en:"Action Verbs", de:"Verben"}, correct:["to connect","to repair","to take over","to destroy","to kidnap"], distractors:["statue","machine","cable","hoax"] },
+    { t:{en:"People & Roles", de:"Menschen & Rollen"}, correct:["commander","boss","hero, heroine","crew","traveller","visitor","expert"], distractors:["UFO","alien"] },
+    { t:{en:"Mystery & Evidence", de:"Mysterium"}, correct:["hoax","investigation","photograph","statue","nonsense","key","machine"], distractors:["alien","UFO"] }
+  ],
+  sb: ["spaceship","spacesuit","commander","investigation","photograph","comfortable","in that case","Calm down!","to take over","to kidnap","to destroy","aeroplane","capital","traveller","nonsense"]
+},
+"Unit 9": {
+  mm: [
+    { t:{en:"Fruit", de:"Obst"}, pairs:[["grapes","Trauben"],["plums","Pflaumen"],["pears","Birnen"],["peaches","Pfirsiche"],["strawberries","Erdbeeren"]] },
+    { t:{en:"Meat & Sides", de:"Fleisch & Beilagen"}, pairs:[["turkey","Truthahn"],["ham","Schinken"],["beef","Rindfleisch"],["chicken","Huhn"],["sausages","Würstchen"],["lamb","Lamm"]] },
+    { t:{en:"Vegetables", de:"Gemüse"}, pairs:[["tomato (pl tomatoes)","Tomate"],["cabbage","Kohl"],["peppers","Paprika"],["onions","Zwiebeln"],["olives","Oliven"],["mushrooms","Pilze"],["potato (pl potatoes)","Kartoffel"]] },
+    { t:{en:"At a Restaurant", de:"Im Restaurant"}, pairs:[["chef","Koch/Köchin"],["recipe","Rezept"],["waiter","Kellner"],["menu","Speisekarte"],["main course","Hauptspeise"],["starter","Vorspeise"],["slice","Scheibe"],["soup","Suppe"]] }
+  ],
+  wh: [
+    { t:{en:"Fruit", de:"Obst"}, correct:["grapes","plums","pears","peaches","strawberries"], distractors:["cabbage","olives","onions","soup"] },
+    { t:{en:"Meat & Savoury", de:"Fleisch & Herzhaft"}, correct:["turkey","ham","beef","chicken","sausages","lamb","stew"], distractors:["cheesecake","pancakes"] },
+    { t:{en:"Restaurant Words", de:"Restaurant-Wörter"}, correct:["chef","recipe","waiter","menu","main course","starter","slice","soup"], distractors:["turkey"] },
+    { t:{en:"Shopping & Consumer", de:"Einkaufen & Konsum"}, correct:["to complain","consumer","delivery","to download","refund","to change one's mind"], distractors:["turkey","chef"] }
+  ],
+  sb: ["strawberries","cheesecake","pumpkin pie","chocolate ice cream","apple juice","mineral water","sausages","cabbage","mushrooms","straightaway","completely","delivery","consumer","to entertain","to complain"]
+},
+"Unit 10": {
+  mm: [
+    { t:{en:"Family & Relationships", de:"Familie & Beziehungen"}, pairs:[["auntie","Tante"],["girlfriend","feste Freundin"],["divorced","geschieden"],["to be related to","verwandt sein"],["to be proud of","stolz sein auf"],["sense of humour","Sinn für Humor"]] },
+    { t:{en:"Character & Feelings", de:"Charakter & Gefühle"}, pairs:[["calm","ruhig"],["ugly","hässlich"],["to panic","in Panik geraten"],["fault","Schuld"],["hopefully","hoffentlich"],["public","öffentlich"]] },
+    { t:{en:"Tech & Actions", de:"Technik & Aktionen"}, pairs:[["virus","Virus"],["to delete","löschen"],["file","Datei"],["to print out","ausdrucken"],["tool","Werkzeug"],["tractor","Traktor"]] }
+  ],
+  wh: [
+    { t:{en:"Family & People", de:"Familie"}, correct:["auntie","girlfriend","divorced","to be related to","to be proud of","sense of humour"], distractors:["virus","tractor"] },
+    { t:{en:"Tech & Office", de:"Technik & Büro"}, correct:["virus","to delete","file","to print out","to panic","public"], distractors:["auntie","ugly"] },
+    { t:{en:"Character & Activity", de:"Charakter & Aktivität"}, correct:["calm","ugly","foreign language","ice skating","fault","hopefully"], distractors:["virus","file","tractor"] }
+  ],
+  sb: ["auntie","divorced","girlfriend","hopefully","foreign language","sense of humour","to be proud of","to be related to","to breathe","to panic","ice skating","to delete","to print out","tractor","virus"]
+},
+"Unit 11": {
+  mm: [
+    { t:{en:"Furniture", de:"Möbel"}, pairs:[["wardrobe","Kleiderschrank"],["bed","Bett"],["bedside table","Nachttisch"],["carpet","Teppich"],["cupboard","Schrank"],["table","Tisch"],["chair","Stuhl"],["sofa","Sofa"]] },
+    { t:{en:"Kitchen & More", de:"Küche & mehr"}, pairs:[["fridge","Kühlschrank"],["cooker","Herd"],["curtain","Vorhang"],["sink","Spülbecken"],["armchair","Sessel"],["lamp","Lampe"],["radiator","Heizkörper"],["rug","Teppich"]] },
+    { t:{en:"House Parts", de:"Hausteile"}, pairs:[["roof","Dach"],["wall","Wand"],["window","Fenster"],["staircase","Treppe"],["cellar","Keller"],["tree house","Baumhaus"],["trailer (American English)","Wohnwagen"],["island","Insel"]] },
+    { t:{en:"Possessive Pronouns", de:"Possessivpronomen"}, pairs:[["ours","unsere/r/s"],["theirs","ihre/r/s"],["mine","meine/r/s"],["hers","ihre/r/s"],["his","seine/r/s"],["yours","deine/r/s"]] }
+  ],
+  wh: [
+    { t:{en:"Furniture", de:"Möbel"}, correct:["wardrobe","bed","bedside table","carpet","cupboard","table","chair","sofa"], distractors:["roof"] },
+    { t:{en:"Kitchen Items", de:"Küche"}, correct:["fridge","cooker","curtain","sink","armchair","lamp","radiator","rug"], distractors:["roof"] },
+    { t:{en:"House & Home", de:"Haus & Zuhause"}, correct:["roof","wall","window","staircase","cellar","tree house","island","pond"], distractors:["mine"] },
+    { t:{en:"Possessive Pronouns", de:"Possessivpronomen"}, correct:["ours","theirs","mine","hers","his","yours","whose"], distractors:["roof","bed"] }
+  ],
+  sb: ["wardrobe","bedside table","staircase","cellar","electricity","furniture","underneath","Central Asia","hammock","moveable","material","pattern","spotted","striped","trailer (American English)"]
+},
+"Unit 12": {
+  mm: [
+    { t:{en:"Aches & Pains", de:"Schmerzen"}, pairs:[["headache","Kopfschmerzen"],["toothache","Zahnschmerzen"],["earache","Ohrenschmerzen"],["stomach ache","Bauchschmerzen"],["pain in the ankle","Schmerzen im Knöchel"],["backache","Rückenschmerzen"]] },
+    { t:{en:"Body & Medical", de:"Körper & Medizin"}, pairs:[["knee","Knie"],["throat","Hals"],["blood","Blut"],["bath","Bad"],["medicine","Medizin"],["toothpaste","Zahnpasta"]] },
+    { t:{en:"Doctors & Cures", de:"Ärzte & Heilmittel"}, pairs:[["patient","Patient/in"],["dentist","Zahnarzt"],["cure","Heilmittel"],["to cure","heilen"],["first aid","Erste Hilfe"],["to injure","verletzen"]] },
+    { t:{en:"Description & Senses", de:"Beschreibung & Sinne"}, pairs:[["taste","Geschmack"],["smell","Geruch"],["memory","Gedächtnis"],["helpful","hilfsbereit"],["horrible","schrecklich"],["since","seit"]] }
+  ],
+  wh: [
+    { t:{en:"Aches & Pains", de:"Schmerzen"}, correct:["headache","toothache","earache","stomach ache","pain in the ankle","backache"], distractors:["toothpaste","cure"] },
+    { t:{en:"Medical Things", de:"Medizinisches"}, correct:["medicine","toothpaste","spoon","blood","first aid","patient","dentist","bath"], distractors:["worm"] },
+    { t:{en:"Remedies & Actions", de:"Heilmittel & Aktionen"}, correct:["cure","to cure","to mash","to mix","to injure","since"], distractors:["headache","blood","dentist"] }
+  ],
+  sb: ["toothache","stomach ache","backache","pain in the ankle","earache","toothpaste","dentist","patient","medicine","first aid","horrible","helpful","It doesn't matter.","Believe me!","lamp post"]
+},
+"Unit 13": {
+  mm: [
+    { t:{en:"Weather Conditions", de:"Wetterlage"}, pairs:[["snowy","schneereich"],["thunderstorm","Gewitter"],["cloudy","bewölkt"],["windy","windig"],["rainy","regnerisch"],["sunny","sonnig"],["foggy","neblig"]] },
+    { t:{en:"Temperature", de:"Temperatur"}, pairs:[["hot","heiß"],["cold","kalt"],["cool","kühl"],["dry","trocken"],["wet","nass"],["mild","mild"],["bright","hell"]] },
+    { t:{en:"Forecast Words", de:"Vorhersage"}, pairs:[["forecast","Vorhersage"],["temperature","Temperatur"],["degree","Grad"],["scale","Skala"],["fog","Nebel"],["sunshine","Sonnenschein"],["outlook","Aussicht"]] },
+    { t:{en:"Nature & Measurement", de:"Natur & Maße"}, pairs:[["coast","Küste"],["sea level","Meeresspiegel"],["mile","Meile"],["inch (pl inches)","Zoll"],["rainfall","Niederschlag"],["average","durchschnittlich"]] }
+  ],
+  wh: [
+    { t:{en:"Weather", de:"Wetter"}, correct:["snowy","thunderstorm","cloudy","windy","rainy","sunny","foggy","heavy rain"], distractors:["coast"] },
+    { t:{en:"Temperature Words", de:"Temperatur-Wörter"}, correct:["hot","cold","cool","dry","wet","mild","bright","thick"], distractors:["coast"] },
+    { t:{en:"Forecast & Measure", de:"Vorhersage & Messen"}, correct:["forecast","temperature","degree","scale","fog","sunshine","outlook","formula"], distractors:["axe"] },
+    { t:{en:"Everyday Chat", de:"Alltagsphrasen"}, correct:["small talk","Have a nice day!","to make sure","hope","career","to earn"], distractors:["windy","forecast"] }
+  ],
+  sb: ["thunderstorm","temperature","weather presenter / meteorologist","throughout the year","sea level","binoculars","rainfall","forecast","sunshine","to continue","generally","Have a nice day!","career","to be mad about sth.","flash of light"]
+},
+"Unit 14": {
+  mm: [
+    { t:{en:"Winter & Water Sports", de:"Winter- & Wassersport"}, pairs:[["snowboarding","Snowboarden"],["skiing","Skifahren"],["surfing","Surfen"],["windsurfing","Windsurfen"],["swimming","Schwimmen"]] },
+    { t:{en:"Wheel Sports", de:"Rollsportarten"}, pairs:[["roller-skating","Rollschuhlaufen"],["mountain biking","Mountainbiken"],["cycling","Radfahren"],["skateboarding","Skateboardfahren"],["mountain climbing","Bergsteigen"]] },
+    { t:{en:"Competition Words", de:"Wettkampfwörter"}, pairs:[["race","Rennen"],["competition","Wettbewerb"],["challenge","Herausforderung"],["world record","Weltrekord"],["success","Erfolg"],["equipment","Ausrüstung"]] },
+    { t:{en:"Sports Actions", de:"Sport-Aktionen"}, pairs:[["to grow up","aufwachsen"],["to appear","erscheinen"],["to manage","schaffen"],["to snorkel","schnorcheln"],["to take part (in)","teilnehmen"],["to score","erzielen"],["to tackle","attackieren"]] }
+  ],
+  wh: [
+    { t:{en:"Sports", de:"Sportarten"}, correct:["roller-skating","snowboarding","skiing","surfing","mountain climbing","windsurfing","swimming","mountain biking"], distractors:["nil"] },
+    { t:{en:"More Sports", de:"Mehr Sport"}, correct:["cycling","skateboarding","roller-skating","to snorkel","mountain climbing"], distractors:["waste of time","nil","success","equipment"] },
+    { t:{en:"Competition Words", de:"Wettkampfwörter"}, correct:["race","competition","challenge","world record","success","equipment","distance","flood"], distractors:["nil"] },
+    { t:{en:"Description & Action", de:"Beschreibung & Aktion"}, correct:["serious","official","extreme","professional","rather","to manage","to take part (in)","to appear"], distractors:["race"] }
+  ],
+  sb: ["roller-skating","snowboarding","skateboarding","mountain climbing","windsurfing","mountain biking","world record","competition","professional","challenge","to take part (in)","to snorkel","waste of time","equipment","on one's own"]
+},
+"Unit 15": {
+  mm: [
+    { t:{en:"Pet Care Tasks", de:"Haustierpflege"}, pairs:[["to feed your pet","Haustier füttern"],["to clean out the litter tray","Katzenklo sauber machen"],["to clean out your pet's cage","Käfig säubern"],["to play with your pet","mit Haustier spielen"],["to dry your pet","abtrocknen"],["to walk your pet","mit Haustier spazieren"],["to take your pet to the vet","zum Tierarzt bringen"],["to give your pet a bath","baden"]] },
+    { t:{en:"Pet Actions & Gear", de:"Aktionen & Zubehör"}, pairs:[["to stroke","streicheln"],["to brush","bürsten"],["cage","Käfig"],["litter tray","Katzenklo"],["vet (veterinarian)","Tierarzt"],["to tidy (up)","aufräumen"]] },
+    { t:{en:"Pets & Nature", de:"Haustiere & Natur"}, pairs:[["emperor penguin","Kaiserpinguin"],["Southern Ocean","Antarktischer Ozean"],["sand","Sand"],["pyjamas","Pyjama"],["to release","befreien"],["space","Platz"]] }
+  ],
+  wh: [
+    { t:{en:"Pet Care", de:"Haustierpflege"}, correct:["to feed your pet","to clean out the litter tray","to clean out your pet's cage","to play with your pet","to dry your pet","to walk your pet","to take your pet to the vet","to give your pet a bath"], distractors:["sand"] },
+    { t:{en:"Pet Gear & Actions", de:"Zubehör & Aktionen"}, correct:["to stroke","to brush","cage","litter tray","vet (veterinarian)","to tidy (up)","to release"], distractors:["sand","pyjamas"] },
+    { t:{en:"Nature & Phrases", de:"Natur & Phrasen"}, correct:["emperor penguin","Southern Ocean","sand","pyjamas","Neither do I.","So do I.","to have got a fear of"], distractors:["cage"] }
+  ],
+  sb: ["to clean out the litter tray","to clean out your pet's cage","to take your pet to the vet","to give your pet a bath","emperor penguin","Southern Ocean","vet (veterinarian)","pyjamas","to release","to keep sb. company","to have got a fear of","Neither do I.","So do I.","to tidy (up)","litter tray"]
+}
 };
 
 // ===== AVATAR SYSTEM =====
@@ -7127,33 +7357,68 @@ function awardVocabXP(n, label) {
   }
 }
 
+// Curated task helpers
+function collectVocabTasks(kind) {
+  const out = [];
+  (state.selectedSources || []).forEach(src => {
+    if (typeof VOCAB_TASKS !== 'undefined' && VOCAB_TASKS[src] && VOCAB_TASKS[src][kind]) {
+      VOCAB_TASKS[src][kind].forEach(task => out.push(Object.assign({}, task, { source: src })));
+    }
+  });
+  return out;
+}
+
+function findVocabWord(src, enText) {
+  const arr = vocabData[src];
+  if (!arr) return null;
+  return arr.find(w => w.w === enText) || null;
+}
+
 function startMemoryMatch() {
-  const pool = collectVocabFromSelectedUnits();
-  if (pool.length < 6) {
-    alert(uiLang==='de' ? 'Zu wenige Wörter — wähle mehr Units.' : 'Too few words — pick more units.');
+  const tasks = collectVocabTasks('mm');
+  if (tasks.length === 0) {
+    alert(uiLang==='de' ? 'Keine Memory-Match-Aufgaben für gewählte Units.' : 'No Memory Match tasks for selected units.');
     return;
   }
-  mmState.poolSize = Math.min(8, pool.length);
-  mmState._pool = pool;
+  shuffle(tasks);
+  mmState._queue = tasks;
+  mmState._queueIdx = 0;
   document.body.classList.add('playing');
   showScreen('memory-match-screen');
   startMemoryMatchRound();
 }
 
 function startMemoryMatchRound() {
-  const pool = mmState._pool || collectVocabFromSelectedUnits();
-  shuffle(pool);
-  const picks = pool.slice(0, mmState.poolSize);
+  let q = mmState._queue;
+  if (!q || !q.length) {
+    q = collectVocabTasks('mm');
+    if (!q.length) { endMemoryMatch(); return; }
+    shuffle(q); mmState._queue = q; mmState._queueIdx = 0;
+  }
+  const task = q[mmState._queueIdx % q.length];
+  mmState._queueIdx++;
+  const pairs = [...task.pairs];
+  shuffle(pairs);
+  const picks = pairs.slice(0, Math.min(8, pairs.length));
   const cards = [];
-  picks.forEach((w, i) => {
-    cards.push({ pairId: i, kind: 'en', text: w.w, word: w });
-    cards.push({ pairId: i, kind: 'de', text: w.g.split(',')[0].trim(), word: w });
+  picks.forEach((p, i) => {
+    cards.push({ pairId: i, kind: 'en', text: p[0] });
+    cards.push({ pairId: i, kind: 'de', text: p[1] });
   });
   shuffle(cards);
   mmState.pairs = picks;
   mmState.cards = cards;
   mmState.first = null; mmState.second = null; mmState.moves = 0; mmState.matched = 0;
   mmState.startTime = Date.now(); mmState.busy = false;
+  const titleCard = document.getElementById('mm-title-card');
+  const titleText = document.getElementById('mm-title-text');
+  const titleLabel = document.getElementById('mm-title-label');
+  if (titleCard && titleText) {
+    const isDe = uiLang === 'de';
+    titleLabel.textContent = isDe ? 'Thema' : 'Topic';
+    titleText.textContent = (isDe ? task.t.de : task.t.en) + ' — ' + task.source;
+    titleCard.style.display = '';
+  }
   renderMemoryMatch();
   document.getElementById('mm-done').style.display = 'none';
   document.getElementById('mm-grid').style.display = '';
@@ -7289,13 +7554,23 @@ function sbLocaliseChrome() {
 }
 
 function startSpellingBee() {
-  const pool = collectVocabFromSelectedUnits().filter(w => {
-    const t = sbNormaliseTarget(w);
-    return t.length >= 3 && t.length <= 20;
+  const seen = new Set();
+  const pool = [];
+  (state.selectedSources || []).forEach(src => {
+    if (!(typeof VOCAB_TASKS !== 'undefined' && VOCAB_TASKS[src] && VOCAB_TASKS[src].sb)) return;
+    VOCAB_TASKS[src].sb.forEach(en => {
+      const key = src + '::' + en;
+      if (seen.has(key)) return;
+      seen.add(key);
+      const w = findVocabWord(src, en);
+      if (!w) return;
+      const t = sbNormaliseTarget(w);
+      if (t.length >= 3 && t.length <= 28) pool.push(w);
+    });
   });
   if (pool.length < 5) { alert(sbT('tooFew')); return; }
   shuffle(pool);
-  sbState.deck = pool.slice(0, Math.min(12, pool.length));
+  sbState.deck = pool.slice(0, Math.min(15, pool.length));
   sbState.idx = 0; sbState.correct = 0; sbState.wrong = 0;
   document.body.classList.add('playing');
   showScreen('spelling-bee-screen');
@@ -7479,38 +7754,21 @@ function endSpellingBee() {
 // =========================================================
 // ========== NEW VOCAB MODES: WORD HUNT ===================
 // =========================================================
-function _whMatch(w, kws) {
-  const base = (w.w || '').toLowerCase().replace(/^(to|a|an|the)\s+/, '').trim();
-  if (!base) return false;
-  const tokens = base.split(/[\s-]+/);
-  for (const kw of kws) {
-    if (base === kw) return true;
-    if (tokens.includes(kw)) return true;
-  }
-  return false;
-}
-const WH_CATEGORIES = [
-  { id: 'food', name_en: 'Food & Drink', name_de: 'Essen & Trinken', kws: ['food','drink','juice','milk','bread','cheese','apple','banana','chicken','rice','egg','eggs','cake','cookie','cookies','fruit','vegetable','vegetables','sugar','salt','coffee','tea','water','burger','pizza','soup','sandwich','orange','tomato','potato','pasta','breakfast','lunch','dinner','meal','carrot','onion','sauce','cream','chocolate','candy','sweets','pepper','butter','honey','salad','fish','meat','beef','pork','ham','bacon','noodle','noodles','lemonade','yoghurt','biscuit','biscuits','crisps','chips','ice cream','pear','grape','grapes','strawberry','strawberries','peach'] },
-  { id: 'animal', name_en: 'Animals', name_de: 'Tiere', kws: ['animal','dog','cat','mouse','bird','horse','cow','sheep','pig','fish','rabbit','duck','chicken','goat','lion','tiger','bear','monkey','frog','snake','spider','insect','bee','butterfly','fly','elephant','zebra','giraffe','kangaroo','panda','parrot','hamster','goldfish','rat','pony','wolf','fox','squirrel','shark','dolphin','whale','crocodile'] },
-  { id: 'family', name_en: 'Family & People', name_de: 'Familie & Menschen', kws: ['family','mother','father','mum','dad','sister','brother','son','daughter','parent','parents','child','children','baby','aunt','uncle','cousin','grandma','grandpa','grandmother','grandfather','husband','wife','friend','boy','girl','man','woman','person','people','neighbour','teacher','student'] },
-  { id: 'clothes', name_en: 'Clothes', name_de: 'Kleidung', kws: ['shirt','t-shirt','tshirt','trousers','jeans','skirt','dress','coat','jacket','sweater','pullover','hat','cap','scarf','glove','gloves','sock','socks','shoe','shoes','boot','boots','tie','belt','hoodie','uniform','pyjamas','swimsuit','sweatshirt','sunglasses','hairband','school tie'] },
-  { id: 'school', name_en: 'School', name_de: 'Schule', kws: ['book','pencil','pen','ruler','rubber','eraser','scissors','desk','chair','classroom','teacher','student','lesson','homework','exam','test','exercise','subject','blackboard','whiteboard','notebook','library','playground','backpack','school','schoolbag','school bag','pencil case','exercise book','board','projector','tablet'] },
-  { id: 'action', name_en: 'Actions (Verbs)', name_de: 'Verben (Tätigkeiten)', match: w => /^to\s/i.test(w.w||'') },
-  { id: 'home', name_en: 'Home & Rooms', name_de: 'Zuhause & Räume', kws: ['house','home','room','bedroom','kitchen','bathroom','living room','garden','door','window','wall','floor','ceiling','roof','stairs','garage','sofa','armchair','table','bed','cupboard','shelf','lamp','carpet','mirror','bathtub','shower','fridge','oven','toilet','sink','cooker'] },
-  { id: 'body', name_en: 'Body Parts', name_de: 'Körperteile', kws: ['body','head','hair','face','eye','eyes','ear','ears','nose','mouth','lip','lips','tooth','teeth','tongue','neck','shoulder','shoulders','arm','arms','hand','hands','finger','fingers','leg','legs','foot','feet','toe','toes','knee','knees','chest','stomach','skin','heart','brain'] }
-];
-WH_CATEGORIES.forEach(c => { if (c.kws && !c.match) c.match = w => _whMatch(w, c.kws); });
+// Curated per-unit tasks from VOCAB_TASKS[unit].wh.
 
 let whState = { round: 0, totalRounds: 5, score: 0, target: null, tiles: [], picked: new Set(), correctSet: new Set(), answered: false };
 
 function startWordHunt() {
-  const pool = collectVocabFromSelectedUnits();
-  if (pool.length < 12) {
-    alert(uiLang==='de' ? 'Zu wenige Wörter — wähle mehr Units.' : 'Too few words — pick more units.');
+  const tasks = collectVocabTasks('wh');
+  if (tasks.length === 0) {
+    alert(uiLang==='de' ? 'Keine Wort-Jagd-Aufgaben für gewählte Units.' : 'No Word Hunt tasks for selected units.');
     return;
   }
-  whState.pool = pool;
-  whState.round = 0; whState.score = 0; whState.totalRounds = 5;
+  shuffle(tasks);
+  whState._queue = tasks;
+  whState._queueIdx = 0;
+  whState.round = 0; whState.score = 0;
+  whState.totalRounds = Math.min(tasks.length, 7);
   document.body.classList.add('playing');
   showScreen('word-hunt-screen');
   wordHuntNextRound();
@@ -7518,26 +7776,21 @@ function startWordHunt() {
 
 function wordHuntNextRound() {
   if (whState.round >= whState.totalRounds) { finishWordHunt(); return; }
-  const shuffled = [...WH_CATEGORIES];
-  shuffle(shuffled);
-  let target = null;
-  let matched = [];
-  for (const cat of shuffled) {
-    const hits = whState.pool.filter(w => cat.match(w));
-    if (hits.length >= 3) { target = cat; matched = hits; break; }
-  }
-  if (!target) { finishWordHunt(); return; }
-  whState.target = target;
+  const task = whState._queue[whState._queueIdx % whState._queue.length];
+  whState._queueIdx++;
+  whState.target = task;
   whState.round++;
   whState.answered = false;
   whState.picked = new Set();
-  shuffle(matched);
-  const numCorrect = Math.min(4, matched.length);
-  const correctPicks = matched.slice(0, numCorrect).map(w => w.w);
-  const nonMatching = whState.pool.filter(w => !target.match(w));
-  shuffle(nonMatching);
-  const fillers = nonMatching.slice(0, 9 - numCorrect).map(w => w.w);
-  const tiles = [...correctPicks, ...fillers];
+  const correct = [...task.correct];
+  const distractors = [...(task.distractors || [])];
+  shuffle(correct); shuffle(distractors);
+  const maxTiles = 9;
+  let cap = Math.min(correct.length, maxTiles - Math.min(distractors.length, 2));
+  cap = Math.max(cap, 3);
+  const correctPicks = correct.slice(0, Math.min(correct.length, cap));
+  const distractorPicks = distractors.slice(0, maxTiles - correctPicks.length);
+  const tiles = [...correctPicks, ...distractorPicks];
   shuffle(tiles);
   whState.tiles = tiles;
   whState.correctSet = new Set(correctPicks);
@@ -7549,7 +7802,7 @@ function renderWordHunt() {
   document.getElementById('wh-score').textContent = whState.score;
   const isDe = uiLang === 'de';
   document.getElementById('wh-prompt-label').textContent = isDe ? 'Tippe alle, die passen' : 'Tap all that match';
-  const catName = isDe ? whState.target.name_de : whState.target.name_en;
+  const catName = isDe ? (whState.target.t ? whState.target.t.de : '') : (whState.target.t ? whState.target.t.en : '');
   document.getElementById('wh-prompt-text').innerHTML = (isDe ? 'Welche sind <span class="wh-prompt-target">' : 'Which are <span class="wh-prompt-target">') + catName + '</span>?';
   const grid = document.getElementById('wh-grid');
   grid.innerHTML = '';
