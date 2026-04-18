@@ -6549,7 +6549,7 @@ function showHomeScreen() {
   var pracLabel = document.getElementById('practice-btn-label');
   if (pracLabel) pracLabel.textContent = '🎯 ' + t('startVocabPractice');
   var pracSub = document.getElementById('practice-subtitle');
-  if (pracSub) pracSub.textContent = state.mode === 'grammar' ? (uiLang === 'de' ? 'Themen und Aufgabentyp auswählbar' : 'Choose topics and task type') : (uiLang === 'de' ? 'Units und Übungsformat auswählbar' : 'Choose units and exercise type');
+  if (pracSub) pracSub.textContent = state.mode === 'grammar' ? (uiLang === 'de' ? 'Themen und Aufgabentyp auswählbar' : 'Choose topics and exercise type') : (uiLang === 'de' ? 'Units und Übungsformat auswählbar' : 'Choose units and exercise type');
   var modeSwitch = document.getElementById('home-mode-switch');
   if (modeSwitch) modeSwitch.textContent = '↩️ ' + (uiLang === 'de' ? 'Zu Grammatik oder Story Mode wechseln' : 'Switch to Grammar or Story Mode');
 
