@@ -3287,7 +3287,7 @@ body.playing .header-container { display: none; }
 
 <!-- PRACTICE SCREEN -->
 <div id="practice-screen" class="screen">
-  <div class="speed-timer-wrap" id="speed-timer-wrap">
+  <div class="speed-timer-wrap" id="speed-timer-wrap" style="display:none;">
     <div class="speed-timer-text" id="speed-timer-text">60</div>
     <div class="speed-timer-bg"><div class="speed-timer-bar" id="speed-timer-bar" style="width:100%"></div></div>
   </div>
@@ -5258,8 +5258,10 @@ function getDailyChallengeTypes() {
 
 function calculateSessionXP(results) {
   let xp = 0;
+  let correctCount = 0;
   for (const r of results) {
     if (r.correct) {
+      correctCount++;
       const base = (XP_TABLE[r.type] || 5) * (r.comboMult || 1);
       const factor = r.isClose ? 0.5 : 1;  // Phase 5h: half XP for typo-tolerated answers
       let gained = Math.max(1, Math.round(base * factor));
@@ -5267,6 +5269,9 @@ function calculateSessionXP(results) {
       xp += gained;
     }
   }
+  // No XP for sessions with zero correct answers — prevents abandoning a fresh
+  // session for a free streak bonus.
+  if (correctCount === 0) return 0;
   // Perfect bonus only if every answer was strictly correct (not close)
   if (results.length >= 5 && results.every(r => r.correct && !r.isClose)) xp += 20;
   const streak = Math.min(state.studentData?.streak || 0, 7);
@@ -6982,6 +6987,7 @@ function startSpeedRound() {
   // Show & start timer
   const wrap = document.getElementById('speed-timer-wrap');
   wrap.classList.add('active');
+  wrap.style.display = '';
   document.getElementById('speed-timer-text').textContent = '60';
   document.getElementById('speed-timer-bar').style.width = '100%';
   document.getElementById('skip-btn').style.display = 'none';
@@ -7003,7 +7009,7 @@ function startSpeedRound() {
 function resetSpeedTimer() {
   if (state.speedTimer) { clearInterval(state.speedTimer); state.speedTimer = null; }
   const wrap = document.getElementById('speed-timer-wrap');
-  if (wrap) wrap.classList.remove('active');
+  if (wrap) { wrap.classList.remove('active'); wrap.style.display = 'none'; }
   const txt = document.getElementById('speed-timer-text');
   if (txt) txt.classList.remove('urgent');
   const skip = document.getElementById('skip-btn');
@@ -7766,7 +7772,7 @@ function endSpellingBee() {
 // =========================================================
 // Curated per-unit tasks from VOCAB_TASKS[unit].wh.
 
-let whState = { round: 0, totalRounds: 5, score: 0, target: null, tiles: [], picked: new Set(), correctSet: new Set(), answered: false };
+let whState = { round: 0, totalRounds: 5, score: 0, target: null, tiles: [], picked: new Set(), correctSet: new Set(), answered: false, mistakes: 0 };
 
 function startWordHunt() {
   const tasks = collectVocabTasks('wh');
@@ -7789,6 +7795,7 @@ function wordHuntNextRound() {
   const task = whState._queue[whState._queueIdx % whState._queue.length];
   whState._queueIdx++;
   whState.target = task;
+  whState.mistakes = 0;
   whState.round++;
   whState.answered = false;
   whState.picked = new Set();
@@ -7844,7 +7851,19 @@ function wordHuntTap(el) {
     el.classList.add('wrong');
     whState.score = Math.max(0, whState.score - 1);
     document.getElementById('wh-score').textContent = whState.score;
-    wordHuntFinishRound(false);
+    whState.mistakes = (whState.mistakes || 0) + 1;
+    // Soft-fail: allow up to 2 mistakes per round before ending. Encourages
+    // learners to keep trying instead of restarting after a single slip.
+    if (whState.mistakes >= 2) {
+      wordHuntFinishRound(false);
+    } else {
+      const fb = document.getElementById('wh-feedback');
+      if (fb) {
+        const isDe = (typeof uiLang !== 'undefined' && uiLang === 'de');
+        fb.textContent = isDe ? '❌ Falsch — du hast noch 1 Versuch!' : '❌ Wrong — 1 try left!';
+        fb.className = 'wh-feedback show wrong';
+      }
+    }
   }
 }
 
@@ -8829,18 +8848,25 @@ async function endPractice() {
 
   const list = document.getElementById('results-list');
   list.innerHTML = '';
-  const sorted = [...state.results].sort((a, b) => a.correct - b.correct);
-  for (const r of sorted) {
-    const item = document.createElement('div');
-    item.className = 'result-item ' + (r.correct ? 'correct' : 'wrong');
-    const reasonTag = r.word.reason ? `<span style="font-size:0.65rem;padding:1px 6px;border-radius:6px;background:rgba(255,255,255,0.07);color:var(--text-secondary);font-weight:500;margin-left:4px;">${escapeHtml(r.word.reason)}</span>` : '';
-    const correctAnswer = !r.correct ? ` <span style="color:#4ade80;font-weight:600;">→ ${escapeHtml(r.word.w)}</span>` : '';
-    item.innerHTML = `
-      <span class="result-icon">${r.correct ? '✓' : '✗'}</span>
-      <span class="result-word">${r.word.w}${reasonTag}</span>
-      <span class="result-answer">${r.correct ? '' : 'You: ' + escapeHtml(r.userAnswer) + correctAnswer}</span>
-    `;
-    list.appendChild(item);
+  if (state.results.length === 0) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'padding:18px;text-align:center;color:var(--text-secondary);font-size:0.9rem;';
+    empty.textContent = 'No words attempted in this session. Start a new practice to track your progress!';
+    list.appendChild(empty);
+  } else {
+    const sorted = [...state.results].sort((a, b) => a.correct - b.correct);
+    for (const r of sorted) {
+      const item = document.createElement('div');
+      item.className = 'result-item ' + (r.correct ? 'correct' : 'wrong');
+      const reasonTag = r.word.reason ? `<span style="font-size:0.65rem;padding:1px 6px;border-radius:6px;background:rgba(255,255,255,0.07);color:var(--text-secondary);font-weight:500;margin-left:4px;">${escapeHtml(r.word.reason)}</span>` : '';
+      const correctAnswer = !r.correct ? ` <span style="color:#4ade80;font-weight:600;">→ ${escapeHtml(r.word.w)}</span>` : '';
+      item.innerHTML = `
+        <span class="result-icon">${r.correct ? '✓' : '✗'}</span>
+        <span class="result-word">${r.word.w}${reasonTag}</span>
+        <span class="result-answer">${r.correct ? '' : 'You: ' + escapeHtml(r.userAnswer) + correctAnswer}</span>
+      `;
+      list.appendChild(item);
+    }
   }
 
   // Show retry-wrong section if there are wrong answers

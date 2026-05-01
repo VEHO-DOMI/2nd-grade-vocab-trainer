@@ -2,6 +2,13 @@
 
 Reverse-chronological release history. Going forward, update on each substantive change. Earlier history (pre-2026-04-11) lives only in `git log`.
 
+## 2026-05-01 — Phase 0 polish (cross-grade)
+- Fix stray "60" timer always visible at top of Komplett / Sprint / MC / Flashcards (`speed-timer-wrap` is now properly hidden when not in Speed Round).
+- Fix XP-for-zero-correct exploit: ending a session with no correct answers now awards 0 XP instead of streak-bonus + perfect-round bonuses.
+- Results page: show a friendly placeholder when a session ended without any attempted words, instead of a blank `RESULTS` box.
+- Word Hunt failure UX softened: 2 mistakes allowed per round before the round ends (was 1). After the first wrong tap, a "Wrong — 1 try left!" / "Falsch — du hast noch 1 Versuch!" message shows.
+- Same fix-set applied across G1 (already shipped), G2, G3, G4. Identifies shared code patterns; future copy-paste between grades is now lower-risk.
+
 ## 2026-04-19 — U12 + bugfix sweep
 - Fix Spelling Bee auto-click + results navigation
 - U12 matching task rebuild
