@@ -19,6 +19,10 @@ Single-file SPA: HTML, CSS, JS, and vocab data bundled into `index.html`. Campai
 ├── data/
 │   ├── m2-campaign.js
 │   └── m2-campaign.json
+├── activity/          ← Activity Game sibling app (Draw / Show / Explain)
+│   ├── index.html     ← standalone group game; no login, no Firebase, no XP
+│   └── data/
+│       └── activity-words.js  ← auto-generated; rebuild via TOOLS/activity-audit/
 └── README.md, CLAUDE.md, CHANGELOG.md
 ```
 
@@ -36,6 +40,8 @@ Single-file SPA: HTML, CSS, JS, and vocab data bundled into `index.html`. Campai
 **Grammar arcade:** chat-sim campaign renderer, group-sort / matching-pairs / anagram task types.
 
 **Live multiplayer:** Battle Arena, Class Quiz.
+
+**Activity Game (sibling app at `activity/`):** teacher-orchestrated group game — Draw / Show / Explain / Mix, 30-60-90 s rounds, unit-scoped, group scoring with tie-break, optional time bonus. No login. Words come from `activity/data/activity-words.js` (single primary category per word, regenerate via `TOOLS/activity-audit/build-activity-words.js` after editing `teacher-overrides.csv`).
 
 ## Firebase
 
