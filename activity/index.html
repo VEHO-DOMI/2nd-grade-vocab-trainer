@@ -145,9 +145,10 @@
   }
   .mode-tile:hover { color: var(--text); }
   .mode-tile .mt-icon { display: block; font-size: 1.6rem; line-height: 1; margin-bottom: 0.25rem; }
-  .mode-tile.active.draw    { background: rgba(239,68,68,0.20);  border-color: var(--draw);    color: white; box-shadow: 0 0 0 1px var(--draw); }
-  .mode-tile.active.show    { background: rgba(34,197,94,0.20);  border-color: var(--show);    color: white; box-shadow: 0 0 0 1px var(--show); }
-  .mode-tile.active.explain { background: rgba(59,130,246,0.20); border-color: var(--explain); color: white; box-shadow: 0 0 0 1px var(--explain); }
+  .mode-tile.active { color: white; background: var(--accent-glow); border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .mode-tile.active.draw    { background: rgba(239,68,68,0.22);  border-color: var(--draw);    box-shadow: 0 0 0 1.5px var(--draw); }
+  .mode-tile.active.show    { background: rgba(34,197,94,0.22);  border-color: var(--show);    box-shadow: 0 0 0 1.5px var(--show); }
+  .mode-tile.active.explain { background: rgba(59,130,246,0.22); border-color: var(--explain); box-shadow: 0 0 0 1.5px var(--explain); }
   .mode-hint {
     margin-top: 0.4rem; font-size: 0.7rem; color: var(--muted);
     text-align: center; font-style: italic;
@@ -587,9 +588,9 @@
   <div class="setup-section">
     <label>Modes (pick one or more)</label>
     <div class="mode-grid" id="mode-grid">
-      <button class="mode-tile" data-mode="draw"><span class="mt-icon">✏️</span>Draw</button>
-      <button class="mode-tile" data-mode="show"><span class="mt-icon">🎭</span>Show</button>
-      <button class="mode-tile" data-mode="explain"><span class="mt-icon">💬</span>Explain</button>
+      <button class="mode-tile draw" data-mode="draw"><span class="mt-icon">✏️</span>Draw</button>
+      <button class="mode-tile show" data-mode="show"><span class="mt-icon">🎭</span>Show</button>
+      <button class="mode-tile explain" data-mode="explain"><span class="mt-icon">💬</span>Explain</button>
     </div>
     <div class="mode-hint" id="mode-hint">Pick at least one. Pick several to mix.</div>
   </div>
