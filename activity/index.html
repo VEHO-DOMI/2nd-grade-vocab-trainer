@@ -135,29 +135,50 @@
   .seg-btn .seg-icon { display: block; font-size: 1.3rem; line-height: 1; margin-bottom: 0.2rem; }
   .seg-btn .seg-label { font-size: 0.78rem; }
 
-  /* Mode pick — wider tiles with category color when active */
-  .mode-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+  /* Mode pick — multi-select, category-colored when active */
+  .mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
   .mode-tile {
-    padding: 0.85rem 0.5rem; border-radius: 14px; border: 1.5px solid var(--card-border);
+    padding: 0.95rem 0.5rem; border-radius: 14px; border: 1.5px solid var(--card-border);
     background: var(--card); color: var(--text-secondary); cursor: pointer;
-    font-family: inherit; font-weight: 700; font-size: 0.9rem; transition: all 0.15s;
+    font-family: inherit; font-weight: 700; font-size: 0.85rem; transition: all 0.15s;
+    position: relative;
   }
   .mode-tile:hover { color: var(--text); }
-  .mode-tile .mt-icon { display: block; font-size: 1.5rem; line-height: 1; margin-bottom: 0.2rem; }
-  .mode-tile.active.draw    { background: rgba(239,68,68,0.18);  border-color: var(--draw);    color: white; box-shadow: 0 0 0 1px var(--draw); }
-  .mode-tile.active.show    { background: rgba(34,197,94,0.18);  border-color: var(--show);    color: white; box-shadow: 0 0 0 1px var(--show); }
-  .mode-tile.active.explain { background: rgba(59,130,246,0.18); border-color: var(--explain); color: white; box-shadow: 0 0 0 1px var(--explain); }
-  .mode-tile.active.mix     { background: var(--accent-glow);    border-color: var(--accent);  color: white; box-shadow: 0 0 0 1px var(--accent); }
+  .mode-tile .mt-icon { display: block; font-size: 1.6rem; line-height: 1; margin-bottom: 0.25rem; }
+  .mode-tile.active.draw    { background: rgba(239,68,68,0.20);  border-color: var(--draw);    color: white; box-shadow: 0 0 0 1px var(--draw); }
+  .mode-tile.active.show    { background: rgba(34,197,94,0.20);  border-color: var(--show);    color: white; box-shadow: 0 0 0 1px var(--show); }
+  .mode-tile.active.explain { background: rgba(59,130,246,0.20); border-color: var(--explain); color: white; box-shadow: 0 0 0 1px var(--explain); }
+  .mode-hint {
+    margin-top: 0.4rem; font-size: 0.7rem; color: var(--muted);
+    text-align: center; font-style: italic;
+  }
 
-  /* Unit scope chips */
-  .scope-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.4rem; }
+  /* Unit selector — multi-select grid */
+  .scope-quick { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.5rem; }
   .scope-chip {
-    padding: 0.4rem 0.7rem; border-radius: 999px; border: 1.5px solid var(--card-border);
-    background: var(--card); color: var(--text-secondary); font-size: 0.75rem; font-weight: 600;
+    padding: 0.38rem 0.7rem; border-radius: 999px; border: 1.5px solid var(--card-border);
+    background: var(--card); color: var(--text-secondary); font-size: 0.74rem; font-weight: 600;
     cursor: pointer; font-family: inherit; transition: all 0.15s;
   }
   .scope-chip:hover { color: var(--text); border-color: var(--accent); }
-  .scope-chip.active { background: var(--accent-glow); border-color: var(--accent); color: var(--text); }
+  .unit-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.32rem;
+    margin-top: 0.1rem;
+  }
+  .unit-cell {
+    padding: 0.55rem 0.2rem; border-radius: 10px; border: 1.5px solid var(--card-border);
+    background: var(--card); color: var(--text-secondary); cursor: pointer;
+    font-family: inherit; font-weight: 700; font-size: 0.78rem; transition: all 0.15s;
+    text-align: center; line-height: 1; position: relative;
+  }
+  .unit-cell:hover { color: var(--text); border-color: var(--accent); }
+  .unit-cell .uc-num { display: block; font-size: 0.92rem; font-weight: 800; }
+  .unit-cell .uc-count { display: block; font-size: 0.6rem; color: var(--muted); margin-top: 0.15rem; font-weight: 500; }
+  .unit-cell.active {
+    background: var(--accent-glow); border-color: var(--accent); color: white;
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+  .unit-cell.active .uc-count { color: rgba(255,255,255,0.7); }
 
   /* Words-available indicator */
   .words-available {
@@ -301,9 +322,27 @@
   }
 
   .game-actions {
-    display: flex; gap: 0.55rem; width: 100%; justify-content: center;
+    display: flex; gap: 0.9rem; width: 100%; justify-content: center;
   }
-  .game-actions .btn { flex: 1; min-width: 80px; }
+  .game-actions .btn-correct, .game-actions .btn-skip {
+    flex: 1; min-height: 84px; font-size: 1.25rem; font-weight: 800;
+    padding: 1.4rem 1rem; border-radius: 18px; letter-spacing: -0.01em;
+  }
+  .game-actions .btn-correct { box-shadow: 0 4px 24px var(--show-glow); }
+  .game-actions .btn-skip {
+    background: rgba(255,255,255,0.08); color: var(--text); border: 1.5px solid var(--card-border);
+  }
+  .game-actions .btn-skip:hover { background: rgba(255,255,255,0.12); }
+  .undo-row {
+    display: flex; justify-content: center; margin-top: 0.7rem;
+  }
+  .undo-row .btn-undo {
+    background: transparent; color: var(--muted); border: 1.5px solid var(--card-border);
+    padding: 0.5rem 1.4rem; font-size: 0.78rem; border-radius: 10px;
+    font-family: inherit; font-weight: 600; cursor: pointer; transition: all 0.15s;
+  }
+  .undo-row .btn-undo:hover:not(:disabled) { color: var(--text); border-color: var(--accent); }
+  .undo-row .btn-undo:disabled { opacity: 0.3; cursor: not-allowed; }
 
   .round-score {
     font-size: 0.9rem; margin-bottom: 0.9rem; color: var(--muted); font-weight: 500;
@@ -410,10 +449,15 @@
     .round-score strong { font-size: 1.2rem; }
     .word-card { padding: 1.1rem 0.8rem; min-height: 80px; margin-bottom: 0.65rem; border-radius: 16px; }
     .word-text { font-size: 1.35rem; }
-    .game-actions { gap: 0.45rem; }
-    .game-actions .btn { padding: 1rem 0.5rem; font-size: 1rem; border-radius: 14px; min-height: 52px; }
-    .bottom-actions { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06); }
+    .game-actions { gap: 0.7rem; }
+    .game-actions .btn-correct, .game-actions .btn-skip {
+      min-height: 76px; font-size: 1.1rem; padding: 1.1rem 0.5rem; border-radius: 16px;
+    }
+    .undo-row { margin-top: 0.6rem; }
+    .undo-row .btn-undo { padding: 0.45rem 1.2rem; font-size: 0.74rem; }
+    .bottom-actions { margin-top: 1.6rem; padding-top: 0.9rem; border-top: 1px solid rgba(255,255,255,0.06); }
     .bottom-actions .btn { padding: 0.4rem 0.7rem; font-size: 0.7rem; opacity: 0.6; }
+    .unit-grid { grid-template-columns: repeat(5, 1fr); }
 
     .seg-btn .seg-icon { font-size: 1.1rem; }
 
@@ -531,26 +575,37 @@
   </div>
 
   <div class="setup-section">
-    <label>Mode</label>
-    <div class="mode-grid" id="mode-grid">
-      <button class="mode-tile" data-mode="draw"><span class="mt-icon">✏️</span>Draw</button>
-      <button class="mode-tile" data-mode="show"><span class="mt-icon">🎭</span>Show</button>
-      <button class="mode-tile" data-mode="explain"><span class="mt-icon">💬</span>Explain</button>
-      <button class="mode-tile active mix" data-mode="mix"><span class="mt-icon">🎲</span>Mix</button>
+    <label>Game length (rounds per group)</label>
+    <div class="seg" id="rounds-seg">
+      <button class="seg-btn" data-rounds="3"><span class="seg-label">3</span></button>
+      <button class="seg-btn active" data-rounds="5"><span class="seg-label">5</span></button>
+      <button class="seg-btn" data-rounds="8"><span class="seg-label">8</span></button>
+      <button class="seg-btn" data-rounds="0"><span class="seg-label">∞</span></button>
     </div>
   </div>
 
   <div class="setup-section">
-    <label>Units</label>
-    <select id="scope-select"></select>
-    <div class="scope-chips" id="scope-chips">
-      <button class="scope-chip active" data-scope="all">All units</button>
-      <button class="scope-chip" data-scope="1-4">U1–4</button>
-      <button class="scope-chip" data-scope="5-8">U5–8</button>
-      <button class="scope-chip" data-scope="9-11">U9–11</button>
-      <button class="scope-chip" data-scope="12-15">U12–15</button>
+    <label>Modes (pick one or more)</label>
+    <div class="mode-grid" id="mode-grid">
+      <button class="mode-tile" data-mode="draw"><span class="mt-icon">✏️</span>Draw</button>
+      <button class="mode-tile" data-mode="show"><span class="mt-icon">🎭</span>Show</button>
+      <button class="mode-tile" data-mode="explain"><span class="mt-icon">💬</span>Explain</button>
     </div>
-    <div class="words-available" id="words-available">
+    <div class="mode-hint" id="mode-hint">Pick at least one. Pick several to mix.</div>
+  </div>
+
+  <div class="setup-section">
+    <label>Units (pick one or more)</label>
+    <div class="scope-quick">
+      <button class="scope-chip" data-quick="all">All</button>
+      <button class="scope-chip" data-quick="none">None</button>
+      <button class="scope-chip" data-quick="1-4">U1–4</button>
+      <button class="scope-chip" data-quick="5-8">U5–8</button>
+      <button class="scope-chip" data-quick="9-11">U9–11</button>
+      <button class="scope-chip" data-quick="12-15">U12–15</button>
+    </div>
+    <div class="unit-grid" id="unit-grid"></div>
+    <div class="words-available" id="words-available" style="margin-top:0.6rem;">
       <span><span class="wa-total" id="wa-total">0</span> words available</span>
       <span class="wa-breakdown" id="wa-breakdown"></span>
     </div>
@@ -600,9 +655,11 @@
     <div class="word-source" id="word-source"></div>
   </div>
   <div class="game-actions">
-    <button class="btn btn-success" onclick="markCorrect()" id="correct-btn">&#10003; Correct</button>
-    <button class="btn btn-secondary" onclick="skipWord()">Skip</button>
-    <button class="btn btn-danger btn-small" onclick="undoLast()" id="undo-btn" disabled>Undo</button>
+    <button class="btn btn-success btn-correct" onclick="markCorrect()" id="correct-btn">&#10003; Correct</button>
+    <button class="btn btn-skip" onclick="skipWord()">Skip →</button>
+  </div>
+  <div class="undo-row">
+    <button class="btn-undo" onclick="undoLast()" id="undo-btn" disabled>↶ Undo last</button>
   </div>
   <div class="bottom-actions">
     <button class="btn btn-secondary btn-small" onclick="confirmResetRound()">Reset Round</button>
@@ -657,8 +714,9 @@ const HISTORY_KEY = '2a-activity-history';
 
 const DEFAULT_SETUP = {
   time: 60,
-  mode: 'mix',         // 'draw' | 'show' | 'explain' | 'mix'
-  scope: 'all',        // 'all' | '1' | '4-7' etc.
+  rounds: 5,                          // rounds per group (0 = unlimited)
+  modes: ['draw', 'show', 'explain'], // multi-select
+  units: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
   timeBonus: false,
 };
 
@@ -688,37 +746,121 @@ function getAudio() {
   }
   return audioCtx;
 }
-function playTone(freq, duration, type='sine', vol=0.3, delay=0) {
+// Single tone with custom envelope. attack/release are seconds. detune in cents.
+function playTone(freq, duration, type='sine', vol=0.25, delay=0, opts={}) {
   const ctx = getAudio(); if (!ctx) return;
   const t0 = ctx.currentTime + delay;
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.type = type; osc.frequency.value = freq;
+  if (opts.detune) osc.detune.value = opts.detune;
+  // Optional pitch glide to a target frequency over duration
+  if (opts.glideTo) osc.frequency.exponentialRampToValueAtTime(opts.glideTo, t0 + duration);
   osc.connect(gain); gain.connect(ctx.destination);
+  const attack = opts.attack != null ? opts.attack : 0.01;
   gain.gain.setValueAtTime(0, t0);
-  gain.gain.linearRampToValueAtTime(vol, t0 + 0.01);
+  gain.gain.linearRampToValueAtTime(vol, t0 + attack);
   gain.gain.exponentialRampToValueAtTime(0.001, t0 + duration);
-  osc.start(t0); osc.stop(t0 + duration);
+  osc.start(t0); osc.stop(t0 + duration + 0.02);
 }
-function playNoise(duration, vol=0.3, delay=0) {
+function playNoise(duration, vol=0.3, delay=0, filter=null) {
   const ctx = getAudio(); if (!ctx) return;
   const t0 = ctx.currentTime + delay;
-  const buf = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+  const buf = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * duration)), ctx.sampleRate);
   const data = buf.getChannelData(0);
-  for (let i = 0; i < data.length; i++) data[i] = (Math.random()*2 - 1) * 0.6;
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random()*2 - 1);
   const src = ctx.createBufferSource(); src.buffer = buf;
   const gain = ctx.createGain();
-  src.connect(gain); gain.connect(ctx.destination);
+  let node = src;
+  if (filter) {
+    const bp = ctx.createBiquadFilter();
+    bp.type = filter.type || 'bandpass';
+    bp.frequency.value = filter.freq || 1000;
+    bp.Q.value = filter.Q || 1;
+    src.connect(bp); node = bp;
+  }
+  node.connect(gain); gain.connect(ctx.destination);
   gain.gain.setValueAtTime(0, t0);
-  gain.gain.linearRampToValueAtTime(vol, t0 + 0.01);
+  gain.gain.linearRampToValueAtTime(vol, t0 + 0.005);
   gain.gain.exponentialRampToValueAtTime(0.001, t0 + duration);
-  src.start(t0); src.stop(t0 + duration);
+  src.start(t0); src.stop(t0 + duration + 0.02);
 }
-function sfxCorrect() { playTone(880, 0.10, 'triangle', 0.2, 0); playTone(1320, 0.15, 'triangle', 0.2, 0.06); }
-function sfxSkip()    { playTone(440, 0.12, 'sawtooth', 0.12, 0); }
-function sfxBeep()    { playTone(660, 0.08, 'sine', 0.18, 0); }
-function sfxBuzzer()  { playNoise(0.6, 0.25, 0); playTone(120, 0.6, 'sawtooth', 0.18, 0); }
-function sfxBonus()   { playTone(523, 0.12, 'triangle', 0.2, 0); playTone(659, 0.12, 'triangle', 0.2, 0.10); playTone(784, 0.18, 'triangle', 0.2, 0.20); }
+
+// "Coin pickup / level up" — 4-note ascending arpeggio with octave doubling.
+function sfxCorrect() {
+  // Mario-style ding: G5 → C6 → E6 → G6 + soft sub octave
+  const seq = [
+    [783.99, 0],     // G5
+    [1046.50, 0.06], // C6
+    [1318.51, 0.12], // E6
+    [1567.98, 0.20], // G6
+  ];
+  for (const [f, d] of seq) {
+    playTone(f, 0.18, 'square',  0.10, d);     // bright lead
+    playTone(f, 0.18, 'triangle',0.18, d);     // smooth body
+    playTone(f * 0.5, 0.18, 'sine', 0.10, d);  // sub harmonic
+  }
+}
+
+// "Whoosh" — quick descending sweep (cartoon "next-please")
+function sfxSkip() {
+  playTone(523.25, 0.18, 'sine', 0.18, 0, { glideTo: 196.00 }); // C5 → G3 glide
+  // soft noise body
+  playNoise(0.10, 0.05, 0, { type: 'lowpass', freq: 1500, Q: 1 });
+}
+
+// Crisp tick for the countdown
+function sfxBeep() {
+  playTone(1760, 0.05, 'square', 0.12, 0);    // A6 staccato
+  playTone(880, 0.05, 'triangle', 0.10, 0);   // A5 underlay
+}
+
+// Game-show klaxon for time's up — 3 descending wahs + opening noise burst
+function sfxBuzzer() {
+  // Quick noisy "thud" attack
+  playNoise(0.12, 0.20, 0, { type: 'lowpass', freq: 600, Q: 1 });
+  // Three pitches, alternating saw + square for a beefier double-reed feel
+  const seq = [
+    [277.18, 0],     // C#4
+    [233.08, 0.20],  // A#3
+    [196.00, 0.40],  // G3
+  ];
+  for (const [f, d] of seq) {
+    playTone(f, 0.22, 'sawtooth', 0.18, d, { detune: -8 });
+    playTone(f, 0.22, 'square',   0.10, d, { detune: +8 });
+  }
+}
+
+// Triumphant 5-note fanfare for the time-bonus star
+function sfxBonus() {
+  // C major 1-3-5-8-10 with held final
+  const seq = [
+    [523.25, 0,    0.12, 'triangle'], // C5
+    [659.25, 0.10, 0.12, 'triangle'], // E5
+    [783.99, 0.20, 0.12, 'triangle'], // G5
+    [1046.50,0.32, 0.20, 'square'],   // C6 (held)
+    [1318.51,0.50, 0.40, 'triangle'], // E6 (long shimmer)
+  ];
+  for (const [f, d, dur, type] of seq) {
+    playTone(f, dur, type, 0.18, d);
+    playTone(f * 2, dur, 'sine', 0.06, d); // octave shimmer
+  }
+}
+
+// Soft 3-note round-start chime
+function sfxStart() {
+  playTone(523.25, 0.18, 'triangle', 0.12, 0);     // C5
+  playTone(659.25, 0.18, 'triangle', 0.14, 0.08);  // E5
+  playTone(783.99, 0.22, 'triangle', 0.16, 0.16);  // G5
+}
+
+// Game-over wrap — held major-7 chord
+function sfxGameOver() {
+  playTone(523.25, 0.6, 'triangle', 0.14, 0);    // C
+  playTone(659.25, 0.6, 'triangle', 0.12, 0);    // E
+  playTone(783.99, 0.6, 'triangle', 0.10, 0);    // G
+  playTone(987.77, 0.7, 'sine',     0.10, 0.05); // B
+}
 
 // ============================================================
 // GAME STATE
@@ -728,11 +870,11 @@ function freshState() {
   return {
     groups: [],
     currentGroupIdx: 0,
-    currentCategory: null,
-    currentMode: 'mix',
+    activeModes: ['draw','show','explain'],     // categories included in this game
+    activeUnits: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
     timePerRound: 60,
     timeBonus: false,
-    scopeUnits: null,            // array of unit numbers, or null = all
+    roundsPerGroup: 5,                          // 0 = unlimited
     usedWordKeys: new Set(),
     roundSkippedKeys: new Set(),
     roundWords: [],
@@ -761,121 +903,137 @@ document.addEventListener('DOMContentLoaded', () => {
 // SETUP SCREEN INITIALIZATION
 // ============================================================
 function initSetupScreen() {
-  // Hydrate setup from saved state
-  setActiveTime(setup.time);
-  setActiveMode(setup.mode);
-  setActiveScope(setup.scope);
-  setTimeBonus(setup.timeBonus);
+  // Sanity-check hydrated setup (might be missing fields if migrating)
+  if (!Array.isArray(setup.modes) || setup.modes.length === 0) setup.modes = ['draw','show','explain'];
+  if (!Array.isArray(setup.units) || setup.units.length === 0) setup.units = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 
-  // Time segmented control
-  document.getElementById('time-seg').addEventListener('click', (e) => {
-    const btn = e.target.closest('.seg-btn');
-    if (!btn) return;
-    const t = parseInt(btn.dataset.time, 10);
-    setActiveTime(t);
-  });
+  // Time picker
+  document.getElementById('time-seg').onclick = (e) => {
+    const btn = e.target.closest('.seg-btn'); if (!btn) return;
+    setTime(parseInt(btn.dataset.time, 10));
+  };
+  // Rounds picker
+  document.getElementById('rounds-seg').onclick = (e) => {
+    const btn = e.target.closest('.seg-btn'); if (!btn) return;
+    setRounds(parseInt(btn.dataset.rounds, 10));
+  };
+  // Mode multi-select
+  document.getElementById('mode-grid').onclick = (e) => {
+    const btn = e.target.closest('.mode-tile'); if (!btn) return;
+    toggleMode(btn.dataset.mode);
+  };
+  // Unit quick-select chips
+  document.querySelector('.scope-quick').onclick = (e) => {
+    const btn = e.target.closest('.scope-chip'); if (!btn) return;
+    applyUnitQuick(btn.dataset.quick);
+  };
 
-  // Mode picker
-  document.getElementById('mode-grid').addEventListener('click', (e) => {
-    const btn = e.target.closest('.mode-tile');
-    if (!btn) return;
-    setActiveMode(btn.dataset.mode);
-  });
+  // Build unit grid (15 cells)
+  buildUnitGrid();
 
-  // Scope chips
-  document.getElementById('scope-chips').addEventListener('click', (e) => {
-    const btn = e.target.closest('.scope-chip');
-    if (!btn) return;
-    setActiveScope(btn.dataset.scope);
-  });
+  // Render initial state
+  renderTime(); renderRounds(); renderModes(); renderUnits(); renderTimeBonus();
+  updateAvailability();
+}
 
-  // Build the per-unit dropdown
-  const sel = document.getElementById('scope-select');
-  sel.innerHTML = '';
-  const optAll = document.createElement('option'); optAll.value = 'all'; optAll.textContent = 'All units (1–15)'; sel.appendChild(optAll);
+function buildUnitGrid() {
+  const grid = document.getElementById('unit-grid');
+  if (!grid) return;
+  const titles = window.ACTIVITY_UNIT_TITLES || {};
+  const counts = perUnitCounts();
+  let html = '';
   for (let u = 1; u <= 15; u++) {
-    const o = document.createElement('option');
-    o.value = String(u);
-    const title = window.ACTIVITY_UNIT_TITLES && window.ACTIVITY_UNIT_TITLES[u];
-    o.textContent = title ? `Unit ${u} · ${title}` : `Unit ${u}`;
-    sel.appendChild(o);
+    const total = (counts[u] && (counts[u].draw + counts[u].show + counts[u].explain)) || 0;
+    const title = titles[u] ? `\n${titles[u]}` : '';
+    html += `<button class="unit-cell" data-unit="${u}" title="Unit ${u}${title}">
+      <span class="uc-num">${u}</span><span class="uc-count">${total}w</span>
+    </button>`;
   }
-  sel.addEventListener('change', (e) => {
-    setActiveScope(e.target.value);
-    // De-activate range chips when picking single unit
-    document.querySelectorAll('.scope-chip').forEach(c => c.classList.remove('active'));
-  });
-
-  updateAvailability();
+  grid.innerHTML = html;
+  grid.onclick = (e) => {
+    const btn = e.target.closest('.unit-cell'); if (!btn) return;
+    toggleUnit(parseInt(btn.dataset.unit, 10));
+  };
 }
 
-function setActiveTime(t) {
-  setup.time = t;
-  saveSetup();
-  document.querySelectorAll('#time-seg .seg-btn').forEach(b => {
-    b.classList.toggle('active', parseInt(b.dataset.time, 10) === t);
-  });
-}
-function setActiveMode(m) {
-  setup.mode = m;
-  saveSetup();
-  document.querySelectorAll('.mode-tile').forEach(b => {
-    b.classList.toggle('active', b.dataset.mode === m);
-  });
-  updateAvailability();
-}
-function setActiveScope(s) {
-  setup.scope = s;
-  saveSetup();
-  document.querySelectorAll('.scope-chip').forEach(c => c.classList.toggle('active', c.dataset.scope === s));
-  // Sync the dropdown
-  const sel = document.getElementById('scope-select');
-  if (sel) {
-    if (s === 'all' || /^\d+$/.test(s)) sel.value = s;
-    else sel.value = 'all'; // ranges aren't listed individually in the dropdown
+function perUnitCounts() {
+  const counts = {};
+  for (const e of (window.ACTIVITY_WORDS || [])) {
+    if (!counts[e.unit]) counts[e.unit] = { draw: 0, show: 0, explain: 0 };
+    counts[e.unit][e.cat]++;
   }
-  updateAvailability();
+  return counts;
 }
-function setTimeBonus(on) {
-  setup.timeBonus = !!on;
-  saveSetup();
-  document.getElementById('time-bonus-switch').classList.toggle('on', !!on);
+
+function setTime(t) { setup.time = t; saveSetup(); renderTime(); }
+function setRounds(r) { setup.rounds = r; saveSetup(); renderRounds(); }
+function toggleMode(m) {
+  const i = setup.modes.indexOf(m);
+  if (i >= 0) {
+    if (setup.modes.length === 1) return;   // require ≥1
+    setup.modes.splice(i, 1);
+  } else {
+    setup.modes.push(m);
+  }
+  saveSetup(); renderModes(); updateAvailability();
 }
+function toggleUnit(u) {
+  const i = setup.units.indexOf(u);
+  if (i >= 0) setup.units.splice(i, 1); else setup.units.push(u);
+  setup.units.sort((a, b) => a - b);
+  saveSetup(); renderUnits(); updateAvailability();
+}
+function applyUnitQuick(scope) {
+  if (scope === 'all')  setup.units = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+  else if (scope === 'none') setup.units = [];
+  else {
+    const m = scope.match(/^(\d+)-(\d+)$/);
+    if (m) { setup.units = []; for (let i = parseInt(m[1],10); i <= parseInt(m[2],10); i++) setup.units.push(i); }
+  }
+  saveSetup(); renderUnits(); updateAvailability();
+}
+function setTimeBonus(on) { setup.timeBonus = !!on; saveSetup(); renderTimeBonus(); }
 function toggleTimeBonus() { setTimeBonus(!setup.timeBonus); }
 
-// Compute the active unit set from the scope value.
-function activeUnits() {
-  if (!setup.scope || setup.scope === 'all') return null; // null means all
-  if (/^\d+$/.test(setup.scope)) return [parseInt(setup.scope, 10)];
-  const m = setup.scope.match(/^(\d+)-(\d+)$/);
-  if (m) {
-    const a = parseInt(m[1], 10), b = parseInt(m[2], 10);
-    const out = []; for (let i = a; i <= b; i++) out.push(i);
-    return out;
-  }
-  return null;
+function renderTime() {
+  document.querySelectorAll('#time-seg .seg-btn').forEach(b =>
+    b.classList.toggle('active', parseInt(b.dataset.time, 10) === setup.time));
 }
-
-function isInScope(entry) {
-  const units = activeUnits();
-  if (!units) return true;
-  return units.includes(entry.unit);
+function renderRounds() {
+  document.querySelectorAll('#rounds-seg .seg-btn').forEach(b =>
+    b.classList.toggle('active', parseInt(b.dataset.rounds, 10) === setup.rounds));
+}
+function renderModes() {
+  document.querySelectorAll('.mode-tile').forEach(b =>
+    b.classList.toggle('active', setup.modes.includes(b.dataset.mode)));
+}
+function renderUnits() {
+  document.querySelectorAll('.unit-cell').forEach(b =>
+    b.classList.toggle('active', setup.units.includes(parseInt(b.dataset.unit, 10))));
+}
+function renderTimeBonus() {
+  document.getElementById('time-bonus-switch').classList.toggle('on', !!setup.timeBonus);
 }
 
 function entryKey(e) { return e.unit + '::' + e.w; }
 
+function entryAllowedBySetup(e) {
+  return setup.units.includes(e.unit) && setup.modes.includes(e.cat);
+}
+
 function updateAvailability() {
-  const all = (window.ACTIVITY_WORDS || []).filter(isInScope);
+  const filteredByUnit = (window.ACTIVITY_WORDS || []).filter(e => setup.units.includes(e.unit));
   const counts = { draw: 0, show: 0, explain: 0 };
-  for (const e of all) counts[e.cat]++;
-  const total = setup.mode === 'mix' ? all.length : counts[setup.mode];
+  for (const e of filteredByUnit) counts[e.cat]++;
+  const total = setup.modes.reduce((s, m) => s + counts[m], 0);
   const wa = document.getElementById('words-available');
   document.getElementById('wa-total').textContent = total;
-  document.getElementById('wa-breakdown').textContent =
-    `Draw ${counts.draw} · Show ${counts.show} · Explain ${counts.explain}`;
+  const bits = setup.modes.map(m => `${capitalize(m)} ${counts[m]}`);
+  document.getElementById('wa-breakdown').textContent = bits.join(' · ');
   wa.classList.toggle('empty', total === 0);
-  document.getElementById('start-btn').disabled = total === 0;
+  document.getElementById('start-btn').disabled = total === 0 || setup.units.length === 0 || setup.modes.length === 0;
 }
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
 // ============================================================
 // SETUP — group rows
@@ -897,25 +1055,26 @@ function removeGroup(btn) {
 
 function startGame() {
   getAudio();
-  const all = (window.ACTIVITY_WORDS || []).filter(isInScope);
-  const wordsPossible = setup.mode === 'mix' ? all.length : all.filter(w => w.cat === setup.mode).length;
+  if (setup.modes.length === 0 || setup.units.length === 0) return;
+  const wordsPossible = (window.ACTIVITY_WORDS || []).filter(entryAllowedBySetup).length;
   if (wordsPossible === 0) return;
 
   const inputs = document.querySelectorAll('.group-input');
   const groups = [];
   inputs.forEach((inp, i) => {
     const name = inp.value.trim() || `Group ${i + 1}`;
-    groups.push({ name, score: 0, correctTotal: 0, skipTotal: 0 });
+    groups.push({ name, score: 0, correctTotal: 0, skipTotal: 0, turnsPlayed: 0 });
   });
   if (groups.length < 2) return;
 
   state = freshState();
   state.groups = groups;
   state.currentGroupIdx = 0;
-  state.currentMode = setup.mode;
+  state.activeModes = setup.modes.slice();
+  state.activeUnits = setup.units.slice();
   state.timePerRound = setup.time;
   state.timeBonus = setup.timeBonus;
-  state.scopeUnits = activeUnits();
+  state.roundsPerGroup = setup.rounds;
   state.gameStarted = true;
   showScreen('pick');
 }
@@ -936,12 +1095,20 @@ function showScreen(name) {
 function updatePickScreen() {
   const g = state.groups[state.currentGroupIdx];
   document.getElementById('pick-prompt').textContent = `${g.name} — your turn!`;
-  document.getElementById('pick-group-label').textContent = `Turn: ${g.name}`;
+  // Turn label: progress through the game
+  const turnLabel = state.roundsPerGroup
+    ? `Turn: ${g.name} · round ${g.turnsPlayed + 1} of ${state.roundsPerGroup}`
+    : `Turn: ${g.name}`;
+  document.getElementById('pick-group-label').textContent = turnLabel;
   const remaining = poolForRound().length;
   document.getElementById('words-remaining').textContent = `${remaining} words left`;
-  const modeInfo = (state.currentMode === 'mix')
-    ? 'Mix mode: each card shows ✏️ Draw, 🎭 Show, or 💬 Explain — do whatever the cue says.'
-    : modeDescription(state.currentMode);
+  let modeInfo;
+  if (state.activeModes.length === 1) {
+    modeInfo = modeDescription(state.activeModes[0]);
+  } else {
+    const labels = state.activeModes.map(m => m === 'draw' ? '✏️ Draw' : m === 'show' ? '🎭 Show' : '💬 Explain');
+    modeInfo = `Mix: ${labels.join(' / ')}. Each card shows the cue.`;
+  }
   document.getElementById('pick-mode-info').textContent = `${state.timePerRound} s · ${modeInfo}`;
   renderScoreboard('pick-scoreboard');
 }
@@ -966,14 +1133,13 @@ function renderScoreboard(containerId) {
 // POOL & WORD SELECTION
 // ============================================================
 function poolForRound() {
-  const all = (window.ACTIVITY_WORDS || []).filter(w => {
-    if (state.scopeUnits && !state.scopeUnits.includes(w.unit)) return false;
+  return (window.ACTIVITY_WORDS || []).filter(w => {
+    if (!state.activeUnits.includes(w.unit)) return false;
+    if (!state.activeModes.includes(w.cat)) return false;
     if (state.usedWordKeys.has(entryKey(w))) return false;
     if (state.roundSkippedKeys.has(entryKey(w))) return false;
-    if (state.currentMode !== 'mix' && w.cat !== state.currentMode) return false;
     return true;
   });
-  return all;
 }
 
 function startRound() {
@@ -982,7 +1148,6 @@ function startRound() {
     alert('No words left for this group with the current setup.');
     return;
   }
-  state.currentCategory = state.currentMode;
   state.roundWords = [];
   state.roundScore = 0;
   state.history = [];
@@ -992,13 +1157,16 @@ function startRound() {
   state.roundClearedAll = false;
   state.beepedSeconds = new Set();
 
+  const g = state.groups[state.currentGroupIdx];
   state.roundUndoSnapshot = {
     usedWordKeys: new Set(state.usedWordKeys),
-    groupScore: state.groups[state.currentGroupIdx].score,
-    correctTotal: state.groups[state.currentGroupIdx].correctTotal,
-    skipTotal: state.groups[state.currentGroupIdx].skipTotal,
+    groupScore: g.score,
+    correctTotal: g.correctTotal,
+    skipTotal: g.skipTotal,
+    turnsPlayed: g.turnsPlayed,
   };
 
+  sfxStart();
   showScreen('play');
   setupPlayScreen();
   nextWord();
@@ -1126,6 +1294,7 @@ function endRound() {
   g.score += state.roundScore + bonus;
   g.correctTotal += state.roundScore;
   g.skipTotal += state.roundWords.filter(r => r.result === 'skipped').length;
+  g.turnsPlayed = (g.turnsPlayed || 0) + 1;
   state.lastRoundBonus = bonus;
   showScreen('summary');
   updateSummaryScreen();
@@ -1155,21 +1324,33 @@ function undoRound() {
   g.score = state.roundUndoSnapshot.groupScore;
   g.correctTotal = state.roundUndoSnapshot.correctTotal;
   g.skipTotal = state.roundUndoSnapshot.skipTotal;
+  g.turnsPlayed = state.roundUndoSnapshot.turnsPlayed != null ? state.roundUndoSnapshot.turnsPlayed : g.turnsPlayed;
   state.roundWords = []; state.roundScore = 0; state.roundSkippedKeys = new Set();
   state.history = []; state.roundUndoSnapshot = null; state.lastRoundBonus = 0;
   showScreen('pick');
 }
 
 function nextTurn() {
-  // Has any word remaining for any group at any category?
+  // Game ends when (a) configured rounds-per-group reached for every group, OR
+  // (b) no words remain in the configured pool for ANY group.
+  if (state.roundsPerGroup && state.groups.every(g => (g.turnsPlayed || 0) >= state.roundsPerGroup)) {
+    showScreen('final'); return;
+  }
   const anyRemaining = (window.ACTIVITY_WORDS || []).some(w => {
-    if (state.scopeUnits && !state.scopeUnits.includes(w.unit)) return false;
-    if (state.currentMode !== 'mix' && w.cat !== state.currentMode) return false;
+    if (!state.activeUnits.includes(w.unit)) return false;
+    if (!state.activeModes.includes(w.cat)) return false;
     return !state.usedWordKeys.has(entryKey(w));
   });
   if (!anyRemaining) { showScreen('final'); return; }
-  state.currentGroupIdx = (state.currentGroupIdx + 1) % state.groups.length;
-  showScreen('pick');
+  // Advance to the next group that still has rounds left (or any group if unlimited).
+  for (let i = 1; i <= state.groups.length; i++) {
+    const idx = (state.currentGroupIdx + i) % state.groups.length;
+    if (!state.roundsPerGroup || (state.groups[idx].turnsPlayed || 0) < state.roundsPerGroup) {
+      state.currentGroupIdx = idx;
+      showScreen('pick'); return;
+    }
+  }
+  showScreen('final');
 }
 
 // ============================================================
@@ -1209,7 +1390,7 @@ function newGame() {
 // FINAL SCREEN — sorting + tie-breaking
 // ============================================================
 function updateFinalScreen() {
-  if (!state.historySaved) { saveGameToHistory(); state.historySaved = true; }
+  if (!state.historySaved) { saveGameToHistory(); state.historySaved = true; sfxGameOver(); }
   // Sort: score desc, then correctTotal desc, then skipTotal asc.
   const sorted = [...state.groups].sort((a, b) => {
     if (b.score !== a.score) return b.score - a.score;
@@ -1257,9 +1438,10 @@ function saveGameToHistory() {
   const maxScore = Math.max(...state.groups.map(g => g.score));
   history.unshift({
     date: new Date().toISOString(),
-    mode: state.currentMode,
+    modes: state.activeModes.slice(),
     time: state.timePerRound,
-    scope: state.scopeUnits ? `Units ${state.scopeUnits.join(', ')}` : 'All units',
+    rounds: state.roundsPerGroup || null,
+    scope: state.activeUnits.length === 15 ? 'All units' : `Units ${state.activeUnits.join(', ')}`,
     wordsUsed: state.usedWordKeys.size,
     teams: state.groups.map(g => ({ name: g.name, score: g.score, winner: g.score === maxScore })),
   });
@@ -1292,7 +1474,8 @@ function renderHistory() {
     const d = new Date(game.date);
     const dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
       + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-    const meta = [game.mode ? game.mode.toUpperCase() : null, game.time ? game.time + 's' : null, game.wordsUsed ? game.wordsUsed + ' words' : null]
+    const modeStr = Array.isArray(game.modes) ? game.modes.map(m => m.toUpperCase()).join('+') : (game.mode ? game.mode.toUpperCase() : null);
+    const meta = [modeStr, game.time ? game.time + 's' : null, game.rounds ? game.rounds + 'r' : null, game.wordsUsed ? game.wordsUsed + ' words' : null]
       .filter(Boolean).join(' · ');
     html += `<div class="history-entry">
       <div class="history-header">

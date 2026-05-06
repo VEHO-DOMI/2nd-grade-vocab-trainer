@@ -2,6 +2,14 @@
 
 Reverse-chronological release history. Going forward, update on each substantive change. Earlier history (pre-2026-04-11) lives only in `git log`.
 
+## 2026-05-06 — Activity Game polish (granularity, sound, ergonomics)
+- **Multi-select units**: replace the single-pick dropdown / range chip with a 5×3 grid where every unit is individually toggleable. Quick-chips now act as bulk shortcuts (All / None / U1–4 / 5–8 / 9–11 / 12–15) over the same multi-select state. Each cell shows the unit number + total word count.
+- **Multi-select modes**: Draw / Show / Explain are independent toggles (≥1 required). Picking just one runs single-mode; picking 2 or 3 mixes them with the per-word category cue at play time. Removes the redundant "Mix" tile.
+- **Game length picker**: 3 / 5 / 8 / ∞ rounds per group. Game ends when every group has played the configured number of rounds, OR when the pool runs dry. Pick-screen shows "round N of M" progress.
+- **Better-spaced action buttons**: large 84-px Correct + Skip side-by-side (was three buttons cramped together with Undo). Undo moved to its own subtler row below — no more accidental tap during the heat of the round.
+- **Richer sound effects**: coin-pickup ascending arpeggio for Correct (G5→C6→E6→G6 with octave doubling), descending whoosh + low-pass noise for Skip, double-tick beep for the countdown, klaxon-style time-up buzzer (C#4→A#3→G3 saw + square layered with noise burst), 5-note triumphant fanfare for the time bonus, plus a soft 3-note chime when a round starts and a held major-7 chord on the final screen.
+- Word-count availability indicator now shows breakdown for active modes only (e.g. "Draw 76 · Show 41" if Explain is off).
+
 ## 2026-05-06 — Activity Game mode
 - New sibling app at `activity/` — teacher-orchestrated group game, three modes: **Draw It** ✏️ / **Show It** 🎭 / **Explain It** 💬, plus **Mix** with per-word category cue.
 - Setup screen: ≥2 group names, time-per-round picker (30 / 60 / 90 s), mode picker, unit scope (All / single unit / range chips for U1–4 / 5–8 / 9–11 / 12–15), live "words available" counter, optional time-bonus toggle (+1 if a group clears all words before time runs out).
